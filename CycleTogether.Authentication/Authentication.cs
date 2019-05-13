@@ -9,13 +9,19 @@ namespace CycleTogether.Authentication
 {
     public class Authentication : IAuthentication
     {
+        private readonly Repository<User> _users;
         
-        public WebModels.User Register(WebModels.User user)
+        public UserWeb Register(UserWeb user)
         {
-            throw new NotImplementedException();
+            var passwordHash = BCrypt.Net.BCrypt.HashPassword(user.Password);
+            user.Password = passwordHash;
+            var userNew = new User() { Id = user.Id, Email = user.Email, FirstName = user.FirstName, LastName = user.LastName, Password = passwordHash };
+            _users.Create(userNew);
+            return user;
+            
         }
-
-        WebModels.User IAuthentication.Authenticate(string email, string password)
+        //TODO implement method
+        UserWeb IAuthentication.Authenticate(string email, string password)
         {
             throw new NotImplementedException();
         }

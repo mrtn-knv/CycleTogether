@@ -10,10 +10,11 @@ namespace DAL
     public class UsersRepository : Repository<User>
     {
 
-        public UsersRepository(List<User> _context) : base(_context)
+        public UsersRepository() 
         {
+
         }
 
-
+        
     }
 }

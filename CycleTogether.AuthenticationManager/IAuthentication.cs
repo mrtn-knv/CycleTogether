@@ -7,7 +7,7 @@ namespace CycleTogether.AuthenticationManager
 {
     public interface IAuthentication
     {
-        User Authenticate(string email, string password);
-        User Register(User user);
+        UserWeb Authenticate(string email, string password);
+        UserWeb Register(UserWeb user);
     }
 }

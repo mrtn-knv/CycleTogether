@@ -7,9 +7,10 @@ namespace DAL
 {
     public interface IRepository<T> where T : class
     {
-        T Create(T context);
-        T Edit(T context);
-        void Delete(T context);
+        //methods as Tasks to all repos and services
+        T Create(T entry);
+        T Edit(T entry);
+        void Delete(T entry);
        
     }
 }

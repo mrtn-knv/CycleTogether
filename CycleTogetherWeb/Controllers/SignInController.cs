@@ -20,13 +20,14 @@ namespace CycleTogetherWeb.Controllers
 
         [AllowAnonymous]
         [HttpPost]
-        public User Authenticate([FromBody]User userParams)
+        public UserWeb Authenticate([FromBody]UserWeb userParams)
         {
             var ecryptedPassword = BCrypt.Net.BCrypt.HashPassword(userParams.Password);
             return _authenticator.Authenticate(userParams.Email, ecryptedPassword);
         }
 
-        public User Register([FromBody]User userParams)
+        [AllowAnonymous]
+        public UserWeb Register([FromBody]UserWeb userParams)
         {
             return _authenticator.Register(userParams);
         }

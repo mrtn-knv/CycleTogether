@@ -10,11 +10,9 @@ namespace DAL
 
         private static List<T> context;
 
-
-        public Repository(List<T> _context)
+        public Repository()
         {
-            context = _context;
-           
+
         }
 
         public T Create(T entry)

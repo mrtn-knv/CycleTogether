@@ -4,7 +4,7 @@ using System.Text;
 
 namespace WebModels
 {
-    public class User
+    public class UserWeb
     {
         public int Id { get; set; }
         public string FirstName { get; set; }
