@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.IdentityModel.Tokens;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using WebModels;
@@ -7,7 +8,7 @@ namespace CycleTogether.AuthenticationManager
 {
     public interface IAuthentication
     {
-        UserWeb Authenticate(string email, string password);
+        SecurityToken Authenticate(string email, string password);
         UserWeb Register(UserWeb user);
     }
 }

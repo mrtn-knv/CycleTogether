@@ -6,7 +6,6 @@ namespace DAL
 {
     public interface IUserRepository
     {
-        //TODO implement method in use
-        bool isUser(string email);
+        User GetByEmail(string email);       
     }
 }

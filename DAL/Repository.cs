@@ -8,7 +8,7 @@ namespace DAL
     public class Repository<T> : IRepository<T> where T : class
     {
 
-        private static List<T> context;
+        protected static List<T> context;
 
         public Repository()
         {
@@ -31,5 +31,6 @@ namespace DAL
             T updated = entry;
             return updated;
         }
+      
     }
 }

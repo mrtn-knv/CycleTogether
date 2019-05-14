@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AutoMapper;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,14 +8,18 @@ using WebModels;
 
 namespace DAL
 {
-    public class UsersRepository : Repository<User>
-    {
-
+    public class UsersRepository : Repository<User>, IUserRepository
+    {      
         public UsersRepository() 
         {
-
+            
+          
         }
 
-        
+        public User GetByEmail(string email)
+        {
+            return context.FirstOrDefault(u => u.Email == email);            
+        }
+     
     }
 }
