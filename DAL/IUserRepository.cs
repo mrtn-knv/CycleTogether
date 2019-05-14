@@ -4,7 +4,7 @@ using System.Text;
 
 namespace DAL
 {
-    public interface IUserRepository
+    public interface IUserRepository : IRepository<User>
     {
         User GetByEmail(string email);       
     }

@@ -19,20 +19,24 @@ namespace CycleTogetherWeb.Controllers
     [ApiController]
     public class SignInController : ControllerBase
     {
-        private readonly IAuthentication _authenticator;        
+        private readonly IAuthentication _authenticator;
+        public SignInController(IAuthentication authenticator)
+        {
+            _authenticator = authenticator;  
+        }
 
         [AllowAnonymous]
         [HttpPost("login")]
-        public IActionResult Authenticate([FromBody]UserWeb userParams)
+        public string Authenticate([FromBody]UserWeb userParams)
         {
-            var passwordHashed = BCrypt.Net.BCrypt.HashPassword(userParams.Password);
-            var authenticated = _authenticator.Authenticate(userParams.Email, passwordHashed);
+            
+            var authenticated = _authenticator.Authenticate(userParams.Email, userParams.Password);
             if (authenticated != null)
             {
-                return Ok(authenticated);
+                return authenticated;
             }
 
-            return BadRequest(new {message = "Username or password is not valid." });
+            return "No login for you";
         }
 
         [AllowAnonymous]

@@ -9,17 +9,15 @@ using WebModels;
 namespace DAL
 {
     public class UsersRepository : Repository<User>, IUserRepository
-    {      
+    {        
         public UsersRepository() 
-        {
-            
+        {            
           
         }
-
         public User GetByEmail(string email)
         {
             return context.FirstOrDefault(u => u.Email == email);            
         }
-     
+
     }
 }

@@ -1,4 +1,5 @@
 ﻿using DAL;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
@@ -9,13 +10,18 @@ using WebModels;
 
 namespace CycleTogether.Authentication
 {
-    public static class TokenGenerator
+    public class TokenGenerator
     {
-        private static readonly AppSettings _appSettings;
-        private static readonly UsersRepository _users;
+        private readonly AppSettings _appSettings;
+        private readonly IUserRepository _users;
 
+        public TokenGenerator(IOptions<AppSettings> appSettings, IUserRepository users)
+        {
+            _appSettings = appSettings.Value;
+            _users = users;
+        }
 
-        public static User IsValid(string email)
+        public User IsValid(string email)
         {
            var user =  _users.GetByEmail(email);
             if (user != null)
@@ -24,7 +30,7 @@ namespace CycleTogether.Authentication
             }
             return null;
         }
-        public static SecurityToken Generate(string email)
+        public  string Generate(string email)
         {
 
             var user = _users.GetByEmail(email);
@@ -41,8 +47,9 @@ namespace CycleTogether.Authentication
                 Expires = DateTime.UtcNow.AddMinutes(30),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
-            var token = tokenHandler.CreateToken(tokenDescriptor);            
-            return token;
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            var encoded = tokenHandler.WriteToken(token);
+            return encoded;
         }
     }
 }
