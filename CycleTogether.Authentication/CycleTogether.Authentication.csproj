@@ -11,6 +11,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CycleTogether.AuthenticationManager\CycleTogether.AuthenticationManager.csproj" />
+    <ProjectReference Include="..\DAL.Contracts\DAL.Contracts.csproj" />
     <ProjectReference Include="..\DAL\DAL.csproj" />
   </ItemGroup>
 

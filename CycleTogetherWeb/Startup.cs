@@ -38,7 +38,7 @@ namespace CycleTogetherWeb
             ConfigureAuthentication(services, key);
 
             services.AddAutoMapper();
-            services.AddSingleton<DAL.IUserRepository, DAL.UsersRepository>();
+            services.AddSingleton<DAL.Contracts.IUserRepository, DAL.UsersRepository>();
             services.AddSingleton(typeof(TokenGenerator));
             services.AddSingleton<IAuthentication, Authentication>();
         }

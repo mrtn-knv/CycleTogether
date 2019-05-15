@@ -1,4 +1,6 @@
 ﻿using DAL;
+using DAL.Contracts;
+using DAL.Models;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System;

@@ -20,6 +20,7 @@
   <ItemGroup>
     <ProjectReference Include="..\CycleTogether.AuthenticationManager\CycleTogether.AuthenticationManager.csproj" />
     <ProjectReference Include="..\CycleTogether.Authentication\CycleTogether.Authentication.csproj" />
+    <ProjectReference Include="..\DAL.Contracts\DAL.Contracts.csproj" />
     <ProjectReference Include="..\WebModels\WebModels.csproj" />
   </ItemGroup>
 

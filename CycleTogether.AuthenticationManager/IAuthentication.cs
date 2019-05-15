@@ -1,8 +1,4 @@
-﻿using Microsoft.IdentityModel.Tokens;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using WebModels;
+﻿using WebModels;
 
 namespace CycleTogether.AuthenticationManager
 {
