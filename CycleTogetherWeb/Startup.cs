@@ -4,14 +4,13 @@ using CycleTogether.AuthenticationManager;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using AutoMapper;
+using CycleTogether.RoutesManager;
+using CycleTogether.Routes;
 
 namespace CycleTogetherWeb
 {
@@ -27,9 +26,6 @@ namespace CycleTogetherWeb
 
         public void ConfigureServices(IServiceCollection services)
         {
-
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
-
             var appSettingsSection = Configuration.GetSection("AppSettings");
             services.Configure<AppSettings>(appSettingsSection);
 
@@ -39,8 +35,11 @@ namespace CycleTogetherWeb
 
             services.AddAutoMapper();
             services.AddSingleton<DAL.Contracts.IUserRepository, DAL.UsersRepository>();
+            services.AddSingleton<IRouteManager, RouteManager>();
+            services.AddSingleton<DAL.Contracts.IRouteRepository, DAL.RoutesRepository>();
             services.AddSingleton(typeof(TokenGenerator));
             services.AddSingleton<IAuthentication, Authentication>();
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
 
         private static void ConfigureAuthentication(IServiceCollection services, byte[] key)
@@ -55,7 +54,7 @@ namespace CycleTogetherWeb
                             x.RequireHttpsMetadata = false;
                             x.SaveToken = true;
                             x.TokenValidationParameters = new TokenValidationParameters
-                            {
+                            {                                  
                                 ValidateIssuerSigningKey = true,
                                 IssuerSigningKey = new SymmetricSecurityKey(key),
                                 ValidateIssuer = false,
