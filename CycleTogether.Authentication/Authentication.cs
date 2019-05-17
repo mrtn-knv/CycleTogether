@@ -20,35 +20,24 @@ namespace CycleTogether.Authentication
             _mapper = mapper;
             _appSettings = appSetings.Value;
             _tokenGenerator = tokenGenerator;
-
         }
 
         public UserWeb Register(UserWeb user)
         {
-            var passwordHash = BCrypt.Net.BCrypt.HashPassword(user.Password);
-            user.Password = passwordHash;
-            User userNew = _mapper.Map<User>(user);           
-            userNew = _users.Create(userNew);
-
-            var toReturn = _mapper.Map<UserWeb>(userNew);
-            return toReturn;
-
+            user.Password = this._tokenGenerator.HashPassword(user.Password);
+            return SaveUser(user);
         }
-        //TODO implement method
+
         public string Authenticate(string email, string password)
         {
+            return _tokenGenerator.Generate(email, password);
+        }
 
-            var validUser = _tokenGenerator.IsValid(email);
-            if (validUser != null)
-            {
-                var isValidPassword = BCrypt.Net.BCrypt.Verify(password, validUser.Password);
-                if (isValidPassword)
-                {
-                    var token = _tokenGenerator.Generate(email);
-                    return token;
-                }
-            }
-            return null;
+        private UserWeb SaveUser(UserWeb user)
+        {
+            User entityUser = _mapper.Map<User>(user);
+            entityUser = _users.Create(entityUser);
+            return _mapper.Map<UserWeb>(entityUser);
         }
     }
 }

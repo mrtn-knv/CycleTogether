@@ -1,44 +1,43 @@
-﻿using DAL;
-using DAL.Contracts;
+﻿using DAL.Contracts;
 using DAL.Models;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using WebModels;
 
 namespace CycleTogether.Authentication
 {
     public class TokenGenerator
     {
-        private readonly AppSettings _appSettings;
-        private readonly IUserRepository _users;
+        private readonly byte[] secretTokenKey;
+        private readonly int tokenExpirationInMinutes;
+
+        private readonly IUserRepository users;
 
         public TokenGenerator(IOptions<AppSettings> appSettings, IUserRepository users)
         {
-            _appSettings = appSettings.Value;
-            _users = users;
+            this.secretTokenKey = Encoding.ASCII.GetBytes(appSettings.Value.Secret);
+            this.tokenExpirationInMinutes = 30;
+
+            this.users = users;
         }
 
-        public User IsValid(string email)
+        public string Generate(string email, string password)
         {
-           var user =  _users.GetByEmail(email);
-            if (user != null)
-            {
-                return user;
-            }
-            return null;
+            var user = users.GetByEmail(email);
+            return user != null ? GenerateToken(password, user) : string.Empty;
         }
-        public  string Generate(string email)
-        {
 
-            var user = _users.GetByEmail(email);
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
-            var tokenDescriptor = new SecurityTokenDescriptor
+        public string HashPassword(string password)
+        {
+            return BCrypt.Net.BCrypt.HashPassword(password);
+        }
+
+        private SecurityTokenDescriptor Token(User user)
+        {
+            return new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new Claim[]
                 {
@@ -46,12 +45,31 @@ namespace CycleTogether.Authentication
                     new Claim(ClaimTypes.Name, user.FirstName),
                     new Claim(ClaimTypes.Surname, user.LastName)
                 }),
-                Expires = DateTime.UtcNow.AddMinutes(30),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+                Expires = DateTime.UtcNow.AddMinutes(tokenExpirationInMinutes),
+                SigningCredentials = new SigningCredentials(
+                    key: new SymmetricSecurityKey(secretTokenKey),
+                    algorithm: SecurityAlgorithms.HmacSha256Signature)
             };
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-            var encoded = tokenHandler.WriteToken(token);
-            return encoded;
+        }
+
+        private string GenerateToken(string enteredPassword, User user)
+        {
+            if (ArePasswordsMatching(enteredPassword, user.Password))
+                return CreateToken(Token(user));
+            else
+                return string.Empty;
+        }
+
+        private bool ArePasswordsMatching(string enteredPassword, string userPassword)
+        {
+            return BCrypt.Net.BCrypt.Verify(enteredPassword, userPassword);
+        }
+
+        private string CreateToken(SecurityTokenDescriptor token)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var securityToken = tokenHandler.CreateToken(token);
+            return tokenHandler.WriteToken(securityToken);
         }
     }
 }
