@@ -1,19 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using DAL.Contracts;
+using DAL.Models;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using WebModels;
 
 namespace DAL
 {
-    public class UsersRepository : Repository<User>
-    {
-
-        public UsersRepository(List<User> _context) : base(_context)
-        {
+    public class UsersRepository : Repository<User>, IUserRepository
+    {        
+        public UsersRepository() 
+        {            
+          
         }
-
+        public User GetByEmail(string email)
+        {
+            return context.FirstOrDefault(u => u.Email == email);            
+        }
 
     }
 }

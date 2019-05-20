@@ -1,37 +1,51 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Linq;
+using DAL.Contracts;
+using DAL.Models;
 
 namespace DAL
 {
-    public class Repository<T> : IRepository<T> where T : class
+    public class Repository<T> : IRepository<T> where T : EntityBase
     {
 
-        private static List<T> context;
+        protected static List<T> context = new List<T>();
 
-
-        public Repository(List<T> _context)
+        public Repository()
         {
-            context = _context;
-           
+
         }
 
         public T Create(T entry)
         {
+            entry.Id = Guid.NewGuid();
             context.Add(entry);
             return entry;
         }
 
-        public void Delete(T entry)
+        public void Delete(Guid id)
         {
-            context.Remove(entry);
+            var current = context.FirstOrDefault(e => e.Id == id);
+            if (current != null)
+            {
+                context.Remove(current);
+            }
+            
         }
 
-        public T Edit(T entry)
+        public void Edit(T entry)
         {
-            T updated = entry;
-            return updated;
+            var toEdit = context.FirstOrDefault(e => e.Id == entry.Id);
+            if (toEdit != null)
+            {
+                toEdit = entry;
+            }
+            
+        }
+
+        public T GetById(Guid id)
+        {
+          return context.FirstOrDefault(t => t.Id == id);
         }
     }
 }

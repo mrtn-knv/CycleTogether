@@ -5,12 +5,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AutoMapper" Version="8.1.0" />
-  </ItemGroup>
-
-  <ItemGroup>
+    <ProjectReference Include="..\CycleTogether.RoutesManager\CycleTogether.RoutesManager.csproj" />
     <ProjectReference Include="..\DAL.Contracts\DAL.Contracts.csproj" />
-    <ProjectReference Include="..\WebModels\WebModels.csproj" />
   </ItemGroup>
 
 </Project>

@@ -8,6 +8,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WebModels;
 using BCrypt;
+using Microsoft.IdentityModel.Tokens;
+using AutoMapper;
+using DAL;
 
 namespace CycleTogetherWeb.Controllers
 {
@@ -16,19 +19,32 @@ namespace CycleTogetherWeb.Controllers
     [ApiController]
     public class SignInController : ControllerBase
     {
-        private IAuthentication _authenticator;
-
-        [AllowAnonymous]
-        [HttpPost]
-        public User Authenticate([FromBody]User userParams)
+        private readonly IAuthentication _authenticator;
+        public SignInController(IAuthentication authenticator)
         {
-            var ecryptedPassword = BCrypt.Net.BCrypt.HashPassword(userParams.Password);
-            return _authenticator.Authenticate(userParams.Email, ecryptedPassword);
+            _authenticator = authenticator;  
         }
 
-        public User Register([FromBody]User userParams)
+        [AllowAnonymous]
+        [HttpPost("login")]
+        public string Authenticate([FromBody]UserWeb userParams)
         {
-            return _authenticator.Register(userParams);
+            
+            var authenticated = _authenticator.Authenticate(userParams.Email, userParams.Password);
+            if (authenticated != null)
+            {
+                return authenticated;
+            }
+
+            return "No login for you";
+        }
+
+        [AllowAnonymous]
+        [HttpPost("register")]
+        public UserWeb Register([FromBody]UserWeb user)
+        {           
+            var registered = _authenticator.Register(user);
+            return registered;
         }
     }
 }
