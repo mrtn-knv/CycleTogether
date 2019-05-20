@@ -31,12 +31,12 @@ namespace CycleTogetherWeb.Controllers
         {
             
             var authenticated = _authenticator.Authenticate(userParams.Email, userParams.Password);
-            if (authenticated != null)
+            if (!string.IsNullOrWhiteSpace(authenticated))
             {
                 return authenticated;
             }
 
-            return "No login for you";
+            return "Incorrect username or password.";
         }
 
         [AllowAnonymous]
