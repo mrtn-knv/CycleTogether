@@ -7,26 +7,21 @@ namespace DAL.Models
     {
         public string Name { get; set; }
         public string Info { get; set; }
-        public int MembersRequired { get; set; }
-        public List<User> Members { get; set; }
+        public List<User> Subscribed { get; set; }
         public string StartPoint { get; set; }
         public string Destination { get; set; }
         public DateTime StartTime { get; set; }
-        public TimeSpan? Duration { get; set; }
 
         public enum Type
         {
-            Classic,
-            MountainBike,
-            Family,
-            Epic
+            OneDay,
+            Multiday
         }
         public enum Difficulty
         {
-            Leisurely,
-            Moderate,
-            Tough,
-            MultiLevel
+            Beginner,
+            Intermediate,
+            Expert
         }
 
         public Route()
