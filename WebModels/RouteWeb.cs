@@ -7,26 +7,24 @@ namespace WebModels
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
+        public UserWeb CreatedBy { get; set; }
         public string Info { get; set; }
-        public List<UserWeb> Members { get; set; }
+        public List<string> SubscribedMails = new List<string>();
         public string StartPoint { get; set; }
         public string Destination { get; set; }
         public DateTime StartTime { get; set; }
-        public TimeSpan? Duration { get; set; }
 
         public enum Type
         {
-            Classic,
-            MountainBike,
-            Family,
-            Epic
+            OneDay,
+            SeveralDays
         }
+
         public enum Difficulty
         {
-            Leisurely,
-            Moderate,
-            Tough,
-            MultiLevel
+            Beginner,
+            Intermediate,
+            Expert
         }
     }
 }

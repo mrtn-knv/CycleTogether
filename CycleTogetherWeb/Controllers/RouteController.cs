@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
+using System.Security.Claims;
 using CycleTogether.RoutesManager;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -21,27 +21,22 @@ namespace CycleTogetherWeb.Controllers
             _routes = routes;
         }
 
-        // GET: api/Route
-        [HttpGet]
-        public IEnumerable<string> Get()
-        {
-            return new string[] { "value1", "value2" };
-        }
-
         // GET: api/Route/5
         [HttpGet("{id}", Name = "Get")]
         public RouteWeb Get(Guid id)
-        {
-            var current = _routes.Get(id);
-            return current;
-
+        {            
+            return _routes.Get(id);
         }
 
         // POST: api/Route/new
         [HttpPost("new")]
         public RouteWeb Create([FromBody] RouteWeb route)
         {
-            return _routes.Create(route);
+            ClaimsIdentity claimsIdentity = HttpContext.User.Identity as ClaimsIdentity;
+            var claims = claimsIdentity.Claims;
+            var mail = claims.FirstOrDefault(c => c.Type.Equals(ClaimTypes.Email)).Value;
+
+            return _routes.Create(route, mail);
         }
 
         // PUT: api/Route/edit
@@ -57,5 +52,6 @@ namespace CycleTogetherWeb.Controllers
         {
             _routes.Remove(id);
         }
+
     }
 }
