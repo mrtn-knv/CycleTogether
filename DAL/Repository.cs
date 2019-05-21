@@ -43,6 +43,11 @@ namespace DAL
             
         }
 
+        public IEnumerable<T> GetAll()
+        {
+           return context.ToList();
+        }
+
         public T GetById(Guid id)
         {
           return context.FirstOrDefault(t => t.Id == id);

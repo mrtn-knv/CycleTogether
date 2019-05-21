@@ -23,6 +23,12 @@ namespace CycleTogetherWeb.Controllers
             _claimsManager = claimsManager;
         }
 
+        [HttpGet("All")]
+        public IEnumerable<RouteWeb> GetAll()
+        {
+            return _routes.GetAll();
+        }
+
         // GET: api/Route/5
         [HttpGet("{id}", Name = "Get")]
         public RouteWeb Get(Guid id)

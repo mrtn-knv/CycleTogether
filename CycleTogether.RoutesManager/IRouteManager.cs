@@ -11,6 +11,7 @@ namespace CycleTogether.RoutesManager
         RouteWeb Update(RouteWeb route);
         void Remove(Guid id);
         RouteWeb Get(Guid id);
+        IEnumerable<RouteWeb> GetAll();
         bool Subscribe(string email, RouteWeb route);
     }
 }

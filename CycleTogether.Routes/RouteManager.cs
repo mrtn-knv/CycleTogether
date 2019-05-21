@@ -3,7 +3,9 @@ using CycleTogether.RoutesManager;
 using DAL.Contracts;
 using DAL.Models;
 using System;
+using System.Collections.Generic;
 using WebModels;
+using System.Linq;
 
 namespace CycleTogether.Routes
 {
@@ -25,6 +27,14 @@ namespace CycleTogether.Routes
             return Save(route, email);
         }
 
+        public IEnumerable<RouteWeb> GetAll()
+        {
+            var all = _routes.GetAll();
+            var routes = MapAll(all);
+            return routes;
+        }
+
+
         public RouteWeb Get(Guid id)
         {
             var route = _routes.GetById(id);
@@ -40,8 +50,11 @@ namespace CycleTogether.Routes
 
         public bool Subscribe(string email, RouteWeb route)
         {
-           var current = _mapper.Map<RouteWeb>(route);
-           return route.SubscribedMails.Contains(email) ? Unsubscribe(email, current) : AddToSubscribed(email, current);
+           return route.SubscribedMails.Contains(email) ? Unsubscribe(email, route) : AddToSubscribed(email, route);
+        }
+        public RouteWeb Update(RouteWeb route)
+        {
+            return SaveUpdated(route);
         }
 
         private bool AddToSubscribed(string email, RouteWeb route)
@@ -49,6 +62,13 @@ namespace CycleTogether.Routes
             var subscribeTo = _mapper.Map<Route>(route);
             _routes.Subscribe(email, subscribeTo);
             return true;
+        }
+        private IEnumerable<RouteWeb> MapAll(IEnumerable<Route> routes)
+        {   
+            foreach (var route in routes)
+            {               
+                yield return _mapper.Map<RouteWeb>(route);
+            }
         }
 
         private bool Unsubscribe(string email, RouteWeb route)
@@ -58,10 +78,6 @@ namespace CycleTogether.Routes
             return false;
         }
 
-        public RouteWeb Update(RouteWeb route)
-        {
-            return SaveUpdated(route);
-        }
         private RouteWeb Save(RouteWeb route, string email)
         {           
             var routeNew = _mapper.Map<Route>(route);
