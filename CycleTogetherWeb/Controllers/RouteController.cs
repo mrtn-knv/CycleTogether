@@ -16,9 +16,11 @@ namespace CycleTogetherWeb.Controllers
     public class RouteController : ControllerBase
     {
         private readonly IRouteManager _routes;
-        public RouteController(IRouteManager routes)
+        private readonly ClaimsManager _claimsManager;
+        public RouteController(IRouteManager routes, ClaimsManager claimsManager)
         {
             _routes = routes;
+            _claimsManager = claimsManager;
         }
 
         // GET: api/Route/5
@@ -33,10 +35,19 @@ namespace CycleTogetherWeb.Controllers
         public RouteWeb Create([FromBody] RouteWeb route)
         {
             ClaimsIdentity claimsIdentity = HttpContext.User.Identity as ClaimsIdentity;
-            var claims = claimsIdentity.Claims;
-            var mail = claims.FirstOrDefault(c => c.Type.Equals(ClaimTypes.Email)).Value;
+            var mail = _claimsManager.GetEmail(claimsIdentity);
 
             return _routes.Create(route, mail);
+        }
+
+        // POST: api/Route/subscribe
+        [HttpPost("subscribe")]
+        public bool Subscribe([FromBody]RouteWeb route)
+        {
+            ClaimsIdentity claimsIdentity = HttpContext.User.Identity as ClaimsIdentity;
+            var mail = _claimsManager.GetEmail(claimsIdentity);
+            
+            return _routes.Subscribe(mail, route);
         }
 
         // PUT: api/Route/edit
