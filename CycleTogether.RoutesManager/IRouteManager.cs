@@ -10,6 +10,7 @@ namespace CycleTogether.RoutesManager
         RouteWeb Create(RouteWeb route, string email);
         RouteWeb Update(RouteWeb route);
         void Remove(Guid id);
-        RouteWeb Get(Guid id);        
+        RouteWeb Get(Guid id);
+        bool Subscribe(string email, RouteWeb route);
     }
 }

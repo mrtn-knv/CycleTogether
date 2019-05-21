@@ -36,7 +36,27 @@ namespace CycleTogether.Routes
         {
 
             _routes.Delete(id);
-        }       
+        }
+
+        public bool Subscribe(string email, RouteWeb route)
+        {
+           var current = _mapper.Map<RouteWeb>(route);
+           return route.SubscribedMails.Contains(email) ? Unsubscribe(email, current) : AddToSubscribed(email, current);
+        }
+
+        private bool AddToSubscribed(string email, RouteWeb route)
+        {
+            var subscribeTo = _mapper.Map<Route>(route);
+            _routes.Subscribe(email, subscribeTo);
+            return true;
+        }
+
+        private bool Unsubscribe(string email, RouteWeb route)
+        {
+            var routeToUnsubscribeFrom = _mapper.Map<Route>(route);
+            _routes.Unsubscribe(email, routeToUnsubscribeFrom);
+            return false;
+        }
 
         public RouteWeb Update(RouteWeb route)
         {

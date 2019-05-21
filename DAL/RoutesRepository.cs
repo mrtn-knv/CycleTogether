@@ -11,6 +11,15 @@ namespace DAL
         {
 
         }
-       
+
+        public void Subscribe(string email, Route route)
+        {
+            route.SubscribedMails.Add(email);
+        }
+
+        public void Unsubscribe(string email, Route route)
+        {
+            route.SubscribedMails.Remove(email);
+        }
     }
 }
