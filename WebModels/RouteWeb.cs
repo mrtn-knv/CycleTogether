@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CycleTogether.Enums;
+using System;
 using System.Collections.Generic;
 
 namespace WebModels
@@ -9,22 +10,17 @@ namespace WebModels
         public string Name { get; set; }
         public UserWeb CreatedBy { get; set; }
         public string Info { get; set; }
-        public List<string> SubscribedMails = new List<string>();
         public string StartPoint { get; set; }
         public string Destination { get; set; }
         public DateTime StartTime { get; set; }
-
-        public enum Type
-        {
-            OneDay,
-            SeveralDays
-        }
-
-        public enum Difficulty
-        {
-            Beginner,
-            Intermediate,
-            Expert
-        }
+        public bool SuitableForKids { get; set; }
+        public bool IsComplete { get; set; }
+        public List<string> SubscribedMails = new List<string>();
+        public List<EquipmentWeb> EquipmentsNeeded { get; set; }
+        public Terrain Terrain { get; set; }
+        public Endurance Endurance { get; set; }
+        public TypeOfRoute Type { get; set; }
+        public Difficulty Difficulty { get; set; }
+        
     }
 }

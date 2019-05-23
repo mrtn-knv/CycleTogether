@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CycleTogether.Enums;
+using System;
 using System.Collections.Generic;
 
 namespace DAL.Models
@@ -12,20 +13,13 @@ namespace DAL.Models
         public string StartPoint { get; set; }
         public string Destination { get; set; }
         public DateTime StartTime { get; set; }
-        public bool Iscomplete { get; set; }
-
-        public enum Type
-        {
-            OneDay,
-            SeveralDays
-        }
-
-        public enum Difficulty
-        {
-            Beginner,
-            Intermediate,
-            Expert
-        }
+        public bool IsComplete { get; set; }
+        public bool SuitableForKids { get; set; }
+        public IEnumerable<Equipment> EquipmentsNeeded { get; set; }
+        public Terrain Terrain { get; set; }
+        public Endurance Endurance { get; set; }
+        public TypeOfRoute Type { get; set; }
+        public Difficulty Difficulty { get; set; }
 
         public Route()
         {
