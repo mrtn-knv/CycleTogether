@@ -1,5 +1,6 @@
-﻿
+﻿using CycleTogether.Enums;
 using System.Collections.Generic;
+using WebModels;
 
 namespace DAL.Models
 {
@@ -11,6 +12,11 @@ namespace DAL.Models
         public string Password { get; set; }
         public List<Route> Routes { get; set; }
         public int Level { get; set; }
+        public List<Equipment> Equipments { get; set; }
+        public Terrain Terrain { get; set; }
+        public Endurance Endurance { get; set; }
+        public TypeOfRoute Type { get; set; }
+        public Difficulty Difficulty { get; set; }
 
         public User()
         {
