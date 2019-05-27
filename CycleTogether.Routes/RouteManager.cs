@@ -14,12 +14,14 @@ namespace CycleTogether.Routes
         private readonly IRouteRepository _routes;
         private readonly IMapper _mapper;
         private readonly IUserRepository _users;
+        private readonly DifficultyCalculator _difficulty;
 
-        public RouteManager(IRouteRepository routes, IMapper mapper, IUserRepository users)
+        public RouteManager(IRouteRepository routes, IMapper mapper, IUserRepository users, DifficultyCalculator difficulty)
         {
             _routes = routes;
             _mapper = mapper;
             _users = users;
+            _difficulty = difficulty;
         }
 
         public RouteWeb Create(RouteWeb route, string email)
@@ -79,7 +81,8 @@ namespace CycleTogether.Routes
         }
 
         private RouteWeb Save(RouteWeb route, string email)
-        {           
+        {
+            route.Difficulty = _difficulty.DifficultyLevel(route);
             var routeNew = _mapper.Map<Route>(route);
             var currentUser = _users.GetByEmail(email);
             routeNew.CreatedBy = currentUser;

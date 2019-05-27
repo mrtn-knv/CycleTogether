@@ -39,6 +39,7 @@ namespace CycleTogetherWeb
             services.AddSingleton<DAL.Contracts.IRouteRepository, DAL.RoutesRepository>();
             services.AddSingleton(typeof(TokenGenerator));
             services.AddSingleton(typeof(ClaimsManager));
+            services.AddSingleton(typeof(DifficultyCalculator));
             services.AddSingleton<IAuthentication, Authentication>();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }

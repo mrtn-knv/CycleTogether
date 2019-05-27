@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.2</TargetFramework>
@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CycleTogether.Enums\CycleTogether.Enums.csproj" />
+    <ProjectReference Include="..\CycleTogether.RoutesDifficultyManager\CycleTogether.RoutesDifficultyManager.csproj" />
     <ProjectReference Include="..\CycleTogether.RoutesManager\CycleTogether.RoutesManager.csproj" />
     <ProjectReference Include="..\DAL.Contracts\DAL.Contracts.csproj" />
   </ItemGroup>

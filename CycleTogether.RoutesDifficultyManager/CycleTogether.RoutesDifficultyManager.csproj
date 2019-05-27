@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CycleTogether.Enums\CycleTogether.Enums.csproj" />
+    <ProjectReference Include="..\WebModels\WebModels.csproj" />
+  </ItemGroup>
+
+</Project>
