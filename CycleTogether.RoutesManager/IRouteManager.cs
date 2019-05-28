@@ -12,6 +12,7 @@ namespace CycleTogether.RoutesManager
         void Remove(Guid id);
         RouteWeb Get(Guid id);
         IEnumerable<RouteWeb> GetAll();
-        bool Subscribe(string email, RouteWeb route);
+        bool HasSubscribed(string email, RouteWeb route);
+        void Unsubscribe(string email, RouteWeb route);
     }
 }

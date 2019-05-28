@@ -16,7 +16,7 @@ namespace CycleTogether.Routes
         private readonly IMapper _mapper;
         private readonly IUserRepository _users;
         private readonly DifficultyCalculator _difficulty;
-        private readonly Subscription _subscription; 
+        private readonly Subscription _subscription;
 
         public RouteManager(IRouteRepository routes, IMapper mapper, IUserRepository users, DifficultyCalculator difficulty, Subscription subscription)
         {
@@ -28,7 +28,7 @@ namespace CycleTogether.Routes
         }
 
         public RouteWeb Create(RouteWeb route, string email)
-        {            
+        {
             return Save(route, email);
         }
 
@@ -53,18 +53,23 @@ namespace CycleTogether.Routes
             _routes.Delete(id);
         }
 
-        public bool Subscribe(string email, RouteWeb route)
+        public bool HasSubscribed(string email, RouteWeb route)
         {
-           return route.SubscribedMails.Contains(email) ? _subscription.Unsubscribe(email, route) : _subscription.AddToSubscribed(email, route);
+            if (_subscription.IsSuitable(email, route)) 
+            {
+               _subscription.AddToSubscribed(email,route);
+                return true;
+            }
+            return false;
         }
         public RouteWeb Update(RouteWeb route)
         {
             return SaveUpdated(route);
         }
         private IEnumerable<RouteWeb> MapAll(IEnumerable<Route> routes)
-        {   
+        {
             foreach (var route in routes)
-            {               
+            {
                 yield return _mapper.Map<RouteWeb>(route);
             }
         }
@@ -77,7 +82,7 @@ namespace CycleTogether.Routes
             routeNew.CreatedBy = currentUser.Id;
             routeNew.SubscribedMails.Add(currentUser.Email);
             currentUser.Routes.Add(routeNew);
-            
+
             _routes.Create(routeNew);
             return _mapper.Map<RouteWeb>(routeNew);
         }
@@ -87,6 +92,14 @@ namespace CycleTogether.Routes
             var current = _mapper.Map<Route>(route);
             _routes.Edit(current);
             return _mapper.Map<RouteWeb>(current);
+        }
+
+        public void Unsubscribe(string email, RouteWeb route)
+        {
+            if (route.SubscribedMails.Contains(email))
+            {
+                _subscription.Unsubscribe(email, route);
+            }
         }
     }
 }

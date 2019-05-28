@@ -1,10 +1,8 @@
 ﻿using CycleTogether.Enums;
-using CycleTogether.RoutesDifficultyManager;
 using System;
-using System.Collections.Generic;
 using WebModels;
 
-namespace CycleTogether.Routes
+namespace CycleTogether.RoutesDifficultyManager
 {
     public class DifficultyCalculator
     {

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
 using CycleTogether.RoutesManager;
 using Microsoft.AspNetCore.Authorization;
@@ -48,15 +47,28 @@ namespace CycleTogetherWeb.Controllers
 
         // POST: api/Route/subscribe
         [HttpPost("subscribe")]
-        public bool Subscribe([FromBody]RouteWeb route)
+        public IActionResult Subscribe([FromBody]RouteWeb route)
         {
             ClaimsIdentity claimsIdentity = HttpContext.User.Identity as ClaimsIdentity;
             var mail = _claimsManager.GetEmail(claimsIdentity);
+
+            if (_routes.HasSubscribed(mail, route))
+                return Ok();
             
-            return _routes.Subscribe(mail, route);
+            return BadRequest();          
         }
 
-        // PUT: api/Route/edit
+        [HttpPost("unsubscribe")]
+        public IActionResult Unsubscribe([FromBody]RouteWeb route)
+        {
+            ClaimsIdentity claimsIdentity = HttpContext.User.Identity as ClaimsIdentity;
+            var mail = _claimsManager.GetEmail(claimsIdentity);
+
+            _routes.Unsubscribe(mail, route);
+            return Ok();
+        }
+
+        // POST: api/Route/edit
         [HttpPost("edit")]
         public RouteWeb Update([FromBody]RouteWeb route)
         {
@@ -69,6 +81,5 @@ namespace CycleTogetherWeb.Controllers
         {
             _routes.Remove(id);
         }
-
     }
 }
