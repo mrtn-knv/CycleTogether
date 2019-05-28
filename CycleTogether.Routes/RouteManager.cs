@@ -5,7 +5,8 @@ using DAL.Models;
 using System;
 using System.Collections.Generic;
 using WebModels;
-using System.Linq;
+using CycleTogether.RoutesDifficultyManager;
+using CycleTogether.RoutesSubscriber;
 
 namespace CycleTogether.Routes
 {
@@ -15,13 +16,15 @@ namespace CycleTogether.Routes
         private readonly IMapper _mapper;
         private readonly IUserRepository _users;
         private readonly DifficultyCalculator _difficulty;
+        private readonly Subscription _subscription; 
 
-        public RouteManager(IRouteRepository routes, IMapper mapper, IUserRepository users, DifficultyCalculator difficulty)
+        public RouteManager(IRouteRepository routes, IMapper mapper, IUserRepository users, DifficultyCalculator difficulty, Subscription subscription)
         {
             _routes = routes;
             _mapper = mapper;
             _users = users;
             _difficulty = difficulty;
+            _subscription = subscription;
         }
 
         public RouteWeb Create(RouteWeb route, string email)
@@ -52,18 +55,11 @@ namespace CycleTogether.Routes
 
         public bool Subscribe(string email, RouteWeb route)
         {
-           return route.SubscribedMails.Contains(email) ? Unsubscribe(email, route) : AddToSubscribed(email, route);
+           return route.SubscribedMails.Contains(email) ? _subscription.Unsubscribe(email, route) : _subscription.AddToSubscribed(email, route);
         }
         public RouteWeb Update(RouteWeb route)
         {
             return SaveUpdated(route);
-        }
-
-        private bool AddToSubscribed(string email, RouteWeb route)
-        {
-            var subscribeTo = _mapper.Map<Route>(route);
-            _routes.Subscribe(email, subscribeTo);
-            return true;
         }
         private IEnumerable<RouteWeb> MapAll(IEnumerable<Route> routes)
         {   
@@ -71,13 +67,6 @@ namespace CycleTogether.Routes
             {               
                 yield return _mapper.Map<RouteWeb>(route);
             }
-        }
-
-        private bool Unsubscribe(string email, RouteWeb route)
-        {
-            var routeToUnsubscribeFrom = _mapper.Map<Route>(route);
-            _routes.Unsubscribe(email, routeToUnsubscribeFrom);
-            return false;
         }
 
         private RouteWeb Save(RouteWeb route, string email)
