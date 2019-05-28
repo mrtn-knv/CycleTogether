@@ -8,7 +8,7 @@ namespace WebModels
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
-        public UserWeb CreatedBy { get; set; }
+        public Guid CreatedBy { get; set; }
         public string Info { get; set; }
         public string StartPoint { get; set; }
         public string Destination { get; set; }

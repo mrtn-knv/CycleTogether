@@ -8,7 +8,7 @@ namespace DAL.Models
     {
         public string Name { get; set; }
         public string Info { get; set; }
-        public User CreatedBy { get; set; }
+        public Guid CreatedBy { get; set; }
         public List<string> SubscribedMails { get; set; }
         public string StartPoint { get; set; }
         public string Destination { get; set; }

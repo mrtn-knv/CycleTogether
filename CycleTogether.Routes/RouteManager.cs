@@ -85,7 +85,7 @@ namespace CycleTogether.Routes
             route.Difficulty = _difficulty.DifficultyLevel(route);
             var routeNew = _mapper.Map<Route>(route);
             var currentUser = _users.GetByEmail(email);
-            routeNew.CreatedBy = currentUser;
+            routeNew.CreatedBy = currentUser.Id;
             routeNew.SubscribedMails.Add(currentUser.Email);
             currentUser.Routes.Add(routeNew);
             
