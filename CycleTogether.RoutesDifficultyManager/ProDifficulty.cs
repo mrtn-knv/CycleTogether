@@ -8,7 +8,7 @@ namespace CycleTogether.RoutesDifficultyManager
 {
     public class ProDifficulty : IDifficultyLevel
     {
-        private List<TerrainEndurance> criteria = new List<TerrainEndurance>
+        private readonly List<TerrainEndurance> criteria = new List<TerrainEndurance>
             {
                 new TerrainEndurance(Terrain.Flat, Endurance.moreThanSixHours),
                 new TerrainEndurance(Terrain.Ragged, Endurance.moreThanSixHours),
@@ -23,30 +23,5 @@ namespace CycleTogether.RoutesDifficultyManager
 
             return Metric.MatchByTerrainEndurance(route, criteria);
         }
-
-        //public bool IsTrueFor(RouteWeb route)
-        //{
-        //    if (route.Endurance == Endurance.moreThanSixHours &&
-        //        route.Terrain == Terrain.Ragged)
-        //    {
-        //        return true;
-        //    }
-        //    else if (route.Endurance == Endurance.fourToSixHours &&
-        //             route.Terrain == Terrain.Extreme)
-        //    {
-        //        return true;
-        //    }
-        //    else if (route.Endurance == Endurance.moreThanSixHours &&
-        //             route.Terrain == Terrain.Flat)
-        //    {
-        //        return true;
-        //    }
-        //    else if (route.Endurance == Endurance.moreThanSixHours &&
-        //             route.Terrain == Terrain.Extreme)
-        //    {
-        //        return true;
-        //    }
-        //    return false;
-        //}
     }
 }

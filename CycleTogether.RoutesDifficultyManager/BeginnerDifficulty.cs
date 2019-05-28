@@ -7,7 +7,7 @@ namespace CycleTogether.RoutesDifficultyManager
 {
     public class BeginnerDifficulty : IDifficultyLevel
     {
-        private List<TerrainEndurance> criteria = new List<TerrainEndurance>()
+        private readonly List<TerrainEndurance> criteria = new List<TerrainEndurance>()
         {
             new TerrainEndurance(Terrain.Flat, Endurance.fourHours),
             new TerrainEndurance(Terrain.Ragged, Endurance.fourHours)
@@ -21,13 +21,5 @@ namespace CycleTogether.RoutesDifficultyManager
 
             return Metric.MatchByTerrainEndurance(route, criteria);
         }
-
-        //private bool MatchByTerrainEnduranceMetric(RouteWeb route)
-        //{
-        //    TerrainEndurance entered = new TerrainEndurance(route.Terrain, route.Endurance);
-        //    return criteria.Contains(entered);
-        //}
-
-
     }
 }

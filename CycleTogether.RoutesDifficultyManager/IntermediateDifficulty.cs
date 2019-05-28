@@ -8,7 +8,7 @@ namespace CycleTogether.RoutesDifficultyManager
 {
     public class IntermediateDifficulty : IDifficultyLevel
     {
-        private List<TerrainEndurance> criteria = new List<TerrainEndurance>
+        private readonly List<TerrainEndurance> criteria = new List<TerrainEndurance>
             {
                 new TerrainEndurance(Terrain.Flat, Endurance.fourToSixHours),
                 new TerrainEndurance(Terrain.Ragged, Endurance.fourToSixHours),
