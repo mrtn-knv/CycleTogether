@@ -12,7 +12,7 @@ namespace WebModels
         public string Email { get; set; }
         public string Password { get; set; }
         public List<RouteWeb> Routes { get; set; }
-        public List<EquipmentWeb> Equipments { get; set; }
+        public IEnumerable<Equipment> Equipments { get; set; }
         public Terrain Terrain { get; set; }
         public Endurance Endurance { get; set; }
         public TypeOfRoute Type { get; set; }

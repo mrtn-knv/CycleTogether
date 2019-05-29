@@ -29,4 +29,14 @@ namespace CycleTogether.Enums
         fourToSixHours,
         moreThanSixHours
     }
+
+    [Flags]
+    public enum Equipment
+    {
+        None = 0,
+        Helmet = 1,
+        Naxers = 2,
+        Wristguards = 4,
+        KneePads = 8
+    }
 }

@@ -4,6 +4,8 @@ using DAL.Contracts;
 using DAL.Models;
 using WebModels;
 using System.Collections.Generic;
+using CycleTogether.Enums;
+using System.Linq;
 
 namespace CycleTogether.RoutesSubscriber
 {
@@ -44,13 +46,17 @@ namespace CycleTogether.RoutesSubscriber
 
         private bool RequirementsHasMatch(User user, RouteWeb route)
         {
-            if (user.Endurance == route.Endurance &&
-                user.Terrain == route.Terrain &&
-                user.Difficulty == route.Difficulty)
+            Compatibility userRequirements = new Compatibility(user.Terrain, user.Difficulty, user.Endurance, user.Equipments);
+            Compatibility routeReruirements = new Compatibility(route.Terrain, route.Difficulty, route.Endurance, route.EquipmentsNeeded);
+
+            if (userRequirements.Equals(routeReruirements))
             {
                 return true;
             }
+
             return false;
         }
+
+
     }
 }

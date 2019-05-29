@@ -4,8 +4,8 @@ using System.Text;
 
 namespace DAL.Models
 {
-    public class Equipment : EntityBase
-    {
-        public string Name { get; set; }
-    }
+    //public class Equipment : EntityBase
+    //{
+    //    public string Name { get; set; }
+    //}
 }

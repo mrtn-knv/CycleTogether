@@ -15,7 +15,7 @@ namespace DAL.Models
         public DateTime StartTime { get; set; }
         public bool IsComplete { get; set; }
         public bool SuitableForKids { get; set; }
-        public IEnumerable<Equipment> EquipmentsNeeded { get; set; }
+        public Equipment EquipmentsNeeded { get; set; }
         public Terrain Terrain { get; set; }
         public Endurance Endurance { get; set; }
         public TypeOfRoute Type { get; set; }
