@@ -20,7 +20,7 @@ namespace CycleTogether.RoutesSubscriber
             _routes = routes;
             _users = users;
         }
-        public void AddToSubscribed(string email, RouteWeb route)
+        public void AddMail(string email, RouteWeb route)
         {
             var subscribeTo = _mapper.Map<Route>(route);
             _routes.Subscribe(email, subscribeTo);
@@ -36,7 +36,8 @@ namespace CycleTogether.RoutesSubscriber
         public bool IsSuitable(string email, RouteWeb route)
         {
             var user = _users.GetByEmail(email);
-            if (RequirementsHasMatch(user, route))
+            var currentRoute = _mapper.Map<Route>(route);
+            if (RequirementsHasMatch(user, currentRoute))
             {
                 return true;
             }
@@ -44,10 +45,10 @@ namespace CycleTogether.RoutesSubscriber
             return false;
         }
 
-        private bool RequirementsHasMatch(User user, RouteWeb route)
+        private bool RequirementsHasMatch(User user, Route route)
         {
-            Compatibility userRequirements = new Compatibility(user.Terrain, user.Difficulty, user.Endurance, user.Equipments);
-            Compatibility routeReruirements = new Compatibility(route.Terrain, route.Difficulty, route.Endurance, route.EquipmentsNeeded);
+            RequirementsMatcher userRequirements = new RequirementsMatcher(user.Terrain, user.Difficulty, user.Endurance, user.Equipments);
+            RequirementsMatcher routeReruirements = new RequirementsMatcher(route.Terrain, route.Difficulty, route.Endurance, route.Equipments);
 
             if (userRequirements.Equals(routeReruirements))
             {
