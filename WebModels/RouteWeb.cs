@@ -16,7 +16,7 @@ namespace WebModels
         public bool SuitableForKids { get; set; }
         public bool IsComplete { get; set; }
         public List<string> SubscribedMails = new List<string>();
-        public Equipment EquipmentsNeeded { get; set; }
+        public List<Guid> Equipments{ get; set; }
         public Terrain Terrain { get; set; }
         public Endurance Endurance { get; set; }
         public TypeOfRoute Type { get; set; }

@@ -5,8 +5,9 @@ using System.Text;
 
 namespace WebModels
 {
-    //public class EquipmentWeb
-    //{
-    //    public Equipment Name { get; set; }
-    //}
+    public class EquipmentWeb
+    {
+        public Guid Id { get; set; }
+        public string Name { get; set; }
+    }
 }

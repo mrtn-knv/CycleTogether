@@ -18,9 +18,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CycleTogether.AuthenticationManager\CycleTogether.AuthenticationManager.csproj" />
     <ProjectReference Include="..\CycleTogether.Authentication\CycleTogether.Authentication.csproj" />
-    <ProjectReference Include="..\CycleTogether.RoutesManager\CycleTogether.RoutesManager.csproj" />
+    <ProjectReference Include="..\CycleTogether.Contracts\CycleTogether.Contracts.csproj" />
+    <ProjectReference Include="..\CycleTogether.Equipments\CycleTogether.Equipments.csproj" />
     <ProjectReference Include="..\CycleTogether.RoutesSubscriber\CycleTogether.RoutesSubscriber.csproj" />
     <ProjectReference Include="..\CycleTogether.Routes\CycleTogether.Routes.csproj" />
     <ProjectReference Include="..\DAL.Contracts\DAL.Contracts.csproj" />
