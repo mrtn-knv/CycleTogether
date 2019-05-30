@@ -7,7 +7,6 @@
   <ItemGroup>
     <ProjectReference Include="..\CycleTogether.Enums\CycleTogether.Enums.csproj" />
     <ProjectReference Include="..\CycleTogether.RoutesDifficultyManager\CycleTogether.RoutesDifficultyManager.csproj" />
-    <ProjectReference Include="..\CycleTogether.RoutesManager\CycleTogether.RoutesManager.csproj" />
     <ProjectReference Include="..\CycleTogether.RoutesSubscriber\CycleTogether.RoutesSubscriber.csproj" />
     <ProjectReference Include="..\DAL.Contracts\DAL.Contracts.csproj" />
   </ItemGroup>

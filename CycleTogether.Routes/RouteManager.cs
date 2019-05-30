@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using CycleTogether.RoutesManager;
 using DAL.Contracts;
 using DAL.Models;
 using System;
@@ -7,6 +6,7 @@ using System.Collections.Generic;
 using WebModels;
 using CycleTogether.RoutesDifficultyManager;
 using CycleTogether.RoutesSubscriber;
+using CycleTogether.Contracts;
 
 namespace CycleTogether.Routes
 {
@@ -17,14 +17,21 @@ namespace CycleTogether.Routes
         private readonly IUserRepository _users;
         private readonly DifficultyCalculator _difficulty;
         private readonly Subscription _subscription;
+        private readonly IEquipmentsRepository _equipments;
 
-        public RouteManager(IRouteRepository routes, IMapper mapper, IUserRepository users, DifficultyCalculator difficulty, Subscription subscription)
+        public RouteManager(IRouteRepository routes,
+                            IMapper mapper, 
+                            IUserRepository users,
+                            DifficultyCalculator difficulty,
+                            Subscription subscription,
+                            IEquipmentsRepository equipments)
         {
             _routes = routes;
             _mapper = mapper;
             _users = users;
             _difficulty = difficulty;
             _subscription = subscription;
+            _equipments = equipments;
         }
 
         public RouteWeb Create(RouteWeb route, string email)
@@ -47,24 +54,32 @@ namespace CycleTogether.Routes
             return found;
         }
 
-        public void Remove(Guid id)
+        public void Remove(Guid id, string userId)
         {
-
-            _routes.Delete(id);
+            var current = _routes.GetById(id);
+            if (current.CreatedBy.ToString() == userId)
+            {
+                _routes.Delete(id);
+            }            
         }
 
-        public bool HasSubscribed(string email, RouteWeb route)
+        public bool Subscribe(string email, RouteWeb route)
         {
             if (_subscription.IsSuitable(email, route)) 
             {
-               _subscription.AddToSubscribed(email,route);
+               _subscription.AddMail(email,route);
                 return true;
             }
             return false;
         }
-        public RouteWeb Update(RouteWeb route)
+        public RouteWeb Update(RouteWeb route, string id)
         {
-            return SaveUpdated(route);
+            if (id == route.CreatedBy.ToString())
+            {
+                return SaveUpdated(route);
+            }
+
+            return null;
         }
         private IEnumerable<RouteWeb> MapAll(IEnumerable<Route> routes)
         {
@@ -80,9 +95,9 @@ namespace CycleTogether.Routes
             var routeNew = _mapper.Map<Route>(route);
             var currentUser = _users.GetByEmail(email);
             routeNew.CreatedBy = currentUser.Id;
+            routeNew.Equipments = route.Equipments;
             routeNew.SubscribedMails.Add(currentUser.Email);
-            currentUser.Routes.Add(routeNew);
-
+            currentUser.Routes.Add(routeNew);            
             _routes.Create(routeNew);
             return _mapper.Map<RouteWeb>(routeNew);
         }
@@ -101,5 +116,6 @@ namespace CycleTogether.Routes
                 _subscription.Unsubscribe(email, route);
             }
         }
+
     }
 }
