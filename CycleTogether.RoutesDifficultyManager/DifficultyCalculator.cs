@@ -1,4 +1,5 @@
-﻿using CycleTogether.Enums;
+﻿using CycleTogether.Contracts;
+using CycleTogether.Enums;
 using System;
 using WebModels;
 

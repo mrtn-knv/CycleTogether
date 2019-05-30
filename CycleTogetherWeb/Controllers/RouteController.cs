@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Security.Claims;
-using CycleTogether.RoutesManager;
+using CycleTogether.Contracts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -38,10 +38,8 @@ namespace CycleTogetherWeb.Controllers
         // POST: api/Route/new
         [HttpPost("new")]
         public RouteWeb Create([FromBody] RouteWeb route)
-        {
-            ClaimsIdentity claimsIdentity = HttpContext.User.Identity as ClaimsIdentity;
-            var mail = _claimsManager.GetEmail(claimsIdentity);
-
+        {            
+            var mail = _claimsManager.GetEmail();
             return _routes.Create(route, mail);
         }
 
@@ -49,20 +47,18 @@ namespace CycleTogetherWeb.Controllers
         [HttpPost("subscribe")]
         public IActionResult Subscribe([FromBody]RouteWeb route)
         {
-            ClaimsIdentity claimsIdentity = HttpContext.User.Identity as ClaimsIdentity;
-            var mail = _claimsManager.GetEmail(claimsIdentity);
+            var mail = _claimsManager.GetEmail();
 
-            if (_routes.HasSubscribed(mail, route))
+            if (_routes.Subscribe(mail, route))
                 return Ok();
             
-            return BadRequest();          
+            return Content("You cant subscribe for this trip.");          
         }
 
         [HttpPost("unsubscribe")]
         public IActionResult Unsubscribe([FromBody]RouteWeb route)
         {
-            ClaimsIdentity claimsIdentity = HttpContext.User.Identity as ClaimsIdentity;
-            var mail = _claimsManager.GetEmail(claimsIdentity);
+            var mail = _claimsManager.GetEmail();
 
             _routes.Unsubscribe(mail, route);
             return Ok();
@@ -72,14 +68,16 @@ namespace CycleTogetherWeb.Controllers
         [HttpPost("edit")]
         public RouteWeb Update([FromBody]RouteWeb route)
         {
-            return _routes.Update(route);
+            var id = _claimsManager.GetId();
+            return _routes.Update(route, id);
         }
 
         // DELETE: api/ApiWithActions/5
         [HttpDelete("{id}")]
         public void Delete(Guid id)
         {
-            _routes.Remove(id);
+            var userId = _claimsManager.GetId();
+            _routes.Remove(id, userId);
         }
     }
 }

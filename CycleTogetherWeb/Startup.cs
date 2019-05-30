@@ -1,6 +1,5 @@
 ﻿using System.Text;
 using CycleTogether.Authentication;
-using CycleTogether.AuthenticationManager;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -9,10 +8,14 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using AutoMapper;
-using CycleTogether.RoutesManager;
 using CycleTogether.Routes;
 using CycleTogether.RoutesDifficultyManager;
 using CycleTogether.RoutesSubscriber;
+using CycleTogether.Contracts;
+using CycleTogether.Equipments;
+using DAL.Contracts;
+using DAL;
+using Microsoft.AspNetCore.Http;
 
 namespace CycleTogetherWeb
 {
@@ -36,15 +39,19 @@ namespace CycleTogetherWeb
             ConfigureAuthentication(services, key);
 
             services.AddAutoMapper();
-            services.AddSingleton<DAL.Contracts.IUserRepository, DAL.UsersRepository>();
+            services.AddSingleton<IUserRepository, UsersRepository>();
             services.AddSingleton<IRouteManager, RouteManager>();
-            services.AddSingleton<DAL.Contracts.IRouteRepository, DAL.RoutesRepository>();
+            services.AddSingleton<IRouteRepository, RoutesRepository>();
+            services.AddSingleton<IEquipmentsRepository, EquipmentRepository>();
             services.AddSingleton(typeof(TokenGenerator));
             services.AddSingleton(typeof(ClaimsManager));
             services.AddSingleton(typeof(DifficultyCalculator));
             services.AddSingleton(typeof(Subscription));
             services.AddSingleton<IAuthentication, Authentication>();
+            services.AddSingleton<IEquipmentManager, EquipmentManager>();
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddHttpContextAccessor();
         }
 
         private static void ConfigureAuthentication(IServiceCollection services, byte[] key)

@@ -5,8 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CycleTogether.Contracts\CycleTogether.Contracts.csproj" />
-    <ProjectReference Include="..\CycleTogether.Enums\CycleTogether.Enums.csproj" />
     <ProjectReference Include="..\WebModels\WebModels.csproj" />
   </ItemGroup>
 

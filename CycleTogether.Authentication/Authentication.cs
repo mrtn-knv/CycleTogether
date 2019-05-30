@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using CycleTogether.AuthenticationManager;
+using CycleTogether.Contracts;
 using DAL.Contracts;
 using DAL.Models;
 using Microsoft.Extensions.Options;
