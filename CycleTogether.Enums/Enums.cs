@@ -4,6 +4,7 @@ namespace CycleTogether.Enums
 {
     public enum Terrain
     {
+        None,
         Ragged,
         Flat,
         Extreme
@@ -11,20 +12,22 @@ namespace CycleTogether.Enums
 
     public enum TypeOfRoute
     {
+        None,
         MountainBike,
         Family,
         Classic,
-        FreeForAll
     }
 
     public enum Difficulty
     {
+        None,
         Easy,
         Intermediate,
         Pro
     }
     public enum Endurance
     {
+        None,
         fourHours,
         fourToSixHours,
         moreThanSixHours
