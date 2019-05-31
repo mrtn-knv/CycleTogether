@@ -65,12 +65,9 @@ namespace CycleTogether.Routes
 
         public bool Subscribe(string email, RouteWeb route)
         {
-            if (_subscription.IsSuitable(email, route)) 
-            {
-               _subscription.AddMail(email,route);
-                return true;
-            }
-            return false;
+            
+              return _subscription.TryAddMail(email, route);
+
         }
         public RouteWeb Update(RouteWeb route, string id)
         {
@@ -91,8 +88,8 @@ namespace CycleTogether.Routes
 
         private RouteWeb Save(RouteWeb route, string email)
         {
-            route.Difficulty = _difficulty.DifficultyLevel(route);
             var routeNew = _mapper.Map<Route>(route);
+            routeNew.Difficulty = _difficulty.DifficultyLevel(route);
             var currentUser = _users.GetByEmail(email);
             routeNew.CreatedBy = currentUser.Id;
             routeNew.Equipments = route.Equipments;
@@ -111,9 +108,10 @@ namespace CycleTogether.Routes
 
         public void Unsubscribe(string email, RouteWeb route)
         {
-            if (route.SubscribedMails.Contains(email))
+            var current = _routes.GetById(route.Id);
+            if (current.SubscribedMails.Contains(email))
             {
-                _subscription.Unsubscribe(email, route);
+                _subscription.Unsubscribe(email, current);
             }
         }
 

@@ -48,18 +48,16 @@ namespace CycleTogetherWeb.Controllers
         public IActionResult Subscribe([FromBody]RouteWeb route)
         {
             var mail = _claimsManager.GetEmail();
-
             if (_routes.Subscribe(mail, route))
                 return Ok();
             
-            return Content("You cant subscribe for this trip.");          
+            return Content("You can't subscribe for this trip.");          
         }
 
         [HttpPost("unsubscribe")]
         public IActionResult Unsubscribe([FromBody]RouteWeb route)
         {
             var mail = _claimsManager.GetEmail();
-
             _routes.Unsubscribe(mail, route);
             return Ok();
         }

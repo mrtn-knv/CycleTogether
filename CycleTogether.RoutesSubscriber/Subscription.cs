@@ -20,24 +20,28 @@ namespace CycleTogether.RoutesSubscriber
             _routes = routes;
             _users = users;
         }
-        public void AddMail(string email, RouteWeb route)
+        public bool TryAddMail(string email, RouteWeb route)
         {
-            var subscribeTo = _mapper.Map<Route>(route);
-            _routes.Subscribe(email, subscribeTo);
+            if (IsSuitable(email, route))
+            {
+                var current = _routes.GetById(route.Id);
+                _routes.Subscribe(email, current);
+                return true;
+            }
+            return false;
         }
 
-        public bool Unsubscribe(string email, RouteWeb route)
+        public bool Unsubscribe(string email, Route route)
         {
-            var routeToUnsubscribeFrom = _mapper.Map<Route>(route);
-            _routes.Unsubscribe(email, routeToUnsubscribeFrom);
+            _routes.Unsubscribe(email, route);
             return false;
         }
 
         public bool IsSuitable(string email, RouteWeb route)
         {
             var user = _users.GetByEmail(email);
-            var currentRoute = _mapper.Map<Route>(route);
-            if (RequirementsHasMatch(user, currentRoute))
+            var current = _routes.GetById(route.Id);
+            if (RequirementsHasMatch(user, current))
             {
                 return true;
             }
