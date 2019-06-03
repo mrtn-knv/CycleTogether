@@ -7,6 +7,7 @@ using WebModels;
 using CycleTogether.RoutesDifficultyManager;
 using CycleTogether.RoutesSubscriber;
 using CycleTogether.Contracts;
+using System.Linq;
 
 namespace CycleTogether.Routes
 {
@@ -54,9 +55,7 @@ namespace CycleTogether.Routes
 
         public IEnumerable<RouteWeb> GetAll()
         {
-            var all = _routes.GetAll();
-            var routes = MapAll(all);
-            return routes;
+            return _routes.GetAll().Select(route => _mapper.Map<RouteWeb>(route));            
         }
 
 

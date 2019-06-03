@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
 using CycleTogether.Contracts;
 using DAL.Contracts;
-using System;
 using System.Collections.Generic;
 using WebModels;
+using System.Linq;
 
 namespace CycleTogether.Equipments
 {
@@ -17,12 +17,8 @@ namespace CycleTogether.Equipments
             _mapper = mapper;
         }
         public IEnumerable<EquipmentWeb> GetAll()
-        {
-            var all = _equipments.GetAll();
-            foreach (var equipment in all)
-            {
-                yield return _mapper.Map<EquipmentWeb>(equipment);
-            }
+        {            
+            return _equipments.GetAll().Select(equipment => _mapper.Map<EquipmentWeb>(equipment));            
         }
     }
 }
