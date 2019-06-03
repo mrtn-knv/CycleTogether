@@ -18,6 +18,7 @@ namespace CycleTogether.Routes
         private readonly DifficultyCalculator _difficulty;
         private readonly Subscription _subscription;
         private readonly IEquipmentsRepository _equipments;
+        
 
         public RouteManager(IRouteRepository routes,
                             IMapper mapper, 
@@ -34,9 +35,21 @@ namespace CycleTogether.Routes
             _equipments = equipments;
         }
 
-        public RouteWeb Create(RouteWeb route, string email)
+        public RouteWeb Create(RouteWeb route, string userId, string email)
         {
-            return Save(route, email);
+            return Save(SetProperties(route, userId, email), userId);
+        }
+
+        private Route SetProperties(RouteWeb route, string id, string email)
+        {
+            var newRoute = _mapper.Map<Route>(route);
+            newRoute.Difficulty = _difficulty.DifficultyLevel(route);
+            newRoute.CreatedBy = Guid.Parse(id);
+            newRoute.Equipments = route.Equipments;
+            newRoute.SubscribedMails.Add(email);
+            var currentUser = _users.GetById(Guid.Parse(id));
+            currentUser.Routes.Add(newRoute);
+            return newRoute;
         }
 
         public IEnumerable<RouteWeb> GetAll()
@@ -66,7 +79,7 @@ namespace CycleTogether.Routes
         public bool Subscribe(string email, RouteWeb route)
         {
             
-              return _subscription.TryAddMail(email, route);
+              return _subscription.AddMail(email, route);
 
         }
         public RouteWeb Update(RouteWeb route, string id)
@@ -86,17 +99,10 @@ namespace CycleTogether.Routes
             }
         }
 
-        private RouteWeb Save(RouteWeb route, string email)
-        {
-            var routeNew = _mapper.Map<Route>(route);
-            routeNew.Difficulty = _difficulty.DifficultyLevel(route);
-            var currentUser = _users.GetByEmail(email);
-            routeNew.CreatedBy = currentUser.Id;
-            routeNew.Equipments = route.Equipments;
-            routeNew.SubscribedMails.Add(currentUser.Email);
-            currentUser.Routes.Add(routeNew);            
-            _routes.Create(routeNew);
-            return _mapper.Map<RouteWeb>(routeNew);
+        private RouteWeb Save(Route route, string email)
+        {                        
+            _routes.Create(route);
+            return _mapper.Map<RouteWeb>(route);
         }
 
         private RouteWeb SaveUpdated(RouteWeb route)

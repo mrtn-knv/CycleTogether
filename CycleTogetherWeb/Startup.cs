@@ -44,11 +44,11 @@ namespace CycleTogetherWeb
             services.AddSingleton<IRouteRepository, RoutesRepository>();
             services.AddSingleton<IEquipmentsRepository, EquipmentRepository>();
             services.AddSingleton(typeof(TokenGenerator));
-            services.AddSingleton(typeof(ClaimsManager));
+            services.AddSingleton(typeof(ClaimsRetriever));
             services.AddSingleton(typeof(DifficultyCalculator));
             services.AddSingleton(typeof(Subscription));
             services.AddSingleton<IAuthentication, Authentication>();
-            services.AddSingleton<IEquipmentManager, EquipmentManager>();
+            services.AddSingleton<IEquipmentRetriever, EquipmentRetriever>();
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             services.AddHttpContextAccessor();

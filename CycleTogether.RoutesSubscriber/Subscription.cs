@@ -20,7 +20,7 @@ namespace CycleTogether.RoutesSubscriber
             _routes = routes;
             _users = users;
         }
-        public bool TryAddMail(string email, RouteWeb route)
+        public bool AddMail(string email, RouteWeb route)
         {
             if (IsSuitable(email, route))
             {
@@ -40,8 +40,8 @@ namespace CycleTogether.RoutesSubscriber
         public bool IsSuitable(string email, RouteWeb route)
         {
             var user = _users.GetByEmail(email);
-            var current = _routes.GetById(route.Id);
-            if (RequirementsHasMatch(user, current))
+            var currentRoute = _routes.GetById(route.Id);
+            if (RequirementsHasMatch(user, currentRoute))
             {
                 return true;
             }
@@ -54,12 +54,7 @@ namespace CycleTogether.RoutesSubscriber
             RequirementsMatcher userRequirements = new RequirementsMatcher(user.Terrain, user.Difficulty, user.Endurance, user.Equipments);
             RequirementsMatcher routeReruirements = new RequirementsMatcher(route.Terrain, route.Difficulty, route.Endurance, route.Equipments);
 
-            if (userRequirements.Equals(routeReruirements))
-            {
-                return true;
-            }
-
-            return false;
+            return userRequirements.Equals(routeReruirements);           
         }
 
 
