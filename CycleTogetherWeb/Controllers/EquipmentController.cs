@@ -15,8 +15,8 @@ namespace CycleTogetherWeb.Controllers
     [ApiController]
     public class EquipmentController : ControllerBase
     {
-        private IEquipmentManager _equipment;
-        public EquipmentController(IEquipmentManager equipment)
+        private IEquipmentRetriever _equipment;
+        public EquipmentController(IEquipmentRetriever equipment)
         {
             _equipment = equipment;
         }

@@ -15,8 +15,8 @@ namespace CycleTogetherWeb.Controllers
     public class RouteController : ControllerBase
     {
         private readonly IRouteManager _routes;
-        private readonly ClaimsManager _claimsManager;
-        public RouteController(IRouteManager routes, ClaimsManager claimsManager)
+        private readonly ClaimsRetriever _claimsManager;
+        public RouteController(IRouteManager routes, ClaimsRetriever claimsManager)
         {
             _routes = routes;
             _claimsManager = claimsManager;
@@ -39,15 +39,16 @@ namespace CycleTogetherWeb.Controllers
         [HttpPost("new")]
         public RouteWeb Create([FromBody] RouteWeb route)
         {            
-            var mail = _claimsManager.GetEmail();
-            return _routes.Create(route, mail);
+            var id = _claimsManager.Id();
+            var mail = _claimsManager.Email();
+            return _routes.Create(route, id, mail);
         }
 
         // POST: api/Route/subscribe
         [HttpPost("subscribe")]
         public IActionResult Subscribe([FromBody]RouteWeb route)
         {
-            var mail = _claimsManager.GetEmail();
+            var mail = _claimsManager.Email();
             if (_routes.Subscribe(mail, route))
                 return Ok();
             
@@ -57,7 +58,7 @@ namespace CycleTogetherWeb.Controllers
         [HttpPost("unsubscribe")]
         public IActionResult Unsubscribe([FromBody]RouteWeb route)
         {
-            var mail = _claimsManager.GetEmail();
+            var mail = _claimsManager.Email();
             _routes.Unsubscribe(mail, route);
             return Ok();
         }
@@ -66,7 +67,7 @@ namespace CycleTogetherWeb.Controllers
         [HttpPost("edit")]
         public RouteWeb Update([FromBody]RouteWeb route)
         {
-            var id = _claimsManager.GetId();
+            var id = _claimsManager.Id();
             return _routes.Update(route, id);
         }
 
@@ -74,7 +75,7 @@ namespace CycleTogetherWeb.Controllers
         [HttpDelete("{id}")]
         public void Delete(Guid id)
         {
-            var userId = _claimsManager.GetId();
+            var userId = _claimsManager.Id();
             _routes.Remove(id, userId);
         }
     }

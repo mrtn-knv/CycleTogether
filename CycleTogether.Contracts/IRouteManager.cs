@@ -7,7 +7,7 @@ namespace CycleTogether.Contracts
 {
     public interface IRouteManager
     {
-        RouteWeb Create(RouteWeb route, string email);
+        RouteWeb Create(RouteWeb route, string id, string email);
         RouteWeb Update(RouteWeb route, string id);
         void Remove(Guid id, string userId);
         RouteWeb Get(Guid id);
