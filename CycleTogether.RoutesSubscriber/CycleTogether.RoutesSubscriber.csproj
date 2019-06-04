@@ -5,7 +5,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CycleTogether.Enums\CycleTogether.Enums.csproj" />
+    <PackageReference Include="AutoMapper" Version="8.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DAL.Contracts\DAL.Contracts.csproj" />
+    <ProjectReference Include="..\DAL.Models\DAL.Models.csproj" />
     <ProjectReference Include="..\WebModels\WebModels.csproj" />
   </ItemGroup>
 
