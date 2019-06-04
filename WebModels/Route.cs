@@ -4,7 +4,7 @@ using System.Text;
 
 namespace WebModels
 {
-    public class RouteWeb
+    public class Route
     {
         public Guid Id { get; set; }
         public string Name { get; set; }

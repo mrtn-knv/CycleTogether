@@ -22,7 +22,7 @@ namespace CycleTogether.Authentication
             _tokenGenerator = tokenGenerator;
         }
 
-        public UserWeb Register(UserWeb user)
+        public User Register(User user)
         {
             user.Password = this._tokenGenerator.HashPassword(user.Password);
             return SaveUser(user);
@@ -33,11 +33,11 @@ namespace CycleTogether.Authentication
             return _tokenGenerator.Generate(email, password);
         }
 
-        private UserWeb SaveUser(UserWeb user)
+        private User SaveUser(User user)
         {
-            User entityUser = _mapper.Map<User>(user);
+            UserEntry entityUser = _mapper.Map<UserEntry>(user);
             entityUser = _users.Create(entityUser);
-            return _mapper.Map<UserWeb>(entityUser);
+            return _mapper.Map<User>(entityUser);
         }
     }
 }

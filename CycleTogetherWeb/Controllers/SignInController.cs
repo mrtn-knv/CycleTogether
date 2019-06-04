@@ -27,7 +27,7 @@ namespace CycleTogetherWeb.Controllers
 
         [AllowAnonymous]
         [HttpPost("login")]
-        public string Authenticate([FromBody]UserWeb userParams)
+        public string Authenticate([FromBody]User userParams)
         {
             
             var authenticated = _authenticator.Authenticate(userParams.Email, userParams.Password);
@@ -41,7 +41,7 @@ namespace CycleTogetherWeb.Controllers
 
         [AllowAnonymous]
         [HttpPost("register")]
-        public UserWeb Register([FromBody]UserWeb user)
+        public User Register([FromBody]User user)
         {           
             var registered = _authenticator.Register(user);
             return registered;

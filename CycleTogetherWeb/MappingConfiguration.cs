@@ -13,10 +13,12 @@ namespace CycleTogetherWeb
     {
         public MappingConfiguration()
         {
-            CreateMap<UserWeb, User>();
-            CreateMap<User, UserWeb>();
-            CreateMap<RouteWeb, Route>();
-            CreateMap<Route, RouteWeb>();
+            CreateMap<User, UserEntry>();
+            CreateMap<UserEntry, User>();
+            CreateMap<Route, RouteEntry>();
+            CreateMap<RouteEntry, Route>();
+            CreateMap<EquipmentEntry, Equipment>();
+            CreateMap<ImageEntry, Image>();
         }
     }
 }

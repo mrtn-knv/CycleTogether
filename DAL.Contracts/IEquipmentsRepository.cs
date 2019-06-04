@@ -5,8 +5,7 @@ using System.Text;
 
 namespace DAL.Contracts
 {
-    public interface IUserRepository : IRepository<UserEntry>
+    public interface IEquipmentsRepository : IRepository<EquipmentEntry>
     {
-        UserEntry GetByEmail(string email);
     }
 }

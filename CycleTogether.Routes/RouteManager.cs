@@ -1,9 +1,13 @@
 ﻿using AutoMapper;
-using CycleTogether.RoutesManager;
 using DAL.Contracts;
 using DAL.Models;
 using System;
+using System.Collections.Generic;
 using WebModels;
+using CycleTogether.RoutesDifficultyManager;
+using CycleTogether.RoutesSubscriber;
+using CycleTogether.Contracts;
+using System.Linq;
 
 namespace CycleTogether.Routes
 {
@@ -11,39 +15,101 @@ namespace CycleTogether.Routes
     {
         private readonly IRouteRepository _routes;
         private readonly IMapper _mapper;
+        private readonly IUserRepository _users;
+        private readonly DifficultyCalculator _difficulty;
+        private readonly Subscription _subscription;
+        
 
-        public RouteManager(IRouteRepository routes, IMapper mapper)
+        public RouteManager(IRouteRepository routes,
+                            IMapper mapper, 
+                            IUserRepository users,
+                            DifficultyCalculator difficulty,
+                            Subscription subscription)
         {
             _routes = routes;
             _mapper = mapper;
+            _users = users;
+            _difficulty = difficulty;
+            _subscription = subscription;
         }
 
-        public RouteWeb Create(RouteWeb route)
+        public Route Create(Route route, string userId, string email)
         {
-            var routeNew = _mapper.Map<Route>(route);
-            _routes.Create(routeNew);
-            return _mapper.Map<RouteWeb>(routeNew);
-
+            return Save(SetProperties(route, userId, email));
         }
 
-        public RouteWeb Get(Guid id)
+        private RouteEntry SetProperties(Route route, string id, string email)
+        {
+            var newRoute = _mapper.Map<RouteEntry>(route);
+            newRoute.Difficulty = _difficulty.DifficultyLevel(route);
+            newRoute.CreatedBy = Guid.Parse(id);
+            newRoute.Equipments = route.Equipments;
+            newRoute.SubscribedMails.Add(email);
+            var currentUser = _users.GetById(Guid.Parse(id));
+            currentUser.Routes.Add(newRoute);
+            return newRoute;
+        }
+
+        public IEnumerable<Route> GetAll()
+        {
+            return _routes.GetAll().Select(route => _mapper.Map<Route>(route));            
+        }
+
+
+        public Route Get(Guid id)
         {
             var route = _routes.GetById(id);
-            var found = _mapper.Map<RouteWeb>(route);
+            var found = _mapper.Map<Route>(route);
             return found;
         }
 
-        public void Remove(Guid id)
+        public void Remove(Guid id, string userId)
         {
-
-            _routes.Delete(id);
+            var current = _routes.GetById(id);
+            if (current.CreatedBy.ToString() == userId)
+            {
+                _routes.Delete(id);
+            }            
         }
 
-        public RouteWeb Update(RouteWeb route)
+        public bool Subscribe(string email, Route route)
         {
-            var current = _mapper.Map<Route>(route);
+            
+              return _subscription.AddMail(email, route);
+
+        }
+        public Route Update(Route route, string currentUserId)
+        {   
+            
+            if (currentUserId == route.CreatedBy.ToString())
+            {
+                return SaveUpdated(route);
+            }
+
+            return null;
+        }
+
+        private Route Save(RouteEntry route)
+        {                        
+            _routes.Create(route);
+            return _mapper.Map<Route>(route);
+        }
+
+        private Route SaveUpdated(Route route)
+        {
+            var current = _mapper.Map<RouteEntry>(route);
             _routes.Edit(current);
-            return _mapper.Map<RouteWeb>(current);
+            return _mapper.Map<Route>(current);
         }
+
+        public void Unsubscribe(string email, Route route)
+        {
+            var current = _routes.GetById(route.Id);
+            if (current.SubscribedMails.Contains(email))
+            {
+                _subscription.Unsubscribe(email, current);
+            }
+        }
+
     }
 }
