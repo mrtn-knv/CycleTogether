@@ -38,9 +38,7 @@ namespace CycleTogether.RoutesSubscriber
             foreach (var equipment in Equipments)
             {
                 if (!requirements.Equipments.Contains(equipment))
-                {
                     return false;
-                }
             }
             return true;
         }

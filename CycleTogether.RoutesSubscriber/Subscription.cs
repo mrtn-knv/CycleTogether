@@ -1,22 +1,16 @@
-﻿using System;
-using AutoMapper;
-using DAL.Contracts;
+﻿using DAL.Contracts;
 using DAL.Models;
 using WebModels;
-using System.Collections.Generic;
-using CycleTogether.Enums;
-using System.Linq;
+
 
 namespace CycleTogether.RoutesSubscriber
 {
     public class Subscription
     {
-        private readonly IMapper _mapper;
         private readonly IRouteRepository _routes;
         private readonly IUserRepository _users;
-        public Subscription(IRouteRepository routes, IMapper mapper, IUserRepository users)
+        public Subscription(IRouteRepository routes, IUserRepository users)
         {
-            _mapper = mapper;
             _routes = routes;
             _users = users;
         }

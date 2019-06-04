@@ -1,8 +1,6 @@
 ﻿using CycleTogether.Contracts;
 using CycleTogether.Enums;
-using System;
 using System.Collections.Generic;
-using System.Text;
 using WebModels;
 
 namespace CycleTogether.RoutesDifficultyManager
