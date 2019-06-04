@@ -5,11 +5,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AutoMapper" Version="8.1.0" />
-  </ItemGroup>
-
-  <ItemGroup>
+    <ProjectReference Include="..\CycleTogether.Contracts\CycleTogether.Contracts.csproj" />
     <ProjectReference Include="..\CycleTogether.Enums\CycleTogether.Enums.csproj" />
+    <ProjectReference Include="..\WebModels\WebModels.csproj" />
   </ItemGroup>
 
 </Project>

@@ -17,6 +17,7 @@ namespace CycleTogetherWeb
             CreateMap<User, UserWeb>();
             CreateMap<RouteWeb, Route>();
             CreateMap<Route, RouteWeb>();
+            CreateMap<Equipment, EquipmentWeb>();
         }
     }
 }

@@ -5,8 +5,16 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CycleTogether.RoutesManager\CycleTogether.RoutesManager.csproj" />
+    <ProjectReference Include="..\CycleTogether.Enums\CycleTogether.Enums.csproj" />
+    <ProjectReference Include="..\CycleTogether.RoutesDifficultyManager\CycleTogether.RoutesDifficultyManager.csproj" />
+    <ProjectReference Include="..\CycleTogether.RoutesSubscriber\CycleTogether.RoutesSubscriber.csproj" />
     <ProjectReference Include="..\DAL.Contracts\DAL.Contracts.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Microsoft.AspNetCore.Http.Abstractions">
+      <HintPath>..\..\..\..\..\..\Program Files\dotnet\sdk\NuGetFallbackFolder\microsoft.aspnetcore.http.abstractions\2.2.0\lib\netstandard2.0\Microsoft.AspNetCore.Http.Abstractions.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>

@@ -9,7 +9,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CycleTogether.Enums\CycleTogether.Enums.csproj" />
+    <ProjectReference Include="..\DAL.Contracts\DAL.Contracts.csproj" />
+    <ProjectReference Include="..\DAL.Models\DAL.Models.csproj" />
+    <ProjectReference Include="..\WebModels\WebModels.csproj" />
   </ItemGroup>
 
 </Project>

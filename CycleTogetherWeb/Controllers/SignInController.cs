@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using CycleTogether.AuthenticationManager;
+using CycleTogether.Contracts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -31,12 +31,12 @@ namespace CycleTogetherWeb.Controllers
         {
             
             var authenticated = _authenticator.Authenticate(userParams.Email, userParams.Password);
-            if (authenticated != null)
+            if (!string.IsNullOrWhiteSpace(authenticated))
             {
                 return authenticated;
             }
 
-            return "No login for you";
+            return "Incorrect username or password.";
         }
 
         [AllowAnonymous]
