@@ -35,18 +35,16 @@ namespace CycleTogether.Routes
 
         public Route Create(Route route, string userId, string email)
         {
-            return Save(SetProperties(route, userId, email));
+            return Save(SetProperties(route, userId, email), userId);
         }
 
-        private RouteEntry SetProperties(Route route, string id, string email)
+        private RouteEntry SetProperties(Route route, string userId, string email)
         {
             var newRoute = _mapper.Map<RouteEntry>(route);
             newRoute.Difficulty = _difficulty.DifficultyLevel(route);
-            newRoute.CreatedBy = Guid.Parse(id);
+            newRoute.CreatedBy = Guid.Parse(userId);
             newRoute.Equipments = route.Equipments;
-            newRoute.SubscribedMails.Add(email);
-            var currentUser = _users.GetById(Guid.Parse(id));
-            currentUser.Routes.Add(newRoute);
+            newRoute.SubscribedMails.Add(email);            
             return newRoute;
         }
 
@@ -89,9 +87,10 @@ namespace CycleTogether.Routes
             return null;
         }
 
-        private Route Save(RouteEntry route)
+        private Route Save(RouteEntry route, string userId)
         {                        
             _routes.Create(route);
+            _users.AddRoute(route, Guid.Parse(userId));
             return _mapper.Map<Route>(route);
         }
 
