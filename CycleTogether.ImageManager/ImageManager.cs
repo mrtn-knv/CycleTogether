@@ -47,7 +47,7 @@ namespace CycleTogether.ImageManager
             };
             var createdImage = _images.Create(_mapper.Map<PictureEntry>(newImage));
             AddImageToRoute(routeId, createdImage);
-            return newImage;
+            return _mapper.Map<Picture>(createdImage);
         }
 
         private ImageUploadResult UploadToCoudinary(string imagePath)
@@ -75,12 +75,13 @@ namespace CycleTogether.ImageManager
                    ToList();
         }
 
-        public void Delete(string publicId, string currentUserId, string routeId)
+        public void Delete(string imageId, string currentUserId, string routeId)
         {
             if (IsRouteCreator(currentUserId, routeId))
             {
-                _images.Delete(Guid.Parse(publicId));
+                var publicId = _images.GetById(Guid.Parse(imageId)).PublicId;
                 DeleteFromCloudinary(publicId);
+                _images.Delete(Guid.Parse(imageId));                                
             }
 
         }

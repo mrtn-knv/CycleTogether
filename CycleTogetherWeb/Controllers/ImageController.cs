@@ -37,11 +37,11 @@ namespace CycleTogetherWeb.Controllers
             return _images.Upload(imagePath, routeId);
         } 
 
-        [HttpDelete("{routeId}")]
-        public void Delete(string publicId, string routeId)
+        [HttpDelete("{routeId}/{imageId}")]
+        public void Delete(string imageId, string routeId)
         {
             var currentUser = _claims.Id();
-            _images.Delete(publicId, currentUser, routeId);
+            _images.Delete(imageId, currentUser, routeId);
         }
     }
 }
