@@ -1,7 +1,6 @@
 ﻿using DAL.Contracts;
 using DAL.Models;
 using System;
-using System.Collections.Generic;
 
 namespace DAL
 {

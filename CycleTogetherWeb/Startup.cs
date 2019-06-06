@@ -17,6 +17,7 @@ using DAL.Contracts;
 using DAL;
 using Microsoft.AspNetCore.Http;
 using CycleTogether.ImageManager;
+using CloudinaryDotNet;
 
 namespace CycleTogetherWeb
 {
@@ -44,11 +45,14 @@ namespace CycleTogetherWeb
             services.AddSingleton<IRouteManager, RouteManager>();
             services.AddSingleton<IRouteRepository, RoutesRepository>();
             services.AddSingleton<IEquipmentsRepository, EquipmentRepository>();
+            services.AddSingleton<IImageRepository, PicturesRepository>();
             services.AddSingleton(typeof(TokenGenerator));
             services.AddSingleton(typeof(ClaimsRetriever));
             services.AddSingleton(typeof(DifficultyCalculator));
             services.AddSingleton(typeof(Subscription));
-            services.AddSingleton(typeof(ImageManager));
+            services.AddSingleton(typeof(Cloudinary));
+            services.AddSingleton(typeof(Account));
+            services.AddSingleton<IPicture, ImageManager>();
             services.AddSingleton<IAuthentication, Authentication>();
             services.AddSingleton<IEquipmentRetriever, EquipmentRetriever>();
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();

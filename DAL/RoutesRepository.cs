@@ -1,7 +1,8 @@
-﻿using System.Collections.Generic;
-using DAL.Contracts;
+﻿using DAL.Contracts;
 using DAL.Models;
+using System;
 using System.Linq;
+
 
 namespace DAL
 {
@@ -10,6 +11,11 @@ namespace DAL
         public RoutesRepository()
         {
 
+        }
+
+        public void AddPicture(Guid routeId, PictureEntry image)
+        {
+            context.FirstOrDefault(r => r.Id == routeId).Images.Add(image);
         }
 
         public void Subscribe(string email, RouteEntry route)

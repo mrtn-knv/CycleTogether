@@ -17,6 +17,7 @@ namespace WebModels
         public bool IsComplete { get; set; }
         public List<string> SubscribedMails = new List<string>();
         public List<Guid> Equipments{ get; set; }
+        public List<Picture> Images { get; set; }
         public Terrain Terrain { get; set; }
         public Endurance Endurance { get; set; }
         public TypeOfRoute Type { get; set; }
