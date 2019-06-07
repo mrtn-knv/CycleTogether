@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Hangfire" Version="1.7.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CycleTogether.Claims\CycleTogether.Claims.csproj" />
+    <ProjectReference Include="..\CycleTogether.Contracts\CycleTogether.Contracts.csproj" />
+  </ItemGroup>
+
+</Project>

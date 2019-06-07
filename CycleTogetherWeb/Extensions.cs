@@ -13,6 +13,8 @@ using CloudinaryDotNet;
 using CycleTogether.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using CycleTogether.Notifications;
+using CycleTogether.Claims;
 
 
 namespace CycleTogetherWeb
@@ -37,6 +39,7 @@ namespace CycleTogetherWeb
                 services.AddSingleton<IAuthentication, Authenticator>();
                 services.AddSingleton<IEquipmentRetriever, EquipmentRetriever>();
                 services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+                services.AddSingleton<INotification, Notification>();
 
             }
 
