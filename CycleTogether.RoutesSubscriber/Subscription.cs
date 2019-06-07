@@ -1,26 +1,20 @@
-﻿using System;
-using AutoMapper;
-using DAL.Contracts;
+﻿using DAL.Contracts;
 using DAL.Models;
 using WebModels;
-using System.Collections.Generic;
-using CycleTogether.Enums;
-using System.Linq;
+
 
 namespace CycleTogether.RoutesSubscriber
 {
     public class Subscription
     {
-        private readonly IMapper _mapper;
         private readonly IRouteRepository _routes;
         private readonly IUserRepository _users;
-        public Subscription(IRouteRepository routes, IMapper mapper, IUserRepository users)
+        public Subscription(IRouteRepository routes, IUserRepository users)
         {
-            _mapper = mapper;
             _routes = routes;
             _users = users;
         }
-        public bool AddMail(string email, RouteWeb route)
+        public bool AddMail(string email, Route route)
         {
             if (IsSuitable(email, route))
             {
@@ -31,13 +25,13 @@ namespace CycleTogether.RoutesSubscriber
             return false;
         }
 
-        public bool Unsubscribe(string email, Route route)
+        public bool Unsubscribe(string email, RouteEntry route)
         {
             _routes.Unsubscribe(email, route);
             return false;
         }
 
-        public bool IsSuitable(string email, RouteWeb route)
+        public bool IsSuitable(string email, Route route)
         {
             var user = _users.GetByEmail(email);
             var currentRoute = _routes.GetById(route.Id);
@@ -49,7 +43,7 @@ namespace CycleTogether.RoutesSubscriber
             return false;
         }
 
-        private bool RequirementsHasMatch(User user, Route route)
+        private bool RequirementsHasMatch(UserEntry user, RouteEntry route)
         {
             RequirementsMatcher userRequirements = new RequirementsMatcher(user.Terrain, user.Difficulty, user.Endurance, user.Equipments);
             RequirementsMatcher routeReruirements = new RequirementsMatcher(route.Terrain, route.Difficulty, route.Endurance, route.Equipments);

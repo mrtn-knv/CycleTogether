@@ -18,7 +18,7 @@ namespace CycleTogether.RoutesDifficultyManager
             _proLevel = new ProDifficulty();
         }
 
-        public Difficulty DifficultyLevel(RouteWeb route)
+        public Difficulty DifficultyLevel(Route route)
         {
             if (_beginnerLevel.IsTrueFor(route))
                 return Difficulty.Easy;

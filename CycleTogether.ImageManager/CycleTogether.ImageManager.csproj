@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.2</TargetFramework>
@@ -6,13 +6,19 @@
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="8.1.1" />
+    <PackageReference Include="CloudinaryDotNet" Version="1.8.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\CycleTogether.Contracts\CycleTogether.Contracts.csproj" />
     <ProjectReference Include="..\DAL.Contracts\DAL.Contracts.csproj" />
-    <ProjectReference Include="..\DAL.Models\DAL.Models.csproj" />
     <ProjectReference Include="..\WebModels\WebModels.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="System.Security.AccessControl">
+      <HintPath>..\..\..\..\..\..\Program Files\dotnet\sdk\NuGetFallbackFolder\system.security.accesscontrol\4.5.0\ref\netstandard2.0\System.Security.AccessControl.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>

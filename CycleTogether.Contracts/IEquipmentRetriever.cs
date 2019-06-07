@@ -5,6 +5,6 @@ namespace CycleTogether.Contracts
 {
     public interface IEquipmentRetriever
     {
-        IEnumerable<EquipmentWeb> GetAll();
+        IEnumerable<Equipment> GetAll();
     }
 }

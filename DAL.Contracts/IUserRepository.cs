@@ -5,8 +5,9 @@ using System.Text;
 
 namespace DAL.Contracts
 {
-    public interface IUserRepository : IRepository<User>
+    public interface IUserRepository : IRepository<UserEntry>
     {
-        User GetByEmail(string email);
+        UserEntry GetByEmail(string email);
+        void AddRoute(RouteEntry route, Guid id);        
     }
 }

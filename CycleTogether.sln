@@ -23,19 +23,25 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CycleTogether.Auth", "Cycle
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CycleTogether.Route", "CycleTogether.Route", "{E34C13E2-7C4E-4BB2-932B-1EE0D9EFCA04}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CycleTogether.Enums", "CycleTogether.Enums\CycleTogether.Enums.csproj", "{DFC9414D-5E09-4119-AF2A-8EA5494E20F6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CycleTogether.Enums", "CycleTogether.Enums\CycleTogether.Enums.csproj", "{DFC9414D-5E09-4119-AF2A-8EA5494E20F6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CycleTogether.RoutesDifficultyManager", "CycleTogether.RoutesDifficultyManager\CycleTogether.RoutesDifficultyManager.csproj", "{779B01FD-A439-4923-BC44-0FDE06B1AD4D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CycleTogether.RoutesDifficultyManager", "CycleTogether.RoutesDifficultyManager\CycleTogether.RoutesDifficultyManager.csproj", "{779B01FD-A439-4923-BC44-0FDE06B1AD4D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CycleTogether.RoutesSubscriber", "CycleTogether.RoutesSubscriber\CycleTogether.RoutesSubscriber.csproj", "{48285F51-591E-4DF2-9E00-F64A38AFA972}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CycleTogether.RoutesSubscriber", "CycleTogether.RoutesSubscriber\CycleTogether.RoutesSubscriber.csproj", "{48285F51-591E-4DF2-9E00-F64A38AFA972}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CycleTogether.Equipments", "CycleTogether.Equipments\CycleTogether.Equipments.csproj", "{6DEBA5D4-325E-4AE5-9F3F-966103C6FEB6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CycleTogether.Equipments", "CycleTogether.Equipments\CycleTogether.Equipments.csproj", "{6DEBA5D4-325E-4AE5-9F3F-966103C6FEB6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CycleTogether.Contracts", "CycleTogether.Contracts\CycleTogether.Contracts.csproj", "{EA5EBF5B-55F7-4496-9C84-90B909CAD97D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CycleTogether.Contracts", "CycleTogether.Contracts\CycleTogether.Contracts.csproj", "{EA5EBF5B-55F7-4496-9C84-90B909CAD97D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CycleTogether.Equipment", "CycleTogether.Equipment", "{CEFACAD2-46DE-4FD9-8EC7-3FA3B88F1BED}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CycleTogether.ContractsAndEnums", "CycleTogether.ContractsAndEnums", "{1C2C9FEC-1B43-444D-B5CD-C9B6CC0F88CC}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CycleTogether.Images", "CycleTogether.Images", "{1BD1D16D-9B2F-404E-AF2B-E0E013F9C93F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CycleTogether.ImageManager", "CycleTogether.ImageManager\CycleTogether.ImageManager.csproj", "{4B3FBBF8-AF07-46C7-A931-DB46108F522D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CycleTogether.Notifications", "CycleTogether.Notifications\CycleTogether.Notifications.csproj", "{59741623-EADB-461D-A8B6-32C96A6FBE5C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -91,6 +97,14 @@ Global
 		{EA5EBF5B-55F7-4496-9C84-90B909CAD97D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EA5EBF5B-55F7-4496-9C84-90B909CAD97D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EA5EBF5B-55F7-4496-9C84-90B909CAD97D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4B3FBBF8-AF07-46C7-A931-DB46108F522D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4B3FBBF8-AF07-46C7-A931-DB46108F522D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4B3FBBF8-AF07-46C7-A931-DB46108F522D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4B3FBBF8-AF07-46C7-A931-DB46108F522D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{59741623-EADB-461D-A8B6-32C96A6FBE5C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{59741623-EADB-461D-A8B6-32C96A6FBE5C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{59741623-EADB-461D-A8B6-32C96A6FBE5C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{59741623-EADB-461D-A8B6-32C96A6FBE5C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -106,6 +120,7 @@ Global
 		{48285F51-591E-4DF2-9E00-F64A38AFA972} = {E34C13E2-7C4E-4BB2-932B-1EE0D9EFCA04}
 		{6DEBA5D4-325E-4AE5-9F3F-966103C6FEB6} = {CEFACAD2-46DE-4FD9-8EC7-3FA3B88F1BED}
 		{EA5EBF5B-55F7-4496-9C84-90B909CAD97D} = {1C2C9FEC-1B43-444D-B5CD-C9B6CC0F88CC}
+		{4B3FBBF8-AF07-46C7-A931-DB46108F522D} = {1BD1D16D-9B2F-404E-AF2B-E0E013F9C93F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {EFB423F9-55B8-4AAA-B678-724323DDAAB7}

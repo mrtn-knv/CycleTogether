@@ -16,9 +16,9 @@ namespace CycleTogether.Equipments
             _equipments = equipments;
             _mapper = mapper;
         }
-        public IEnumerable<EquipmentWeb> GetAll()
+        public IEnumerable<Equipment> GetAll()
         {            
-            return _equipments.GetAll().Select(equipment => _mapper.Map<EquipmentWeb>(equipment));            
+            return _equipments.GetAll().Select(equipment => _mapper.Map<Equipment>(equipment));            
         }
     }
 }

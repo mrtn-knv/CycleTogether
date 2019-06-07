@@ -1,6 +1,5 @@
 ﻿using CycleTogether.Contracts;
 using CycleTogether.Enums;
-using System;
 using System.Collections.Generic;
 using WebModels;
 
@@ -13,7 +12,7 @@ namespace CycleTogether.RoutesDifficultyManager
             new TerrainEndurance(Terrain.Flat, Endurance.fourHours),
             new TerrainEndurance(Terrain.Ragged, Endurance.fourHours)
         };
-        public bool IsTrueFor(RouteWeb route)
+        public bool IsTrueFor(Route route)
         {
             if (route.Terrain == Terrain.Extreme)
                 return false;

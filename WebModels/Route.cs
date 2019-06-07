@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace WebModels
 {
-    public class RouteWeb
+    public class Route
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
@@ -17,6 +17,7 @@ namespace WebModels
         public bool IsComplete { get; set; }
         public List<string> SubscribedMails = new List<string>();
         public List<Guid> Equipments{ get; set; }
+        public List<Picture> Images { get; set; }
         public Terrain Terrain { get; set; }
         public Endurance Endurance { get; set; }
         public TypeOfRoute Type { get; set; }

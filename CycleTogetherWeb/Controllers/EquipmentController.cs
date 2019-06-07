@@ -22,7 +22,7 @@ namespace CycleTogetherWeb.Controllers
         }
 
         [HttpGet("all")]
-        public IEnumerable<EquipmentWeb> GetAvailableEquipments()
+        public IEnumerable<Equipment> GetAvailableEquipments()
         {
             return _equipment.GetAll();
         }

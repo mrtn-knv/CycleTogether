@@ -35,7 +35,7 @@ namespace CycleTogether.Authentication
             return BCrypt.Net.BCrypt.HashPassword(password);
         }
 
-        private SecurityTokenDescriptor Token(User user)
+        private SecurityTokenDescriptor Token(UserEntry user)
         {
             return new SecurityTokenDescriptor
             {
@@ -53,7 +53,7 @@ namespace CycleTogether.Authentication
             };
         }
 
-        private string GenerateToken(string enteredPassword, User user)
+        private string GenerateToken(string enteredPassword, UserEntry user)
         {
             if (ArePasswordsMatching(enteredPassword, user.Password))
                 return CreateToken(Token(user));
