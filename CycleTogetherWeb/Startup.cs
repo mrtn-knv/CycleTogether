@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using CycleTogether.Notifications;
+using CycleTogether.ImageManager;
 
 
 
@@ -24,6 +26,12 @@ namespace CycleTogetherWeb
         {
             var appSettingsSection = Configuration.GetSection("AppSettings");
             services.Configure<AppSettings>(appSettingsSection);
+
+            var mailConfig = Configuration.GetSection("mailConfig");
+            services.Configure<NotificationCredentials>(mailConfig);
+
+            var cloudinary = Configuration.GetSection("CloudinaryAccount");
+            services.Configure<CloudinaryAccount>(cloudinary);
 
             var appSettings = appSettingsSection.Get<AppSettings>();
             var key = Encoding.ASCII.GetBytes(appSettings.Secret);

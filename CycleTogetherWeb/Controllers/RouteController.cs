@@ -4,6 +4,7 @@ using CycleTogether.Contracts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebModels;
+using CycleTogether.Claims;
 
 namespace CycleTogetherWeb.Controllers
 {
@@ -13,11 +14,11 @@ namespace CycleTogetherWeb.Controllers
     public class RouteController : ControllerBase
     {
         private readonly IRouteManager _routes;
-        private readonly ClaimsRetriever _claimsManager;
+        private readonly ClaimsRetriever _claims;
         public RouteController(IRouteManager routes, ClaimsRetriever claimsManager)
         {
             _routes = routes;
-            _claimsManager = claimsManager;
+            _claims = claimsManager;
         }
 
         [HttpGet("All")]
@@ -37,8 +38,8 @@ namespace CycleTogetherWeb.Controllers
         [HttpPost("new")]
         public Route Create([FromBody] Route route)
         {            
-            var id = _claimsManager.Id();
-            var mail = _claimsManager.Email();
+            var id = _claims.Id();
+            var mail = _claims.Email();
             return _routes.Create(route, id, mail);
         }
 
@@ -46,7 +47,7 @@ namespace CycleTogetherWeb.Controllers
         [HttpPost("subscribe")]
         public IActionResult Subscribe([FromBody]Route route)
         {
-            var mail = _claimsManager.Email();
+            var mail = _claims.Email();
             if (_routes.Subscribe(mail, route))
                 return Ok();
             
@@ -56,7 +57,7 @@ namespace CycleTogetherWeb.Controllers
         [HttpPost("unsubscribe")]
         public IActionResult Unsubscribe([FromBody]Route route)
         {
-            var mail = _claimsManager.Email();
+            var mail = _claims.Email();
             _routes.Unsubscribe(mail, route);
             return Ok();
         }
@@ -65,7 +66,7 @@ namespace CycleTogetherWeb.Controllers
         [HttpPost("edit")]
         public Route Update([FromBody]Route route)
         {
-            var currentUserId = _claimsManager.Id();
+            var currentUserId = _claims.Id();
             return _routes.Update(route, currentUserId);
         }
 
@@ -73,7 +74,7 @@ namespace CycleTogetherWeb.Controllers
         [HttpDelete("{id}")]
         public void Delete(Guid id)
         {
-            var userId = _claimsManager.Id();
+            var userId = _claims.Id();
             _routes.Remove(id, userId);
         }
     }
