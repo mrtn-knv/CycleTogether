@@ -11,7 +11,7 @@ using System.Linq;
 
 namespace CycleTogether.ImageManager
 {
-    public class ImageManager : IPicture
+    public class CloudinaryStorage : IPicture
     {
         private readonly Account _account;
         private readonly Cloudinary _cloudinary;
@@ -19,7 +19,7 @@ namespace CycleTogether.ImageManager
         private readonly IMapper _mapper;
         private readonly IUserRepository _users;
         private readonly IRouteRepository _routes;
-        public ImageManager(IImageRepository images, IMapper mapper, IUserRepository users, IRouteRepository routes)
+        public CloudinaryStorage(IImageRepository images, IMapper mapper, IUserRepository users, IRouteRepository routes)
         {
             _account = new Account("diroaq4wp", "712983898652981", "tFVw4-kYq09AwH9srE84eNWBEnk");
             _cloudinary = new Cloudinary(_account);
@@ -30,41 +30,15 @@ namespace CycleTogether.ImageManager
 
         }
 
-
         public Picture Upload(string imagePath, string routeId)
         {
             var image = UploadToCoudinary(imagePath);
             return Save(image, routeId);
         }
 
-        private Picture Save(ImageUploadResult image, string routeId)
-        {
-            var newImage = new Picture()
-            {
-                Path = image.SecureUri.ToString(),
-                RouteId = Guid.Parse(routeId),
-                PublicId = image.PublicId
-            };
-            var createdImage = _images.Create(_mapper.Map<PictureEntry>(newImage));
-            AddImageToRoute(routeId, createdImage);
-            return _mapper.Map<Picture>(createdImage);
-        }
-
-        private ImageUploadResult UploadToCoudinary(string imagePath)
-        {
-            var uploadParams = new ImageUploadParams()
-            {
-                File = new FileDescription(@imagePath),
-            };
-            return _cloudinary.Upload(uploadParams);
-        }
-
         public Picture Get(string id)
         {
-            var image = _images.GetById(Guid.Parse(id));
-            var map = _mapper.Map<Picture>(image);
-            return map;
-
+            return _mapper.Map<Picture>(_images.GetById(Guid.Parse(id)));
         }
 
         public List<Picture> GetAll(string routeId)
@@ -81,9 +55,8 @@ namespace CycleTogether.ImageManager
             {
                 var publicId = _images.GetById(Guid.Parse(imageId)).PublicId;
                 DeleteFromCloudinary(publicId);
-                _images.Delete(Guid.Parse(imageId));                                
+                _images.Delete(Guid.Parse(imageId));
             }
-
         }
 
         private void DeleteFromCloudinary(string publicId)
@@ -101,5 +74,33 @@ namespace CycleTogether.ImageManager
         {
             _routes.AddPicture(Guid.Parse(routeId), newImage);
         }
+
+        private Picture Save(ImageUploadResult image, string routeId)
+        {
+            var newImage = FillImageProperties(image, routeId);
+            var createdImage = _images.Create(_mapper.Map<PictureEntry>(newImage));
+            AddImageToRoute(routeId, createdImage);
+            return _mapper.Map<Picture>(createdImage);
+        }
+
+        private static Picture FillImageProperties(ImageUploadResult image, string routeId)
+        {
+            return new Picture()
+            {
+                Path = image.SecureUri.ToString(),
+                RouteId = Guid.Parse(routeId),
+                PublicId = image.PublicId
+            };
+        }
+
+        private ImageUploadResult UploadToCoudinary(string imagePath)
+        {
+            var uploadParams = new ImageUploadParams()
+            {
+                File = new FileDescription(@imagePath),
+            };
+            return _cloudinary.Upload(uploadParams);
+        }
+
     }
 }

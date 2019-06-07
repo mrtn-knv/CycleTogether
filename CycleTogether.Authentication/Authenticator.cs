@@ -7,14 +7,14 @@ using WebModels;
 
 namespace CycleTogether.Authentication
 {
-    public class Authentication : IAuthentication
+    public class Authenticator : IAuthentication
     {
         private readonly IUserRepository _users;
         private readonly IMapper _mapper;
         private readonly AppSettings _appSettings;
         private readonly TokenGenerator _tokenGenerator;
 
-        public Authentication(IMapper mapper, IUserRepository users, TokenGenerator tokenGenerator, IOptions<AppSettings> appSetings)
+        public Authenticator(IMapper mapper, IUserRepository users, TokenGenerator tokenGenerator, IOptions<AppSettings> appSetings)
         {
             _users = users;
             _mapper = mapper;
