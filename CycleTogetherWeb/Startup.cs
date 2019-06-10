@@ -1,13 +1,10 @@
 ﻿using System.Text;
-using CycleTogether.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using CycleTogether.Notifications;
-using CycleTogether.ImageManager;
-
+using CycleTogether.BindingModels;
 
 
 namespace CycleTogetherWeb
@@ -17,7 +14,6 @@ namespace CycleTogetherWeb
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
-
         }
 
         public IConfiguration Configuration { get; }
@@ -26,9 +22,9 @@ namespace CycleTogetherWeb
         {
             var appSettingsSection = Configuration.GetSection("AppSettings");
             services.Configure<AppSettings>(appSettingsSection);
-
-            var mailConfig = Configuration.GetSection("mailConfig");
-            services.Configure<NotificationCredentials>(mailConfig);
+            
+            var mailConfigSection = Configuration.GetSection("NotificationCredentials");
+            services.Configure<NotificationCredentials>(mailConfigSection);
 
             var cloudinary = Configuration.GetSection("CloudinaryAccount");
             services.Configure<CloudinaryAccount>(cloudinary);

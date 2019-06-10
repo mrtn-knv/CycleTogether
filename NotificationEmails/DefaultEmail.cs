@@ -1,12 +1,10 @@
-﻿using System;
+﻿using Microsoft.Extensions.Options;
+using System.Net.Mail;
 
 namespace NotificationEmails
 {
-    public class DefaultEmail
+    public abstract class DefaultEmail
     {
-        public DefaultEmail()
-        {
-
-        }
+        public abstract MailMessage Generate();
     }
 }

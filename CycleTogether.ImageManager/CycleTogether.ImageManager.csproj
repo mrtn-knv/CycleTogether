@@ -11,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\CycleTogether.BindingModels\CycleTogether.BindingModels.csproj" />
     <ProjectReference Include="..\CycleTogether.Contracts\CycleTogether.Contracts.csproj" />
     <ProjectReference Include="..\DAL.Contracts\DAL.Contracts.csproj" />
     <ProjectReference Include="..\WebModels\WebModels.csproj" />

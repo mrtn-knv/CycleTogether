@@ -4,6 +4,7 @@ using DAL.Contracts;
 using DAL.Models;
 using Microsoft.Extensions.Options;
 using WebModels;
+using CycleTogether.BindingModels;
 
 namespace CycleTogether.Authentication
 {

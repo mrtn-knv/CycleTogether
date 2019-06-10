@@ -9,6 +9,7 @@ using AutoMapper;
 using DAL.Models;
 using System.Linq;
 using Microsoft.Extensions.Options;
+using CycleTogether.BindingModels;
 
 namespace CycleTogether.ImageManager
 {

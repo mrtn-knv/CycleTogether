@@ -15,7 +15,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using CycleTogether.Notifications;
 using CycleTogether.Claims;
-
+using CycleTogether.BindingModels;
+using NotificationEmails;
 
 namespace CycleTogetherWeb
 {
@@ -35,6 +36,7 @@ namespace CycleTogetherWeb
                 services.AddSingleton(typeof(Subscription));
                 services.AddSingleton(typeof(Cloudinary));
                 services.AddSingleton(typeof(Account));
+                services.AddSingleton(typeof(NotificationCreator));
                 services.AddSingleton<IPicture, CloudinaryStorage>();
                 services.AddSingleton<IAuthentication, Authenticator>();
                 services.AddSingleton<IEquipmentRetriever, EquipmentRetriever>();
