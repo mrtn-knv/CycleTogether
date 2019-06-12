@@ -1,22 +1,21 @@
-﻿using System.Net.Mail;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Options;
 using CycleTogether.BindingModels;
 
 namespace NotificationEmails
 {
     public class NotificationCreator
     {
-        private string Sender { get; set; }
+        private string AppEmail { get; set; }
         public NotificationCreator(IOptions<NotificationCredentials> credentials)
         {
-            Sender = credentials.Value.DefaultSender;
+            AppEmail = credentials.Value.DefaultSender;
         }
-        public  DefaultEmail Create(string type, string receiver)
+        public  DefaultEmail Create(string type, string InvitationSender, string routeId)
         {
             switch (type)
             {
-                case "Invitation": return new InvitationEmail(receiver, Sender);
-                case "Notification": return new ReminderEmail(receiver, Sender);
+                case "invite": return new InvitationEmail(AppEmail, routeId, InvitationSender);
+                case "remind": return new ReminderEmail(AppEmail, routeId);
                 default: return null;
             }
             

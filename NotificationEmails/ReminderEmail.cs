@@ -1,30 +1,17 @@
-﻿using System.Net.Mail;
-
+﻿
 namespace NotificationEmails
 {
     public class ReminderEmail : DefaultEmail
     {
-        public string Sender { get; set; }
-        public string Receiver { get; set; }
-        public string Subject => "Upcoming trip";
-        public string Body => string.Format(@"<html><head></head><body><b>Check your trips!</b></body>");
+        public string LinkToFollow { get; set; }
 
-
-        public ReminderEmail(string receiver, string sender)
+        public ReminderEmail(string appSender, string routeId)
         {
-            Sender = sender;
-            Receiver = receiver;
+            AppEmail = appSender;
+            Subject = "Upcoming trip";
+            LinkToFollow = BaseLink + routeId;
+            Body = string.Format(@"You have subscribed for an event tomorrow. For more details, please click <a href={0}>here</a>", LinkToFollow);
         }
-
-        public override MailMessage Generate()
-        {
-            var newMessage = new MailMessage();
-            newMessage.From = new MailAddress(Sender);
-            newMessage.To.Add(Receiver);
-            newMessage.Subject = Subject;
-            newMessage.IsBodyHtml = true;
-            newMessage.Body = Body;
-            return newMessage;
-        }
+        
     }
 }
