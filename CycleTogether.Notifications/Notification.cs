@@ -6,7 +6,7 @@ using System.Net;
 using System;
 using CycleTogether.BindingModels;
 using NotificationEmails;
-
+using System.Collections.Generic;
 
 namespace CycleTogether.Notifications
 {
@@ -14,22 +14,29 @@ namespace CycleTogether.Notifications
     {
         private readonly ClaimsRetriever _claims;
         private readonly NotificationCredentials _mailCredentials;
-        private SmtpClient _client;
+        private readonly SmtpClient _client;
         private readonly NotificationCreator _creator;
-        public Notification(ClaimsRetriever claims, IOptions<NotificationCredentials> mailCredentials, NotificationCreator creator)
+        private readonly IRouteManager _routes;
+        public Notification(ClaimsRetriever claims, IOptions<NotificationCredentials> mailCredentials, NotificationCreator creator, IRouteManager routes)
         {
+            _routes = routes;
             _claims = claims;
-            _creator = creator;
+            _creator = creator;            
             _mailCredentials = mailCredentials.Value;
             _client = Client();
             SetCredentials(_client);
         }
-        public void SendNotification(string email, string notification)
+        public string SendNotification(string notification, string routeId, List<string> receiverEmails)
         {
-            var message = _creator.Create(notification, email).Generate();
-            Send(message);
+            var invitationSender = _claims.FullName();
+            return Send(_creator.Create(notification, invitationSender, routeId).Generate(receiverEmails));
         }
 
+        public string SendReminder(string notification, string routeId)
+        {
+            var receiversEmails = _routes.Get(Guid.Parse(routeId)).SubscribedMails;
+            return Send(_creator.Create(notification, null, routeId).Generate(receiversEmails));
+        }
         public string Send(MailMessage email)
         {
             try
@@ -42,7 +49,6 @@ namespace CycleTogether.Notifications
 
                 return ex.ToString();
             }
-
         }
         private  void SetCredentials(SmtpClient client)
         {
@@ -52,13 +58,13 @@ namespace CycleTogether.Notifications
         }
         private SmtpClient Client()
         {
-            var client = new SmtpClient();            
-            client.DeliveryMethod = SmtpDeliveryMethod.Network;
-            client.EnableSsl = true;            
-            client.Host = _mailCredentials.DefaultHost;
-            client.Port = 587;
-
-            return client;
+            return new SmtpClient
+            {
+                DeliveryMethod = SmtpDeliveryMethod.Network,
+                EnableSsl = true,
+                Host = _mailCredentials.DefaultHost,
+                Port = 25
+            };            
         }
     }
 }

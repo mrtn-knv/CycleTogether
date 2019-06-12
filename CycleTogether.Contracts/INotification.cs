@@ -1,8 +1,10 @@
-﻿
+﻿using System.Collections.Generic;
+
 namespace CycleTogether.Contracts
 {
     public interface INotification
     {
-        void SendNotification(string email, string notification);
+        string SendNotification(string notification, string routeId, List<string> receiver);
+        string SendReminder(string notification, string routeId);
     }
 }

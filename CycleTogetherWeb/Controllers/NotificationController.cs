@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+﻿using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using CycleTogether.Contracts;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CycleTogetherWeb.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class NotificationController : ControllerBase
@@ -18,12 +16,18 @@ namespace CycleTogetherWeb.Controllers
         {
             _notificator = notificator;
         }
+                
+        [HttpPost("{routeId}/invite")]
+        public IActionResult SendInvitation([FromBody]List<string> emails, string notificationType, string routeId)
+        {            
+            return Content(_notificator.SendNotification(notificationType, routeId, emails));
+        }
 
-        [HttpPost("Invite")]
-        public IActionResult SendInvitation()
+        [AllowAnonymous]
+        [HttpPost("{routeId}/remind")]
+        public IActionResult Remind(string notificationType, string routeId)
         {
-            _notificator.SendNotification("martina.kuneva@gmail.com", "Invitation");
-            return Ok();
+            return Content(_notificator.SendReminder(notificationType, routeId));
         }
 
     }
