@@ -18,16 +18,16 @@ namespace CycleTogetherWeb.Controllers
         }
                 
         [HttpPost("{routeId}/invite")]
-        public IActionResult SendInvitation([FromBody]List<string> emails, string notificationType, string routeId)
-        {            
-            return Content(_notificator.SendNotification(notificationType, routeId, emails));
+        public void SendInvitation([FromBody]List<string> emails, string routeId)
+        {
+            _notificator.SendInvitation(routeId, emails);
         }
 
         [AllowAnonymous]
         [HttpPost("{routeId}/remind")]
-        public IActionResult Remind(string notificationType, string routeId)
+        public void Remind(string routeId)
         {
-            return Content(_notificator.SendReminder(notificationType, routeId));
+            _notificator.SendReminder(routeId);
         }
 
     }

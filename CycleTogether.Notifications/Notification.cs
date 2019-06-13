@@ -7,52 +7,66 @@ using System;
 using CycleTogether.BindingModels;
 using NotificationEmails;
 using System.Collections.Generic;
+using Microsoft.Extensions.Configuration;
 
 namespace CycleTogether.Notifications
 {
     public class Notification : INotification
     {
         private readonly ClaimsRetriever _claims;
-        private readonly NotificationCredentials _mailCredentials;
         private readonly SmtpClient _client;
-        private readonly NotificationCreator _creator;
+        private readonly EmailProperties _emailProperties;
+        private readonly NotificationCredentials _emailCredentials;
         private readonly IRouteManager _routes;
-        public Notification(ClaimsRetriever claims, IOptions<NotificationCredentials> mailCredentials, NotificationCreator creator, IRouteManager routes)
+        public Notification(ClaimsRetriever claims, EmailProperties emailProperties, NotificationCredentials emailCredentials, IRouteManager routes)
         {
             _routes = routes;
             _claims = claims;
-            _creator = creator;            
-            _mailCredentials = mailCredentials.Value;
+            _emailProperties = emailProperties;
+            _emailCredentials = emailCredentials;
             _client = Client();
             SetCredentials(_client);
         }
-        public string SendNotification(string notification, string routeId, List<string> receiverEmails)
+        public void SendInvitation(string routeId, List<string> receiverEmails)
         {
-            var invitationSender = _claims.FullName();
-            return Send(_creator.Create(notification, invitationSender, routeId).Generate(receiverEmails));
+            Send(InvitationEmail(routeId, receiverEmails));
         }
 
-        public string SendReminder(string notification, string routeId)
+        private Email InvitationEmail(string routeId, List<string> receiverEmails)
+        {
+            var invitationSender = _claims.FullName();
+            var body = string.Format(_emailProperties.InvitationBody, invitationSender, _emailProperties.BaseLink + routeId);
+            return new Email(receiverEmails, _emailCredentials.DefaultSender, _emailProperties.SubjectInvitation, body);
+        }
+
+        public void SendReminder(string routeId)
+        {
+            Send(NotificationEmail(routeId));
+        }
+
+        private Email NotificationEmail(string routeId)
         {
             var receiversEmails = _routes.Get(Guid.Parse(routeId)).SubscribedMails;
-            return Send(_creator.Create(notification, null, routeId).Generate(receiversEmails));
+            var body = string.Format(_emailProperties.ReminderBody, _emailProperties.BaseLink + routeId);
+            return new Email(receiversEmails, _emailCredentials.DefaultSender, _emailProperties.SubjectReminder, body);
         }
-        public string Send(MailMessage email)
+
+        public void Send(MailMessage email)
         {
             try
             {
                 _client.Send(email);
-                return "OK";
+                
             }
             catch (Exception ex)
             {
 
-                return ex.ToString();
+                var exception = ex.ToString();
             }
         }
         private  void SetCredentials(SmtpClient client)
         {
-            var credentials = new NetworkCredential(_mailCredentials.DefaultSender, _mailCredentials.DefaultPass);
+            var credentials = new NetworkCredential(_emailCredentials.DefaultSender, _emailCredentials.DefaultPass);
             client.UseDefaultCredentials = false;
             client.Credentials = credentials;
         }
@@ -62,7 +76,7 @@ namespace CycleTogether.Notifications
             {
                 DeliveryMethod = SmtpDeliveryMethod.Network,
                 EnableSsl = true,
-                Host = _mailCredentials.DefaultHost,
+                Host = _emailCredentials.DefaultHost,
                 Port = 25
             };            
         }

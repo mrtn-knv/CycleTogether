@@ -5,13 +5,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using CycleTogether.BindingModels;
-
+using NotificationEmails;
 
 namespace CycleTogetherWeb
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, IHostingEnvironment env)
         {
             Configuration = configuration;
         }
@@ -22,12 +22,15 @@ namespace CycleTogetherWeb
         {
             var appSettingsSection = Configuration.GetSection("AppSettings");
             services.Configure<AppSettings>(appSettingsSection);
-            
-            var mailConfigSection = Configuration.GetSection("NotificationCredentials");
-            services.Configure<NotificationCredentials>(mailConfigSection);
-
-            var cloudinary = Configuration.GetSection("CloudinaryAccount");
-            services.Configure<CloudinaryAccount>(cloudinary);
+            var mailCredentials = new NotificationCredentials();
+            Configuration.Bind("NotificationCredentials", mailCredentials);
+            services.AddSingleton(mailCredentials);
+            var cloudinary = new CloudinaryAccount();
+            Configuration.Bind("CloudinaryAccount", cloudinary);
+            services.AddSingleton(cloudinary);
+            var emails = new EmailProperties();
+            Configuration.Bind("EmailProperties", emails);
+            services.AddSingleton(emails);
 
             var appSettings = appSettingsSection.Get<AppSettings>();
             var key = Encoding.ASCII.GetBytes(appSettings.Secret);

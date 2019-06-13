@@ -34,15 +34,11 @@ namespace CycleTogetherWeb
                 services.AddSingleton(typeof(ClaimsRetriever));
                 services.AddSingleton(typeof(DifficultyCalculator));
                 services.AddSingleton(typeof(Subscription));
-                services.AddSingleton(typeof(Cloudinary));
-                services.AddSingleton(typeof(Account));
-                services.AddSingleton(typeof(NotificationCreator));
-                services.AddSingleton<IPicture, CloudinaryStorage>();
+                services.AddSingleton<IGallery, CloudinaryStorage>();
                 services.AddSingleton<IAuthentication, Authenticator>();
                 services.AddSingleton<IEquipmentRetriever, EquipmentRetriever>();
                 services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
                 services.AddSingleton<INotification, Notification>();
-
             }
 
             public static void AddAuthentication(this IServiceCollection services, AppSettings appSettings, byte[] key)

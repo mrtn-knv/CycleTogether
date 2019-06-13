@@ -1,0 +1,15 @@
+{
+  "NotificationCredentials": {
+    "DefaultSender": "cycle.together@gmx.com",
+    "DefaultHost": "mail.gmx.com",
+    "DefaultPass": "cycleTogether123"
+  },
+  "EmailProperties": {
+    "BaseLink": "http://localhost:4000/api/route/",
+    "SubjectInvitation": "Trip invitation",
+    "InvitationBody": "<html><head></head><body><p>{0} has sent you invitation for a trip. For more details, please click <a href={1}>here</a></p></body>",
+    
+    "SubjectReminder": "Upcoming trip",
+    "ReminderBody": "You have subscribed for an event tomorrow. For more details, please click <a href={0}>here</a>"
+  }
+}

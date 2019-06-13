@@ -13,7 +13,7 @@ using CycleTogether.BindingModels;
 
 namespace CycleTogether.ImageManager
 {
-    public class CloudinaryStorage : IPicture
+    public class CloudinaryStorage : IGallery
     {
         private readonly Account _account;
         private readonly Cloudinary _cloudinary;
@@ -26,9 +26,9 @@ namespace CycleTogether.ImageManager
                                  IMapper mapper, 
                                  IUserRepository users, 
                                  IRouteRepository routes, 
-                                 IOptions<CloudinaryAccount> credentials)
+                                 CloudinaryAccount credentials)
         {
-            _credentials = credentials.Value;
+            _credentials = credentials;
             _account = new Account(_credentials.Cloud, _credentials.ApiKey, _credentials.ApiSecret);
             _cloudinary = new Cloudinary(_account);
             _images = images;

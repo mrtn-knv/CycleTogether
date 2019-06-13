@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore;
+﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 
 namespace CycleTogetherWeb
 {
@@ -20,6 +14,16 @@ namespace CycleTogetherWeb
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
+            .ConfigureAppConfiguration((webHostBuilderContext,
+                                        configurationbuilder) =>
+            {
+                var env = webHostBuilderContext.HostingEnvironment;
+                configurationbuilder.SetBasePath(env.ContentRootPath);
+                configurationbuilder.AddJsonFile("appsettings.json", false, true);
+                configurationbuilder.AddJsonFile("emailconfig.json", false, true);
+                configurationbuilder.AddJsonFile("cloudinaryCredentials.json", false, true);
+                configurationbuilder.AddEnvironmentVariables();
+            })
                 .UseStartup<Startup>();
 
 
