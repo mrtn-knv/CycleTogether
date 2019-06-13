@@ -9,14 +9,13 @@ using CycleTogether.Equipments;
 using DAL;
 using Microsoft.AspNetCore.Http;
 using CycleTogether.ImageManager;
-using CloudinaryDotNet;
 using CycleTogether.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using CycleTogether.Notifications;
 using CycleTogether.Claims;
 using CycleTogether.BindingModels;
-using NotificationEmails;
+
 
 namespace CycleTogetherWeb
 {

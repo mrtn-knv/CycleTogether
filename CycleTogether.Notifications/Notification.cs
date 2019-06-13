@@ -1,13 +1,12 @@
 ﻿using CycleTogether.Contracts;
 using CycleTogether.Claims;
-using Microsoft.Extensions.Options;
 using System.Net.Mail;
 using System.Net;
 using System;
 using CycleTogether.BindingModels;
 using NotificationEmails;
 using System.Collections.Generic;
-using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
 namespace CycleTogether.Notifications
 {
@@ -60,8 +59,7 @@ namespace CycleTogether.Notifications
             }
             catch (Exception ex)
             {
-
-                var exception = ex.ToString();
+                
             }
         }
         private  void SetCredentials(SmtpClient client)
