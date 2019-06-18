@@ -5,9 +5,9 @@ namespace DAL.Models
     public class RouteEquipment
     {
         public Guid RouteId { get; set; }
-        public RouteEntry Route { get; set; }
+        public virtual RouteEntry Route { get; set; }
 
         public Guid EquipmentId { get; set; }
-        public EquipmentEntry Equipment { get; set; }
+        public virtual EquipmentEntry Equipment { get; set; }
     }
 }

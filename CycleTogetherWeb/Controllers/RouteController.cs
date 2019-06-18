@@ -39,16 +39,15 @@ namespace CycleTogetherWeb.Controllers
         public Route Create([FromBody] Route route)
         {            
             var id = _claims.Id();
-            var mail = _claims.Email();
-            return _routes.Create(route, id, mail);
+            return _routes.Create(route, id);
         }
 
         // POST: api/Route/subscribe
         [HttpPost("subscribe")]
         public IActionResult Subscribe([FromBody]Route route)
         {
-            var mail = _claims.Email();
-            if (_routes.Subscribe(mail, route))
+            var currentUserId = _claims.Id();
+            if (_routes.Subscribe(currentUserId, route))
                 return Ok();
             
             return Content("You can't subscribe for this trip.");          
@@ -57,8 +56,8 @@ namespace CycleTogetherWeb.Controllers
         [HttpPost("unsubscribe")]
         public IActionResult Unsubscribe([FromBody]Route route)
         {
-            var mail = _claims.Email();
-            _routes.Unsubscribe(mail, route);
+            var currentUserId = _claims.Id();
+            _routes.Unsubscribe(currentUserId, route);
             return Ok();
         }
 

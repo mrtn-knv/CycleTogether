@@ -8,11 +8,7 @@ namespace DAL.Models
         public string Path { get; set; }
 
         public Guid RouteId { get; set; }
-        public RouteEntry Route { get; set; }
+        public virtual RouteEntry Route { get; set; }
 
-        public PictureEntry()
-        {
-
-        }
     }
 }

@@ -6,7 +6,7 @@ namespace CycleTogether.Contracts
 {
     public interface IRouteManager
     {
-        Route Create(Route route, string id, string email);
+        Route Create(Route route, string id);
         Route Update(Route route, string id);
         void Remove(Guid id, string userId);
         Route Get(Guid id);

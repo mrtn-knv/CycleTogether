@@ -18,6 +18,7 @@ namespace CycleTogether.Routes
         private readonly IUserRepository _users;
         private readonly DifficultyCalculator _difficulty;
         private readonly Subscription _subscription;
+        private readonly IUserRouteRepository _subscribtion;
         
 
         public RouteManager(IRouteRepository routes,
@@ -33,18 +34,17 @@ namespace CycleTogether.Routes
             _subscription = subscription;
         }
 
-        public Route Create(Route route, string userId, string email)
+        public Route Create(Route route, string userId)
         {
-            return Save(SetProperties(route, userId, email), userId);
+            return Save(SetProperties(route, userId));
         }
 
-        private RouteEntry SetProperties(Route route, string userId, string email)
+        private RouteEntry SetProperties(Route route, string userId)
         {
             var newRoute = _mapper.Map<RouteEntry>(route);
             newRoute.Difficulty = _difficulty.DifficultyLevel(route);
-            newRoute.CreatedBy = Guid.Parse(userId);
-            newRoute.Equipments = route.Equipments;
-            newRoute.SubscribedMails.Add(email);            
+            newRoute.UserId = Guid.Parse(userId);
+            
             return newRoute;
         }
 
@@ -61,19 +61,19 @@ namespace CycleTogether.Routes
             return found;
         }
 
-        public void Remove(Guid id, string userId)
+        public void Remove(Guid routeId, string userId)
         {
-            var current = _routes.GetById(id);
-            if (current.CreatedBy.ToString() == userId)
+            var current = _routes.GetById(routeId);
+            if (current.UserId.ToString() == userId)
             {
-                _routes.Delete(id);
+                _routes.Delete(routeId);
             }            
         }
 
-        public bool Subscribe(string email, Route route)
+        public bool Subscribe(string id, Route route)
         {
             
-              return _subscription.AddMail(email, route);
+              return _subscription.AddMail(id, route);
 
         }
         public Route Update(Route route, string currentUserId)
@@ -87,10 +87,9 @@ namespace CycleTogether.Routes
             return null;
         }
 
-        private Route Save(RouteEntry route, string userId)
+        private Route Save(RouteEntry route)
         {                        
             _routes.Create(route);
-            _users.AddRoute(route, Guid.Parse(userId));
             return _mapper.Map<Route>(route);
         }
 
@@ -101,13 +100,12 @@ namespace CycleTogether.Routes
             return _mapper.Map<Route>(current);
         }
 
-        public void Unsubscribe(string email, Route route)
+        public void Unsubscribe(string id, Route route)
         {
-            var current = _routes.GetById(route.Id);
-            if (current.SubscribedMails.Contains(email))
-            {
-                _subscription.Unsubscribe(email, current);
-            }
+            var userFromRoute = new UserRoute {RouteId = route.Id, UserId = Guid.Parse(id) };
+            
+                //_subscription.Unsubscribe(id, current);
+            
         }
 
     }

@@ -49,9 +49,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NotificationEmails", "Notif
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CycleTogether.Claims", "CycleTogether.Claims\CycleTogether.Claims.csproj", "{1D849A7C-7F3D-4CB1-AFFC-AB12BDE7BFBB}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CycleTogether.BindingModels", "CycleTogether.BindingModels\CycleTogether.BindingModels.csproj", "{C75B18F7-D57D-4FBE-9CB5-852D689BF398}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CycleTogether.JSONBindingModels", "CycleTogether.BindingModels\CycleTogether.JSONBindingModels.csproj", "{C75B18F7-D57D-4FBE-9CB5-852D689BF398}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DAL.Data", "DAL.Data\DAL.Data.csproj", "{C3BFE754-728C-4EB4-B233-573A3BB1D585}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DAL.Data", "DAL.Data\DAL.Data.csproj", "{C3BFE754-728C-4EB4-B233-573A3BB1D585}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

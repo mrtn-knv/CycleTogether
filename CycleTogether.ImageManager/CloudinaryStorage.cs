@@ -52,7 +52,7 @@ namespace CycleTogether.ImageManager
         public List<Picture> GetAll(string routeId)
         {
             return _routes.GetById(Guid.Parse(routeId)).
-                   Images.Select(img => _mapper.
+                   Pictures.Select(img => _mapper.
                    Map<Picture>(img)).
                    ToList();
         }

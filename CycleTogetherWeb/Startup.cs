@@ -5,7 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using CycleTogether.BindingModels;
-using NotificationEmails;
+using DAL.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace CycleTogetherWeb
 {
@@ -31,6 +32,10 @@ namespace CycleTogetherWeb
             var emails = new EmailProperties();
             Configuration.Bind("EmailProperties", emails);
             services.AddSingleton(emails);
+
+            services.AddDbContext<CycleTogetherDbContext>(options =>
+                options.UseLazyLoadingProxies()
+                    .UseSqlServer(Configuration["ConnectionString:DefaultConnectionString"]));
 
             var appSettings = appSettingsSection.Get<AppSettings>();
             var key = Encoding.ASCII.GetBytes(appSettings.Secret);

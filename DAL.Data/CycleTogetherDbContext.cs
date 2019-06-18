@@ -1,4 +1,5 @@
-﻿using DAL.Models;
+﻿using DAL.Data.Configurations;
+using DAL.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace DAL.Data
@@ -14,5 +15,24 @@ namespace DAL.Data
         public DbSet<EquipmentEntry> Equipments { get; set; }
         public DbSet<PictureEntry> Pictures { get; set; }
         public DbSet<RouteEntry> Routes { get; set; }
+        public DbSet<RouteEquipment> RouteEquipments { get; set; }
+        public DbSet<UserEquipment> UserEquipments { get; set; }
+        public DbSet<UserRoute> UserRoutes { get; set; }
+        //public DbSet<EntityBase> EntityBase { get; set; }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder options)
+        {
+            base.OnConfiguring(options);
+        }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+            modelBuilder.ApplyConfiguration(new RouteEntityConfiguration());
+            modelBuilder.ApplyConfiguration(new RouteEquipmentEntityConfiguration());
+            modelBuilder.ApplyConfiguration(new UserEntityConfiguration());
+            modelBuilder.ApplyConfiguration(new UserEquipmentEntityConfiguration());
+            modelBuilder.ApplyConfiguration(new UserRouteEntityConfiguration());
+        }
     }
 }

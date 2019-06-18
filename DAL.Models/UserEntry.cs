@@ -16,14 +16,10 @@ namespace DAL.Models
         public TypeOfRoute Type { get; set; }
         public Difficulty Difficulty { get; set; }
 
-        public IList<UserEquipment> UserEquipments { get; set; }
-        public IList<UserRoute> UserRoutes { get; set; }
-        public ICollection<RouteEntry> Routes { get; set; }
+        public virtual IList<UserEquipment> UserEquipments { get; set; }
+        public virtual IList<UserRoute> UserRoutes { get; set; }
+        public virtual ICollection<RouteEntry> Routes { get; set; }
 
-        public UserEntry()
-        {
-
-        }
     }
 }
 

@@ -15,12 +15,13 @@
     <PackageReference Include="CloudinaryDotNet" Version="1.8.0" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="2.2.4" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.3" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\CycleTogether.Authentication\CycleTogether.Authentication.csproj" />
-    <ProjectReference Include="..\CycleTogether.BindingModels\CycleTogether.BindingModels.csproj" />
+    <ProjectReference Include="..\CycleTogether.BindingModels\CycleTogether.JSONBindingModels.csproj" />
     <ProjectReference Include="..\CycleTogether.Claims\CycleTogether.Claims.csproj" />
     <ProjectReference Include="..\CycleTogether.Contracts\CycleTogether.Contracts.csproj" />
     <ProjectReference Include="..\CycleTogether.Equipments\CycleTogether.Equipments.csproj" />
@@ -29,6 +30,7 @@
     <ProjectReference Include="..\CycleTogether.RoutesSubscriber\CycleTogether.RoutesSubscriber.csproj" />
     <ProjectReference Include="..\CycleTogether.Routes\CycleTogether.Routes.csproj" />
     <ProjectReference Include="..\DAL.Contracts\DAL.Contracts.csproj" />
+    <ProjectReference Include="..\DAL.Data\DAL.Data.csproj" />
     <ProjectReference Include="..\NotificationEmails\NotificationEmails.csproj" />
     <ProjectReference Include="..\WebModels\WebModels.csproj" />
   </ItemGroup>

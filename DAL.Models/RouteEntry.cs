@@ -19,15 +19,10 @@ namespace DAL.Models
         public Difficulty Difficulty { get; set; }
 
         public Guid UserId { get; set; }
-        public UserEntry User { get; set; }
-        public IList<UserRoute> UserRoutes { get; set; }
-        public IList<RouteEquipment> RouteEquipments { get; set; }
-        public ICollection<PictureEntry> Pictures { get; set; }
-
-        public RouteEntry()
-        {
-
-        }
+        public virtual UserEntry User { get; set; }
+        public virtual IList<UserRoute> UserRoutes { get; set; }
+        public virtual IList<RouteEquipment> RouteEquipments { get; set; }
+        public virtual ICollection<PictureEntry> Pictures { get; set; }
 
     }
 }

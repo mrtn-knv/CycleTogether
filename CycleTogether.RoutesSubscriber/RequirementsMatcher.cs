@@ -1,4 +1,5 @@
 ﻿using CycleTogether.Enums;
+using DAL.Models;
 using System;
 using System.Collections.Generic;
 
@@ -9,13 +10,14 @@ namespace CycleTogether.RoutesSubscriber
         public Terrain Terrain { get; private set; }
         public Difficulty Difficulty { get; private set; }
         public Endurance Endurance { get; private set; }
-        List<Guid> Equipments { get; }
-        public RequirementsMatcher(Terrain terrain, Difficulty difficulty, Endurance endurance, List<Guid> equipments)
+        List<UserEquipment> Equipments { get; }
+        //TODO : Modify requirementsMatcher so that equipments to be checked from the DB join table 
+        public RequirementsMatcher(Terrain terrain, Difficulty difficulty, Endurance endurance /*IEnumerable<UserRoute>*/)
         {
             Terrain = terrain;
             Difficulty = difficulty;
             Endurance = endurance;
-            Equipments = equipments;
+            //Equipments = equipments;
         }
 
         public override bool Equals(object obj)

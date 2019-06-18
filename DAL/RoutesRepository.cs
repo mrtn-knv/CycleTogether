@@ -1,4 +1,5 @@
 ﻿using DAL.Contracts;
+using DAL.Data;
 using DAL.Models;
 using System;
 using System.Linq;
@@ -6,26 +7,29 @@ using System.Linq;
 
 namespace DAL
 {
-    public class RoutesRepository : Repository<RouteEntry>, IRouteRepository
+    public class RoutesRepository : DbRepository<RouteEntry>, IRouteRepository
     {
-        public RoutesRepository()
+        public RoutesRepository(CycleTogetherDbContext context) : base(context)
         {
 
         }
 
         public void AddPicture(Guid routeId, PictureEntry image)
         {
-            context.FirstOrDefault(r => r.Id == routeId).Images.Add(image);
+            
+            GetAll().FirstOrDefault(r => r.Id == routeId).Pictures.Add(image);
         }
 
-        public void Subscribe(string email, RouteEntry route)
+        public void Subscribe(string id, RouteEntry route)
         {
-            route.SubscribedMails.Add(email);
+            //TODO
+            route.UserRoutes.Add(new UserRoute {RouteId = route.Id, UserId = Guid.Parse(id) });
         }
 
-        public void Unsubscribe(string email, RouteEntry route)
+        public void Unsubscribe(string id, RouteEntry route)
         {
-            route.SubscribedMails.Remove(email);
+            //TODO
+            route.UserRoutes.Where(ur => ur.Id == route.Id && ur.UserId == Guid.Parse(id));
         }
     }
 }

@@ -22,6 +22,8 @@ namespace CycleTogetherWeb
                 configurationbuilder.AddJsonFile("appsettings.json", false, true);
                 configurationbuilder.AddJsonFile("emailconfig.json", false, true);
                 configurationbuilder.AddJsonFile("cloudinaryCredentials.json", false, true);
+                //TODO: Fix connection string from separate config file.
+                //configurationbuilder.AddJsonFile("connectionStrings.json", false, true);
                 configurationbuilder.AddEnvironmentVariables();
             })
                 .UseStartup<Startup>();
