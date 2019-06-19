@@ -46,18 +46,19 @@ namespace CycleTogetherWeb.Controllers
         [HttpPost("subscribe")]
         public IActionResult Subscribe([FromBody]Route route)
         {
-            var currentUserId = _claims.Id();
-            if (_routes.Subscribe(currentUserId, route))
+            var currentUserId = Guid.Parse(_claims.Id());
+            if (_routes.Subscribe(currentUserId, route.Id))
                 return Ok();
             
             return Content("You can't subscribe for this trip.");          
         }
 
+        // POST: api/Route/unsubscribe
         [HttpPost("unsubscribe")]
         public IActionResult Unsubscribe([FromBody]Route route)
         {
-            var currentUserId = _claims.Id();
-            _routes.Unsubscribe(currentUserId, route);
+            var currentUserId = Guid.Parse(_claims.Id());
+            _routes.Unsubscribe(currentUserId, route.Id);
             return Ok();
         }
 

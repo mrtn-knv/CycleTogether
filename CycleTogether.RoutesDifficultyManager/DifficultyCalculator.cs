@@ -27,7 +27,7 @@ namespace CycleTogether.RoutesDifficultyManager
             else if (_proLevel.IsTrueFor(route))
                 return Difficulty.Pro;
             else
-                throw new ArgumentException("Invalid difficulty level stage");
+                return Difficulty.None;
         }
     }
 }

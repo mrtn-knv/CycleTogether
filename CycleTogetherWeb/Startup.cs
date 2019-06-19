@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using CycleTogether.BindingModels;
 using DAL.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Http;
 
 namespace CycleTogetherWeb
 {
@@ -37,12 +38,13 @@ namespace CycleTogetherWeb
                 options.UseLazyLoadingProxies()
                     .UseSqlServer(Configuration["ConnectionString:DefaultConnectionString"]));
 
+
             var appSettings = appSettingsSection.Get<AppSettings>();
             var key = Encoding.ASCII.GetBytes(appSettings.Secret);
             services.AddAuthentication(appSettings, key);
             services.SetupServices();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
-            services.AddHttpContextAccessor();
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

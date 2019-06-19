@@ -1,7 +1,6 @@
 ﻿using CycleTogether.Enums;
 using System.Collections.Generic;
 
-
 namespace DAL.Models
 {
     public class UserEntry : EntityBase
@@ -16,8 +15,8 @@ namespace DAL.Models
         public TypeOfRoute Type { get; set; }
         public Difficulty Difficulty { get; set; }
 
-        public virtual IList<UserEquipment> UserEquipments { get; set; }
-        public virtual IList<UserRoute> UserRoutes { get; set; }
+        public virtual IList<UserEquipmentEntry> UserEquipments { get; set; }
+        public virtual IList<UserRouteEntry> UserRoutes { get; set; }
         public virtual ICollection<RouteEntry> Routes { get; set; }
 
     }

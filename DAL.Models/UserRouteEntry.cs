@@ -2,12 +2,12 @@
 
 namespace DAL.Models
 {
-    public class RouteEquipment
+    public class UserRouteEntry : EntityBase
     {
+        public Guid UserId { get; set; }
+        public virtual UserEntry User { get; set; }
+
         public Guid RouteId { get; set; }
         public virtual RouteEntry Route { get; set; }
-
-        public Guid EquipmentId { get; set; }
-        public virtual EquipmentEntry Equipment { get; set; }
     }
 }

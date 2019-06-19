@@ -7,8 +7,8 @@ namespace DAL.Models
     {
         public string Name { get; set; }
 
-        public virtual IList<UserEquipment> UserEquipments { get; set; }
-        public virtual IList<RouteEquipment> RouteEquipments { get; set; }
+        public virtual IList<UserEquipmentEntry> UserEquipments { get; set; }
+        public virtual IList<RouteEquipmentEntry> RouteEquipments { get; set; }
 
     }
 }

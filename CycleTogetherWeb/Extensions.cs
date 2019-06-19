@@ -24,20 +24,21 @@ namespace CycleTogetherWeb
             public static void SetupServices(this IServiceCollection services)
             {
                 services.AddAutoMapper();
-                services.AddSingleton<IUserRepository, UsersRepository>();
-                services.AddSingleton<IRouteManager, RouteManager>();
-                services.AddSingleton<IRouteRepository, RoutesRepository>();
-                services.AddSingleton<IEquipmentsRepository, EquipmentRepository>();
-                services.AddSingleton<IImageRepository, PicturesRepository>();
-                services.AddSingleton(typeof(TokenGenerator));
-                services.AddSingleton(typeof(ClaimsRetriever));
-                services.AddSingleton(typeof(DifficultyCalculator));
-                services.AddSingleton(typeof(Subscription));
-                services.AddSingleton<IGallery, CloudinaryStorage>();
-                services.AddSingleton<IAuthentication, Authenticator>();
-                services.AddSingleton<IEquipmentRetriever, EquipmentRetriever>();
-                services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-                services.AddSingleton<INotification, Notification>();
+                services.AddScoped<IUserRepository, UsersRepository>();
+                services.AddScoped<IRouteManager, RouteManager>();
+                services.AddScoped<IRouteRepository, RoutesRepository>();
+                services.AddScoped<IEquipmentsRepository, EquipmentRepository>();
+                services.AddScoped<IImageRepository, PicturesRepository>();
+                services.AddScoped<IUserRouteRepository, UserRoutesRepository>();
+                services.AddScoped(typeof(TokenGenerator));
+                services.AddScoped(typeof(ClaimsRetriever));
+                services.AddScoped(typeof(DifficultyCalculator));
+                services.AddScoped(typeof(Subscription));
+                services.AddScoped<IGallery, CloudinaryStorage>();
+                services.AddScoped<IAuthentication, Authenticator>();
+                services.AddScoped<IEquipmentRetriever, EquipmentRetriever>();
+                services.AddScoped<IHttpContextAccessor, HttpContextAccessor>();
+                services.AddScoped<INotification, Notification>();
             }
 
             public static void AddAuthentication(this IServiceCollection services, AppSettings appSettings, byte[] key)

@@ -7,9 +7,9 @@ using System.Text;
 
 namespace DAL.Data.Configurations
 {
-    public class UserEquipmentEntityConfiguration : IEntityTypeConfiguration<UserEquipment>
+    public class UserEquipmentEntityConfiguration : IEntityTypeConfiguration<UserEquipmentEntry>
     {
-        public void Configure(EntityTypeBuilder<UserEquipment> builder)
+        public void Configure(EntityTypeBuilder<UserEquipmentEntry> builder)
         {
             builder.HasKey(ue => new { ue.UserId, ue.EquipmentId });
             builder.HasOne(ue => ue.Equipment)

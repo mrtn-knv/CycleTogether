@@ -20,8 +20,8 @@ namespace DAL.Models
 
         public Guid UserId { get; set; }
         public virtual UserEntry User { get; set; }
-        public virtual IList<UserRoute> UserRoutes { get; set; }
-        public virtual IList<RouteEquipment> RouteEquipments { get; set; }
+        public virtual IList<UserRouteEntry> UserRoutes { get; set; }
+        public virtual IList<RouteEquipmentEntry> RouteEquipments { get; set; }
         public virtual ICollection<PictureEntry> Pictures { get; set; }
 
     }

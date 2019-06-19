@@ -5,7 +5,7 @@ namespace NotificationEmails
 {
     public class Email : MailMessage
     {
-        public Email(List<string>receivers,string from, string subject, string body): base()
+        public Email(IEnumerable<string>receivers,string from, string subject, string body): base()
         {
             base.From = new MailAddress(from);
             base.Subject = subject;

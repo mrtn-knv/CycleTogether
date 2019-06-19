@@ -15,9 +15,9 @@ namespace DAL.Data
         public DbSet<EquipmentEntry> Equipments { get; set; }
         public DbSet<PictureEntry> Pictures { get; set; }
         public DbSet<RouteEntry> Routes { get; set; }
-        public DbSet<RouteEquipment> RouteEquipments { get; set; }
-        public DbSet<UserEquipment> UserEquipments { get; set; }
-        public DbSet<UserRoute> UserRoutes { get; set; }
+        public DbSet<RouteEquipmentEntry> RouteEquipments { get; set; }
+        public DbSet<UserEquipmentEntry> UserEquipments { get; set; }
+        public DbSet<UserRouteEntry> UserRoutes { get; set; }
         //public DbSet<EntityBase> EntityBase { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder options)

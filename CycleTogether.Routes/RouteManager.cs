@@ -15,20 +15,21 @@ namespace CycleTogether.Routes
     {
         private readonly IRouteRepository _routes;
         private readonly IMapper _mapper;
+        private readonly IUserRouteRepository _subscriber;
         private readonly IUserRepository _users;
         private readonly DifficultyCalculator _difficulty;
-        private readonly Subscription _subscription;
-        private readonly IUserRouteRepository _subscribtion;
-        
+        private readonly Subscription _subscription;      
 
         public RouteManager(IRouteRepository routes,
                             IMapper mapper, 
                             IUserRepository users,
+                            IUserRouteRepository userRoutes,
                             DifficultyCalculator difficulty,
                             Subscription subscription)
         {
             _routes = routes;
             _mapper = mapper;
+            _subscriber = userRoutes;
             _users = users;
             _difficulty = difficulty;
             _subscription = subscription;
@@ -36,7 +37,9 @@ namespace CycleTogether.Routes
 
         public Route Create(Route route, string userId)
         {
-            return Save(SetProperties(route, userId));
+             var newRoute = Save(SetProperties(route, userId));
+            _subscriber.Create(new DAL.Models.UserRouteEntry { RouteId = newRoute.Id, UserId = Guid.Parse(userId) });
+            return newRoute;
         }
 
         private RouteEntry SetProperties(Route route, string userId)
@@ -44,7 +47,6 @@ namespace CycleTogether.Routes
             var newRoute = _mapper.Map<RouteEntry>(route);
             newRoute.Difficulty = _difficulty.DifficultyLevel(route);
             newRoute.UserId = Guid.Parse(userId);
-            
             return newRoute;
         }
 
@@ -70,16 +72,10 @@ namespace CycleTogether.Routes
             }            
         }
 
-        public bool Subscribe(string id, Route route)
-        {
-            
-              return _subscription.AddMail(id, route);
-
-        }
         public Route Update(Route route, string currentUserId)
         {   
             
-            if (currentUserId == route.CreatedBy.ToString())
+            if (currentUserId == route.UserId.ToString())
             {
                 return SaveUpdated(route);
             }
@@ -88,9 +84,8 @@ namespace CycleTogether.Routes
         }
 
         private Route Save(RouteEntry route)
-        {                        
-            _routes.Create(route);
-            return _mapper.Map<Route>(route);
+        {   
+            return _mapper.Map<Route>(_routes.Create(route));
         }
 
         private Route SaveUpdated(Route route)
@@ -100,12 +95,13 @@ namespace CycleTogether.Routes
             return _mapper.Map<Route>(current);
         }
 
-        public void Unsubscribe(string id, Route route)
+        public bool Subscribe(Guid userId, Guid routeId)
+        {            
+              return _subscription.Subscribe(userId, routeId);
+        }
+        public void Unsubscribe(Guid userId, Guid routeId)
         {
-            var userFromRoute = new UserRoute {RouteId = route.Id, UserId = Guid.Parse(id) };
-            
-                //_subscription.Unsubscribe(id, current);
-            
+            _subscription.Unsubscribe(new DAL.Models.UserRouteEntry { RouteId = routeId, UserId = userId });
         }
 
     }

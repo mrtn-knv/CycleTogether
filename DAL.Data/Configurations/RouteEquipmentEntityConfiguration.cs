@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace DAL.Data.Configurations
 {
-    public class RouteEquipmentEntityConfiguration : IEntityTypeConfiguration<RouteEquipment>
+    public class RouteEquipmentEntityConfiguration : IEntityTypeConfiguration<RouteEquipmentEntry>
     {
-        public void Configure(EntityTypeBuilder<RouteEquipment> builder)
+        public void Configure(EntityTypeBuilder<RouteEquipmentEntry> builder)
         {
             builder.HasKey(re => new { re.EquipmentId, re.RouteId });
             builder.HasOne(re => re.Route)

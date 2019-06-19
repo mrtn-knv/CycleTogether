@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using CycleTogether.Contracts;
 using Microsoft.AspNetCore.Authorization;
+using WebModels;
 
 namespace CycleTogetherWeb.Controllers
 {
@@ -18,9 +19,9 @@ namespace CycleTogetherWeb.Controllers
         }
                 
         [HttpPost("{routeId}/invite")]
-        public void SendInvitation([FromBody]List<string> emails, string routeId)
+        public void SendInvitation([FromBody]List<User> users, string routeId)
         {
-            _notificator.SendInvitation(routeId, emails);
+            _notificator.SendInvitation(routeId, users);
         }
 
         [AllowAnonymous]

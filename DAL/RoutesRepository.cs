@@ -19,17 +19,5 @@ namespace DAL
             
             GetAll().FirstOrDefault(r => r.Id == routeId).Pictures.Add(image);
         }
-
-        public void Subscribe(string id, RouteEntry route)
-        {
-            //TODO
-            route.UserRoutes.Add(new UserRoute {RouteId = route.Id, UserId = Guid.Parse(id) });
-        }
-
-        public void Unsubscribe(string id, RouteEntry route)
-        {
-            //TODO
-            route.UserRoutes.Where(ur => ur.Id == route.Id && ur.UserId == Guid.Parse(id));
-        }
     }
 }

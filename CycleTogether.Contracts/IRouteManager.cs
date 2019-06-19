@@ -11,7 +11,7 @@ namespace CycleTogether.Contracts
         void Remove(Guid id, string userId);
         Route Get(Guid id);
         IEnumerable<Route> GetAll();
-        bool Subscribe(string email, Route route);
-        void Unsubscribe(string email, Route route);
+        bool Subscribe(Guid userId, Guid routeId);
+        void Unsubscribe(Guid userId, Guid routeId);
     }
 }

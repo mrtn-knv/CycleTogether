@@ -5,7 +5,7 @@ using System.Text;
 
 namespace DAL.Contracts
 {
-    public interface IUserRouteRepository : IRepository<UserRoute>
+    public interface IUserRouteRepository : IRepository<UserRouteEntry>
     {
     }
 }

@@ -12,7 +12,7 @@ namespace DAL
     public class DbRepository<TEntity> : IRepository<TEntity>, IDisposable  where TEntity : EntityBase
     {
         private readonly CycleTogetherDbContext _context;
-        private DbSet<TEntity> dbSet;
+        private readonly DbSet<TEntity> dbSet;
 
         public DbRepository(CycleTogetherDbContext context) 
         {
