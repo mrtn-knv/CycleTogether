@@ -91,9 +91,12 @@ namespace DAL.Data.Migrations
 
                     b.Property<Guid>("RouteId");
 
-                    b.Property<Guid>("Id");
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
 
                     b.HasKey("EquipmentId", "RouteId");
+
+                    b.HasAlternateKey("Id");
 
                     b.HasIndex("RouteId");
 
@@ -134,9 +137,12 @@ namespace DAL.Data.Migrations
 
                     b.Property<Guid>("EquipmentId");
 
-                    b.Property<Guid>("Id");
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
 
                     b.HasKey("UserId", "EquipmentId");
+
+                    b.HasAlternateKey("Id");
 
                     b.HasIndex("EquipmentId");
 
@@ -149,9 +155,12 @@ namespace DAL.Data.Migrations
 
                     b.Property<Guid>("RouteId");
 
-                    b.Property<Guid>("Id");
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
 
                     b.HasKey("UserId", "RouteId");
+
+                    b.HasAlternateKey("Id");
 
                     b.HasIndex("RouteId");
 

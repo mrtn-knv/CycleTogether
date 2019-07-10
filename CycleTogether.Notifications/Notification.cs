@@ -53,7 +53,9 @@ namespace CycleTogether.Notifications
         public void SendReminder(string routeId)
         {
             var sendDate = _routes.Get(Guid.Parse(routeId)).StartTime.AddDays(-1).Day;
-            var job = BackgroundJob.Schedule(() => Send(NotificationEmail(routeId)), TimeSpan.FromDays(sendDate));            
+            var job = BackgroundJob.Schedule(
+                () => Send(NotificationEmail(routeId)),
+                TimeSpan.FromDays(sendDate));            
         }
 
         private Email NotificationEmail(string routeId)

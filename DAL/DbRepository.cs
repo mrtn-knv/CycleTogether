@@ -3,7 +3,6 @@ using DAL.Contracts;
 using System;
 using System.Collections.Generic;
 using DAL.Data;
-using AutoMapper;
 using DAL.Models;
 using System.Linq;
 

@@ -7,5 +7,6 @@ namespace DAL.Contracts
 {
     public interface IUserRouteRepository : IRepository<UserRouteEntry>
     {
+        bool Exists(UserRouteEntry userRoute);
     }
 }

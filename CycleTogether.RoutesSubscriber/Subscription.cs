@@ -19,9 +19,11 @@ namespace CycleTogether.RoutesSubscriber
         }
         public bool Subscribe(Guid userId, Guid routeId)
         {
-            if (Requirements.Match(_users.GetById(userId), _routes.GetById(routeId)))
+            var subscribed = new UserRouteEntry { RouteId = routeId, UserId = userId };
+            if (Requirements.Match(_users.GetById(userId), _routes.GetById(routeId)) &&
+                                   _subscriber.Exists(subscribed) == false)
             {
-                _subscriber.Create(new UserRouteEntry { UserId = userId, RouteId= routeId });
+                _subscriber.Create(subscribed);
                 return true;
             }
             return false;
@@ -33,7 +35,7 @@ namespace CycleTogether.RoutesSubscriber
             {
                 _subscriber.Delete(userFromRoute.Id);
                 return true;
-            }            
+            }
             return false;
         }
 

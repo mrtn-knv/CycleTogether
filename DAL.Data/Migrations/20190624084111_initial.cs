@@ -73,11 +73,13 @@ namespace DAL.Data.Migrations
                 columns: table => new
                 {
                     UserId = table.Column<Guid>(nullable: false),
-                    EquipmentId = table.Column<Guid>(nullable: false)
+                    EquipmentId = table.Column<Guid>(nullable: false),
+                    Id = table.Column<Guid>(nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_UserEquipments", x => new { x.UserId, x.EquipmentId });
+                    table.UniqueConstraint("AK_UserEquipments_Id", x => x.Id);
                     table.ForeignKey(
                         name: "FK_UserEquipments_Equipments_EquipmentId",
                         column: x => x.EquipmentId,
@@ -117,11 +119,13 @@ namespace DAL.Data.Migrations
                 columns: table => new
                 {
                     RouteId = table.Column<Guid>(nullable: false),
-                    EquipmentId = table.Column<Guid>(nullable: false)
+                    EquipmentId = table.Column<Guid>(nullable: false),
+                    Id = table.Column<Guid>(nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_RouteEquipments", x => new { x.EquipmentId, x.RouteId });
+                    table.UniqueConstraint("AK_RouteEquipments_Id", x => x.Id);
                     table.ForeignKey(
                         name: "FK_RouteEquipments_Equipments_EquipmentId",
                         column: x => x.EquipmentId,
@@ -141,11 +145,13 @@ namespace DAL.Data.Migrations
                 columns: table => new
                 {
                     UserId = table.Column<Guid>(nullable: false),
-                    RouteId = table.Column<Guid>(nullable: false)
+                    RouteId = table.Column<Guid>(nullable: false),
+                    Id = table.Column<Guid>(nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_UserRoutes", x => new { x.UserId, x.RouteId });
+                    table.UniqueConstraint("AK_UserRoutes_Id", x => x.Id);
                     table.ForeignKey(
                         name: "FK_UserRoutes_Routes_RouteId",
                         column: x => x.RouteId,

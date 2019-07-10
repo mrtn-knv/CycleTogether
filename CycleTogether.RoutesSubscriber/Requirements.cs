@@ -11,9 +11,9 @@ namespace CycleTogether.RoutesSubscriber
         {
             //user.Terrain, user.Difficulty, user.Endurance,
             if (EquipmentMatch(user.UserEquipments, route.RouteEquipments) &&
-                user.Endurance == route.Endurance &&
-                user.Terrain == route.Terrain &&
-                user.Difficulty == route.Difficulty)
+                user.Endurance >= route.Endurance &&
+                user.Terrain >= route.Terrain &&
+                user.Difficulty >= route.Difficulty)
             {
                 return true;
             }

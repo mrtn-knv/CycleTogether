@@ -1,21 +1,24 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using System;
+using System.Runtime.Serialization;
 
 namespace CycleTogether.Enums
 {
     public enum Terrain
     {
         None,
-        Ragged,
         Flat,
+        Ragged,
         Extreme
     }
 
     public enum TypeOfRoute
     {
         None,
-        MountainBike,
         Family,
         Classic,
+        MountainBike,
     }
 
     public enum Difficulty
@@ -25,6 +28,7 @@ namespace CycleTogether.Enums
         Intermediate,
         Pro
     }
+
     public enum Endurance
     {
         None,

@@ -17,6 +17,7 @@ namespace WebModels
         public bool IsComplete { get; set; }
         public IEnumerable<UserRoute> Subscribed { get; set; }
         public IEnumerable<RouteEquipments> Equipments{ get; set; }
+        public IEnumerable<Guid> EquipmentsIds { get; set; }
         public IEnumerable<Picture> Images { get; set; }
         public Terrain Terrain { get; set; }
         public Endurance Endurance { get; set; }

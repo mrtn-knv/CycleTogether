@@ -9,7 +9,7 @@ using CycleTogether.Claims;
 namespace CycleTogetherWeb.Controllers
 {
     //[Authorize]
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class ImageController : ControllerBase
     {
@@ -20,13 +20,13 @@ namespace CycleTogetherWeb.Controllers
             _images = images;
             _claims = claims;
         }
-        [HttpGet("All/{routeId}")]
+        [HttpGet("all/{routeId}")]
         public List<Picture> GetAll(Guid routeId)
         {
            return _images.GetAll(routeId.ToString());
         }
 
-        [HttpGet("{imageId}")]
+        [HttpGet("all/{routeId}/{imageId}")]
         public Picture GetImage(Guid imageId)
         {             
            return _images.Get(imageId.ToString());

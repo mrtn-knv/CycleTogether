@@ -7,6 +7,7 @@ namespace WebModels
     public class RouteEquipments
     {
         public Guid Id { get; set; }
-        public string Name { get; set; }
+        public Guid RouteId { get; set; }
+        public Guid EquipmentId { get; set; }
     }
 }

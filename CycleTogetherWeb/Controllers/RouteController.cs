@@ -9,7 +9,7 @@ using CycleTogether.Claims;
 namespace CycleTogetherWeb.Controllers
 {
     [Authorize]
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class RouteController : ControllerBase
     {
@@ -21,20 +21,26 @@ namespace CycleTogetherWeb.Controllers
             _claims = claimsManager;
         }
 
-        [HttpGet("All")]
+        [HttpGet("all")]
         public IEnumerable<Route> GetAll()
         {
             return _routes.GetAll();
         }
 
-        // GET: api/Route/5
-        [HttpGet("{id}", Name = "Get")]
+        // GET: /Route/5
+        [HttpGet("{id}", Name = "id")]
         public Route Get(Guid id)
         {            
             return _routes.Get(id);
         }
 
-        // POST: api/Route/new
+        [HttpGet("all/mytrips")]
+        public IEnumerable<Route> GetAllByUser()
+        {            
+            return _routes.AllByUser(Guid.Parse(_claims.Id()));
+        }
+
+        // POST: /Route/new
         [HttpPost("new")]
         public Route Create([FromBody] Route route)
         {            
@@ -42,18 +48,18 @@ namespace CycleTogetherWeb.Controllers
             return _routes.Create(route, id);
         }
 
-        // POST: api/Route/subscribe
+        // POST: /Route/subscribe
         [HttpPost("subscribe")]
-        public IActionResult Subscribe([FromBody]Route route)
+        public bool Subscribe([FromBody]Route route)
         {
             var currentUserId = Guid.Parse(_claims.Id());
             if (_routes.Subscribe(currentUserId, route.Id))
-                return Ok();
+                return true;
             
-            return Content("You can't subscribe for this trip.");          
+            return false;          
         }
 
-        // POST: api/Route/unsubscribe
+        // POST: /Route/unsubscribe
         [HttpPost("unsubscribe")]
         public IActionResult Unsubscribe([FromBody]Route route)
         {
@@ -62,7 +68,7 @@ namespace CycleTogetherWeb.Controllers
             return Ok();
         }
 
-        // POST: api/Route/edit
+        // POST: /Route/edit
         [HttpPost("edit")]
         public Route Update([FromBody]Route route)
         {
@@ -70,7 +76,7 @@ namespace CycleTogetherWeb.Controllers
             return _routes.Update(route, currentUserId);
         }
 
-        // DELETE: api/ApiWithActions/5
+        // DELETE: /ApiWithActions/5
         [HttpDelete("{id}")]
         public void Delete(Guid id)
         {

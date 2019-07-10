@@ -9,6 +9,7 @@ using DAL.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http;
 
+
 namespace CycleTogetherWeb
 {
     public class Startup
@@ -38,12 +39,15 @@ namespace CycleTogetherWeb
                 options.UseLazyLoadingProxies()
                     .UseSqlServer(Configuration["ConnectionString:DefaultConnectionString"]));
 
-
             var appSettings = appSettingsSection.Get<AppSettings>();
             var key = Encoding.ASCII.GetBytes(appSettings.Secret);
             services.AddAuthentication(appSettings, key);
             services.SetupServices();
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2).AddJsonOptions(options => 
+            {
+                options.SerializerSettings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
+                options.SerializerSettings.NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore;
+            });
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
         }
 

@@ -13,5 +13,6 @@ namespace CycleTogether.Contracts
         IEnumerable<Route> GetAll();
         bool Subscribe(Guid userId, Guid routeId);
         void Unsubscribe(Guid userId, Guid routeId);
+        IEnumerable<Route> AllByUser(Guid userId);
     }
 }

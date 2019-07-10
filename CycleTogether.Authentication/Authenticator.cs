@@ -1,10 +1,11 @@
-﻿using AutoMapper;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using AutoMapper;
 using CycleTogether.Contracts;
 using DAL.Contracts;
 using DAL.Models;
-using Microsoft.Extensions.Options;
 using WebModels;
-using CycleTogether.BindingModels;
 
 namespace CycleTogether.Authentication
 {
@@ -13,18 +14,34 @@ namespace CycleTogether.Authentication
         private readonly IUserRepository _users;
         private readonly IMapper _mapper;
         private readonly TokenGenerator _tokenGenerator;
+        private readonly IUserEquipmentRepository _userEquipments;
 
-        public Authenticator(IMapper mapper, IUserRepository users, TokenGenerator tokenGenerator)
+        public Authenticator(IMapper mapper, IUserRepository users, TokenGenerator tokenGenerator, IUserEquipmentRepository userEquipments)
         {
             _users = users;
             _mapper = mapper;
             _tokenGenerator = tokenGenerator;
+            _userEquipments = userEquipments;
         }
 
-        public User Register(User user)
+        public void Register(User user)
         {
-            user.Password = this._tokenGenerator.HashPassword(user.Password);
-            return SaveUser(user);
+            if (!_users.GetAll().Any(u => u.Email == user.Email))
+            {
+                user.Password = this._tokenGenerator.HashPassword(user.Password);
+                var savedUser = SaveUser(user);
+                SaveUserEquipments(savedUser.Id, user.Equipments);
+            }
+            
+        }
+
+        private void SaveUserEquipments(Guid id, List<Guid> equipments)
+        {
+            if (equipments != null)
+            foreach (var equipment in equipments)
+            {
+                _userEquipments.Create(new UserEquipmentEntry { UserId = id, EquipmentId = equipment });
+            }
         }
 
         public string Authenticate(string email, string password)
@@ -34,9 +51,8 @@ namespace CycleTogether.Authentication
 
         private User SaveUser(User user)
         {
-            UserEntry entityUser = _mapper.Map<UserEntry>(user);
-            entityUser = _users.Create(entityUser);
-            return _mapper.Map<User>(entityUser);
+            var newUser = _users.Create(_mapper.Map<UserEntry>(user));            
+            return _mapper.Map<User>(newUser);
         }
     }
 }

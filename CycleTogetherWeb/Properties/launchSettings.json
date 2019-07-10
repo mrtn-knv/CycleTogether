@@ -12,7 +12,7 @@
     "IIS Express": {
       "commandName": "IISExpress",
       "launchBrowser": true,
-      "launchUrl": "api/signin",
+      "launchUrl": "",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
@@ -20,8 +20,8 @@
     "CycleTogetherWeb": {
       "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "api/signin",
-      "applicationUrl": "http://localhost:4000",
+      "launchUrl": "",
+      "applicationUrl": "http://localhost:55300",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }

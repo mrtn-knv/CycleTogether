@@ -1,9 +1,7 @@
 ﻿using DAL.Contracts;
 using DAL.Data;
 using DAL.Models;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 
 namespace DAL
 {
@@ -14,5 +12,9 @@ namespace DAL
 
         }
 
+        public bool Exists(UserRouteEntry userRoute)
+        {
+            return GetAll().Any(ur => ur.UserId == userRoute.UserId && ur.RouteId == userRoute.RouteId);           
+        }
     }
 }
