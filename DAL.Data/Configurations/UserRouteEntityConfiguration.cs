@@ -8,7 +8,7 @@ namespace DAL.Data.Configurations
     {
         public void Configure(EntityTypeBuilder<UserRouteEntry> builder)
         {
-            builder.HasKey(ur => new { ur.UserId, ur.RouteId });
+            builder.HasKey(ur => ur.Id);
             builder.HasOne(ur => ur.User)
                    .WithMany(u => u.UserRoutes)
                    .HasForeignKey(ur => ur.UserId)

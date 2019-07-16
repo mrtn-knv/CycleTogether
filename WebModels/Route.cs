@@ -23,6 +23,6 @@ namespace WebModels
         public Endurance Endurance { get; set; }
         public TypeOfRoute Type { get; set; }
         public Difficulty Difficulty { get; set; }
-        
+
     }
 }
