@@ -43,6 +43,20 @@ namespace CycleTogether.Routes
             return newRoute;
         }
 
+        public IEnumerable<Route> GetUsersSubscriptions(string userId)
+        {
+            return UsersSubscribtions(userId);
+        }
+
+        private IEnumerable<Route> UsersSubscribtions(string userId)
+        {
+            var userRoutes = _subscriber.GetAll().Where(ur => ur.UserId == Guid.Parse(userId));
+            foreach (var userRoute in userRoutes)
+            {
+              yield return _mapper.Map<Route>(_routes.GetById(userRoute.RouteId));
+            }
+        }
+
         public IEnumerable<Route> AllByUser(Guid userId)
         {
            return _routes.AllByUser(userId).Select(route => _mapper.Map<Route>(route));
@@ -87,6 +101,7 @@ namespace CycleTogether.Routes
                 catch (NullReferenceException ex)
                 {
 
+                    //TODO: Add Logger.
 
                 }
 
@@ -111,7 +126,7 @@ namespace CycleTogether.Routes
             }
             catch (Exception ex)
             {
-
+                //TODO: Add Logger.
                 throw;
             }
 
@@ -119,13 +134,16 @@ namespace CycleTogether.Routes
 
         }
 
-        public void Remove(Guid routeId, string userId)
+        public bool Remove(Guid routeId, string userId)
         {
             var current = _routes.GetById(routeId);
             if (current.UserId.ToString() == userId)
             {
                 _routes.Delete(routeId);
+                return true;
             }
+
+            return false;
         }
 
         public Route Update(Route route, string currentUserId)
@@ -156,14 +174,14 @@ namespace CycleTogether.Routes
         {
             return _subscription.Subscribe(userId, routeId);
         }
-        public void Unsubscribe(Guid userId, Guid routeId)
+        public bool Unsubscribe(Guid userId, Guid routeId)
         {
             var current = _subscriber.GetAll().FirstOrDefault(ur => ur.RouteId == routeId && ur.UserId == userId);
             if (current != null)
             {
-                _subscription.Unsubscribe(current);
+               return _subscription.Unsubscribe(current);
             }
-            
+            return false;
         }
 
     }

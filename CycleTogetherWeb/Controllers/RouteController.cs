@@ -27,6 +27,13 @@ namespace CycleTogetherWeb.Controllers
             return _routes.GetAll();
         }
 
+        [HttpGet("subscribed")]
+        public IEnumerable<Route> GetUserSubscribed()
+        {
+            var userId = _claims.Id();
+            return _routes.GetUsersSubscriptions(userId);
+        }
+
         // GET: /Route/5
         [HttpGet("{id}", Name = "id")]
         public Route Get(Guid id)
@@ -64,8 +71,12 @@ namespace CycleTogetherWeb.Controllers
         public IActionResult Unsubscribe([FromBody]Route route)
         {
             var currentUserId = Guid.Parse(_claims.Id());
-            _routes.Unsubscribe(currentUserId, route.Id);
-            return Ok();
+            if (_routes.Unsubscribe(currentUserId, route.Id))
+            {
+                return Ok(true);
+            }
+
+            return Ok(false);
         }
 
         // POST: /Route/edit
@@ -78,10 +89,15 @@ namespace CycleTogetherWeb.Controllers
 
         // DELETE: /ApiWithActions/5
         [HttpDelete("{id}")]
-        public void Delete(Guid id)
+        public IActionResult Delete(Guid id)
         {
             var userId = _claims.Id();
-            _routes.Remove(id, userId);
+            if (_routes.Remove(id, userId))
+            {
+                return Ok(true);
+            }
+
+            return Ok(false);
         }
     }
 }

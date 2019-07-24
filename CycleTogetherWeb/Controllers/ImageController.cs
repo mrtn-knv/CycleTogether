@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using WebModels;
 using CycleTogether.Claims;
-
+using System.Web.Http.Cors;
 
 namespace CycleTogetherWeb.Controllers
 {
@@ -32,9 +32,12 @@ namespace CycleTogetherWeb.Controllers
            return _images.Get(imageId.ToString());
         }
 
+        [EnableCors(origins:"*", headers:"*", methods: "*")]
         [HttpPost("{routeId}")]
-        public Picture Upload([FromBody]string imagePath, string routeId)
+        public Picture Upload([FromBody]object pic)
         {
+            var imagePath = "asadasd";
+            var routeId = "testtest";
             return _images.Upload(imagePath, routeId);
         } 
 

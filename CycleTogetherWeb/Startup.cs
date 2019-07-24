@@ -8,6 +8,7 @@ using CycleTogether.BindingModels;
 using DAL.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Cors;
 
 
 namespace CycleTogetherWeb
@@ -43,6 +44,7 @@ namespace CycleTogetherWeb
             var key = Encoding.ASCII.GetBytes(appSettings.Secret);
             services.AddAuthentication(appSettings, key);
             services.SetupServices();
+            services.AddCors();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2).AddJsonOptions(options => 
             {
                 options.SerializerSettings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
