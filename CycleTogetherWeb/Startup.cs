@@ -8,8 +8,7 @@ using CycleTogether.BindingModels;
 using DAL.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Cors;
-
+using StackExchange.Redis;
 
 namespace CycleTogetherWeb
 {
@@ -35,16 +34,17 @@ namespace CycleTogetherWeb
             var emails = new EmailProperties();
             Configuration.Bind("EmailProperties", emails);
             services.AddSingleton(emails);
+            services.AddSingleton(RedisDatabase());
 
             services.AddDbContext<CycleTogetherDbContext>(options =>
                 options.UseLazyLoadingProxies()
                     .UseSqlServer(Configuration["ConnectionString:DefaultConnectionString"]));
-
+            
+            services.AddCors();
             var appSettings = appSettingsSection.Get<AppSettings>();
             var key = Encoding.ASCII.GetBytes(appSettings.Secret);
             services.AddAuthentication(appSettings, key);
             services.SetupServices();
-            services.AddCors();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2).AddJsonOptions(options => 
             {
                 options.SerializerSettings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
@@ -63,8 +63,9 @@ namespace CycleTogetherWeb
                 .AllowAnyHeader());
 
             app.UseAuthentication();
-
+            
             app.UseMvc();
         }
+        private IDatabase RedisDatabase() => ConnectionMultiplexer.Connect("localhost").GetDatabase();
     }
 }

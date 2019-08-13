@@ -5,6 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="StackExchange.Redis" Version="2.0.601" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\CycleTogether.BindingModels\CycleTogether.JSONBindingModels.csproj" />
     <ProjectReference Include="..\CycleTogether.Contracts\CycleTogether.Contracts.csproj" />
   </ItemGroup>

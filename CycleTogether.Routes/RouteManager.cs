@@ -9,6 +9,7 @@ using CycleTogether.RoutesSubscriber;
 using CycleTogether.Contracts;
 using System.Linq;
 
+
 namespace CycleTogether.Routes
 {
     public class RouteManager : IRouteManager
@@ -19,12 +20,14 @@ namespace CycleTogether.Routes
         private readonly DifficultyCalculator _difficulty;
         private readonly Subscription _subscription;
         private readonly IRouteEquipmentRepositoy _routeEquipments;
+        private readonly IRoutesCache _cache;
 
         public RouteManager(IRouteRepository routes,
                             IMapper mapper,
                             IUserRouteRepository userRoutes,
                             DifficultyCalculator difficulty,
                             Subscription subscription,
+                            IRoutesCache cache,
                             IRouteEquipmentRepositoy routeEquipments)
         {
             _routes = routes;
@@ -33,13 +36,16 @@ namespace CycleTogether.Routes
             _difficulty = difficulty;
             _subscription = subscription;
             _routeEquipments = routeEquipments;
+            _cache = cache;
+
         }
 
         public Route Create(Route route, string userId)
-        {           
+        {
             var newRoute = Save(SetProperties(route, userId));
             SaveRouteEquipments(newRoute, route.EquipmentsIds);
             _subscriber.Create(new UserRouteEntry { RouteId = newRoute.Id, UserId = Guid.Parse(userId) });
+            _cache.AddItem(newRoute);
             return newRoute;
         }
 
@@ -50,25 +56,36 @@ namespace CycleTogether.Routes
 
         private IEnumerable<Route> UsersSubscribtions(string userId)
         {
-            var userRoutes = _subscriber.GetAll().Where(ur => ur.UserId == Guid.Parse(userId));
-            foreach (var userRoute in userRoutes)
+            var subscriptions = _cache.UserSubscriptions(userId);
+            if (subscriptions == null)
             {
-              yield return _mapper.Map<Route>(_routes.GetById(userRoute.RouteId));
+                var userRoutes = _subscriber.GetAll().Where(ur => ur.UserId == Guid.Parse(userId));
+                var routes = userRoutes.Select(userRoute => _mapper.Map<Route>(_routes.GetById(userRoute.RouteId)));
+                _cache.AddUserSubsciptions(routes.ToList(), userId);
+                return _cache.UserSubscriptions(userId);
             }
+            return subscriptions;
         }
 
         public IEnumerable<Route> AllByUser(Guid userId)
         {
-           return _routes.AllByUser(userId).Select(route => _mapper.Map<Route>(route));
+            var userRoutes = _cache.AllBy(userId.ToString());
+            if (userRoutes == null)
+            {
+                var routes = _routes.AllByUser(userId).Select(route => _mapper.Map<Route>(route));
+                _cache.AddUserRoutes(routes.ToList(), userId.ToString());
+                return _cache.UserRoutes(userId.ToString());
+            }
+            return userRoutes;
         }
 
         private void SaveRouteEquipments(Route newRoute, IEnumerable<Guid> equipmentIds)
         {
             foreach (var equipmentId in equipmentIds)
             {
-                _routeEquipments.Create(new RouteEquipmentEntry() {RouteId = newRoute.Id, EquipmentId = equipmentId });
+                _routeEquipments.Create(new RouteEquipmentEntry() { RouteId = newRoute.Id, EquipmentId = equipmentId });
             }
-            
+
         }
 
         private RouteEntry SetProperties(Route route, string userId)
@@ -82,8 +99,15 @@ namespace CycleTogether.Routes
 
         public IEnumerable<Route> GetAll()
         {
-            FillAllEquipmentsForRoutes();
-            return _routes.GetAll().Select(route => _mapper.Map<Route>(route));
+            var all = _cache.All();
+            if (all == null)
+            {
+                FillAllEquipmentsForRoutes();
+                var routes = _routes.GetAll().Select(route => _mapper.Map<Route>(route));
+                _cache.AddAll(routes.ToList());
+                return _cache.All();
+            }
+            return all;
         }
 
         private void FillAllEquipmentsForRoutes()
@@ -113,6 +137,7 @@ namespace CycleTogether.Routes
         {
             try
             {
+                _cache.GetItem(id.ToString());
                 var route = _routes.GetById(id);
                 route.UserRoutes = _subscriber.GetAll().Where(subscribed => subscribed.RouteId == route.Id).ToList();
                 var found = _mapper.Map<Route>(route);
@@ -127,11 +152,8 @@ namespace CycleTogether.Routes
             catch (Exception ex)
             {
                 //TODO: Add Logger.
-                throw;
+                throw; 
             }
-
-
-
         }
 
         public bool Remove(Guid routeId, string userId)
@@ -140,6 +162,7 @@ namespace CycleTogether.Routes
             if (current.UserId.ToString() == userId)
             {
                 _routes.Delete(routeId);
+                _cache.RemoveItem(_mapper.Map<Route>(current));
                 return true;
             }
 
@@ -179,7 +202,7 @@ namespace CycleTogether.Routes
             var current = _subscriber.GetAll().FirstOrDefault(ur => ur.RouteId == routeId && ur.UserId == userId);
             if (current != null)
             {
-               return _subscription.Unsubscribe(current);
+                return _subscription.Unsubscribe(current);
             }
             return false;
         }

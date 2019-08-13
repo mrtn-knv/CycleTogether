@@ -12,15 +12,15 @@ namespace CycleTogether.Authentication
 {
     public class TokenGenerator
     {
-        private readonly byte[] secretTokenKey;
-        private readonly int tokenExpirationInMinutes;
+        private readonly byte[] _secretTokenKey;
+        private readonly int _tokenExpirationInMinutes;
 
         private readonly IUserRepository users;
 
         public TokenGenerator(IOptions<AppSettings> appSettings, IUserRepository users)
         {
-            this.secretTokenKey = Encoding.ASCII.GetBytes(appSettings.Value.Secret);
-            this.tokenExpirationInMinutes = 30;
+            this._secretTokenKey = Encoding.ASCII.GetBytes(appSettings.Value.Secret);
+            this._tokenExpirationInMinutes = 30;
 
             this.users = users;
         }
@@ -47,9 +47,9 @@ namespace CycleTogether.Authentication
                     new Claim(ClaimTypes.Name, user.FirstName),
                     new Claim(ClaimTypes.Surname, user.LastName)
                 }),
-                Expires = DateTime.UtcNow.AddMinutes(tokenExpirationInMinutes),
+                Expires = DateTime.UtcNow.AddMinutes(_tokenExpirationInMinutes),
                 SigningCredentials = new SigningCredentials(
-                    key: new SymmetricSecurityKey(secretTokenKey),
+                    key: new SymmetricSecurityKey(_secretTokenKey),
                     algorithm: SecurityAlgorithms.HmacSha256Signature)
             };
         }
