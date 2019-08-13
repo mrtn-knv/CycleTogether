@@ -15,6 +15,7 @@ namespace CycleTogetherWeb.Controllers
     {
         private readonly IRouteManager _routes;
         private readonly ClaimsRetriever _claims;
+        
         public RouteController(IRouteManager routes, ClaimsRetriever claimsManager)
         {
             _routes = routes;
@@ -34,18 +35,19 @@ namespace CycleTogetherWeb.Controllers
             return _routes.GetUsersSubscriptions(userId);
         }
 
+        [HttpGet("all/mytrips")]
+        public IEnumerable<Route> GetAllByUser()
+        {
+            return _routes.AllByUser(Guid.Parse(_claims.Id()));
+        }
+
         // GET: /Route/5
         [HttpGet("{id}", Name = "id")]
         public Route Get(Guid id)
         {            
             return _routes.Get(id);
         }
-
-        [HttpGet("all/mytrips")]
-        public IEnumerable<Route> GetAllByUser()
-        {            
-            return _routes.AllByUser(Guid.Parse(_claims.Id()));
-        }
+        
 
         // POST: /Route/new
         [HttpPost("new")]

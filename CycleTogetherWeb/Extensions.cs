@@ -16,6 +16,7 @@ using CycleTogether.Notifications;
 using CycleTogether.Claims;
 using CycleTogether.BindingModels;
 using CycleTogether.Notification;
+using CycleTogether.Cache;
 
 namespace CycleTogetherWeb
 {
@@ -42,7 +43,8 @@ namespace CycleTogetherWeb
             services.AddScoped<INotification, Notification>();
             services.AddScoped<IUserEquipmentRepository, UserEquipmentsRepository>();
             services.AddScoped<IRouteEquipmentRepositoy, RouteEquipmentRepository>();
-            
+            services.AddSingleton<IRoutesCache, RoutesCache>();
+            services.AddSingleton<IEquipmentCache, EquipmentsCache>();
             
         }
 

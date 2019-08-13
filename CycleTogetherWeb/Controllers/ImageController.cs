@@ -5,10 +5,12 @@ using System.Collections.Generic;
 using WebModels;
 using CycleTogether.Claims;
 using System.Web.Http.Cors;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 
 namespace CycleTogetherWeb.Controllers
 {
-    //[Authorize]
+    [Authorize]
     [Route("[controller]")]
     [ApiController]
     public class ImageController : ControllerBase
@@ -32,13 +34,16 @@ namespace CycleTogetherWeb.Controllers
            return _images.Get(imageId.ToString());
         }
 
-        [EnableCors(origins:"*", headers:"*", methods: "*")]
+        
         [HttpPost("{routeId}")]
-        public Picture Upload([FromBody]object pic)
+        public IActionResult Upload(string routeId, IFormFile pic)
         {
-            var imagePath = "asadasd";
-            var routeId = "testtest";
-            return _images.Upload(imagePath, routeId);
+            if (pic != null)
+            {
+                return Ok(_images.Upload(pic, routeId));
+            }
+
+            return Content("You cannot upload empty file.");
         } 
 
         [HttpDelete("{routeId}/{imageId}")]

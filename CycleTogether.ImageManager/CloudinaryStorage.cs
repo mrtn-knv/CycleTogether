@@ -1,15 +1,15 @@
-﻿using CloudinaryDotNet;
+﻿using AutoMapper;
+using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
+using CycleTogether.BindingModels;
 using CycleTogether.Contracts;
 using DAL.Contracts;
+using DAL.Models;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
-using WebModels;
-using AutoMapper;
-using DAL.Models;
 using System.Linq;
-using Microsoft.Extensions.Options;
-using CycleTogether.BindingModels;
+using WebModels;
 
 namespace CycleTogether.ImageManager
 {
@@ -22,10 +22,11 @@ namespace CycleTogether.ImageManager
         private readonly IUserRepository _users;
         private readonly IRouteRepository _routes;
         private readonly CloudinaryAccount _credentials;
-        public CloudinaryStorage(IImageRepository images, 
-                                 IMapper mapper, 
-                                 IUserRepository users, 
-                                 IRouteRepository routes, 
+   
+        public CloudinaryStorage(IImageRepository images,
+                                 IMapper mapper,
+                                 IUserRepository users,
+                                 IRouteRepository routes,
                                  CloudinaryAccount credentials)
         {
             _credentials = credentials;
@@ -38,9 +39,9 @@ namespace CycleTogether.ImageManager
 
         }
 
-        public Picture Upload(string imagePath, string routeId)
+        public Picture Upload(IFormFile pic, string routeId)
         {
-            var image = UploadToCoudinary(imagePath);
+            var image = UploadToCoudinary(pic);
             return Save(image, routeId);
         }
 
@@ -101,13 +102,10 @@ namespace CycleTogether.ImageManager
             };
         }
 
-        private ImageUploadResult UploadToCoudinary(string imagePath)
+        private ImageUploadResult UploadToCoudinary(IFormFile pic)
         {
-            var uploadParams = new ImageUploadParams()
-            {
-                File = new FileDescription(@imagePath),
-            };
-            return _cloudinary.Upload(uploadParams);
+            var image = new ImageUploadParams() {File = new FileDescription(pic.Name, pic.OpenReadStream()) };           
+            return _cloudinary.Upload(image);
         }
 
     }

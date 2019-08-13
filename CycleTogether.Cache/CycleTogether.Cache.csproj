@@ -5,14 +5,18 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AutoMapper" Version="8.1.1" />
     <PackageReference Include="StackExchange.Redis" Version="2.0.601" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DAL.Contracts\DAL.Contracts.csproj" />
-    <ProjectReference Include="..\DAL.Models\DAL.Models.csproj" />
+    <ProjectReference Include="..\CycleTogether.Contracts\CycleTogether.Contracts.csproj" />
     <ProjectReference Include="..\WebModels\WebModels.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\..\..\..\..\..\Program Files\dotnet\sdk\NuGetFallbackFolder\newtonsoft.json\11.0.2\lib\netstandard2.0\Newtonsoft.Json.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>
