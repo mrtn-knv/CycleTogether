@@ -3,37 +3,41 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using WebModels;
-
+using CycleTogether.Claims;
+using System.Web.Http.Cors;
 
 namespace CycleTogetherWeb.Controllers
 {
     //[Authorize]
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class ImageController : ControllerBase
     {
-        private readonly IPicture _images;
+        private readonly IGallery _images;
         private readonly ClaimsRetriever _claims;
-        public ImageController(IPicture images, ClaimsRetriever claims)
+        public ImageController(IGallery images, ClaimsRetriever claims)
         {
             _images = images;
             _claims = claims;
         }
-        [HttpGet("All/{routeId}")]
+        [HttpGet("all/{routeId}")]
         public List<Picture> GetAll(Guid routeId)
         {
            return _images.GetAll(routeId.ToString());
         }
 
-        [HttpGet("{imageId}")]
+        [HttpGet("all/{routeId}/{imageId}")]
         public Picture GetImage(Guid imageId)
         {             
            return _images.Get(imageId.ToString());
         }
 
+        [EnableCors(origins:"*", headers:"*", methods: "*")]
         [HttpPost("{routeId}")]
-        public Picture Upload([FromBody]string imagePath, string routeId)
+        public Picture Upload([FromBody]object pic)
         {
+            var imagePath = "asadasd";
+            var routeId = "testtest";
             return _images.Upload(imagePath, routeId);
         } 
 

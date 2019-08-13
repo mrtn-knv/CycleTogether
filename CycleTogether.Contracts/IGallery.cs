@@ -4,7 +4,7 @@ using WebModels;
 
 namespace CycleTogether.Contracts
 {
-    public interface IPicture
+    public interface IGallery
     {
         Picture Upload(string imagePath, string routeId);
         Picture Get(string publicId);

@@ -1,0 +1,35 @@
+﻿using System.Collections.Generic;
+using Microsoft.AspNetCore.Mvc;
+using CycleTogether.Contracts;
+using Microsoft.AspNetCore.Authorization;
+using WebModels;
+
+namespace CycleTogetherWeb.Controllers
+{
+    [Authorize]
+    [Route("[controller]")]
+    [ApiController]
+    public class NotificationController : ControllerBase
+    {
+        private readonly INotification _notificator;
+
+        public NotificationController(INotification notificator)
+        {
+            _notificator = notificator;
+        }
+                
+        [HttpPost("{routeId}/invite")]
+        public void SendInvitation([FromBody]List<User> users, string routeId)
+        {
+            _notificator.SendInvitation(routeId, users);
+        }
+
+        [AllowAnonymous]
+        [HttpPost("{routeId}/remind")]
+        public void Remind(string routeId)
+        {
+            _notificator.SendReminder(routeId);
+        }
+
+    }
+}

@@ -1,7 +1,7 @@
 ﻿using DAL.Contracts;
 using DAL.Models;
-using WebModels;
-
+using System;
+using System.Linq;
 
 namespace CycleTogether.RoutesSubscriber
 {
@@ -9,48 +9,47 @@ namespace CycleTogether.RoutesSubscriber
     {
         private readonly IRouteRepository _routes;
         private readonly IUserRepository _users;
-        public Subscription(IRouteRepository routes, IUserRepository users)
+        private readonly IUserRouteRepository _subscriber;
+
+        public Subscription(IRouteRepository routes, IUserRepository users, IUserRouteRepository subscriber)
         {
             _routes = routes;
             _users = users;
+            _subscriber = subscriber;
         }
-        public bool AddMail(string email, Route route)
+        public bool Subscribe(Guid userId, Guid routeId)
         {
-            if (IsSuitable(email, route))
+            var subscribed = new UserRouteEntry { RouteId = routeId, UserId = userId };
+            if (Requirements.Match(_users.GetById(userId), _routes.GetById(routeId)) &&
+                                   _subscriber.Exists(subscribed) == false)
             {
-                var current = _routes.GetById(route.Id);
-                _routes.Subscribe(email, current);
+                _subscriber.Create(subscribed);
                 return true;
             }
             return false;
         }
 
-        public bool Unsubscribe(string email, RouteEntry route)
+        public bool Unsubscribe(UserRouteEntry userFromRoute)
         {
-            _routes.Unsubscribe(email, route);
+            if (IsSubscribed(userFromRoute))
+            {
+                _subscriber.Delete(userFromRoute.Id);
+                return true;
+            }
             return false;
         }
 
-        public bool IsSuitable(string email, Route route)
+        private bool IsSubscribed(UserRouteEntry userFromRoute)
         {
-            var user = _users.GetByEmail(email);
-            var currentRoute = _routes.GetById(route.Id);
-            if (RequirementsHasMatch(user, currentRoute))
+            if (_subscriber.GetAll()
+                .FirstOrDefault(ur => ur.RouteId == userFromRoute.RouteId
+                && ur.UserId == userFromRoute.UserId)
+                != null)
             {
                 return true;
             }
-
             return false;
         }
-
-        private bool RequirementsHasMatch(UserEntry user, RouteEntry route)
-        {
-            RequirementsMatcher userRequirements = new RequirementsMatcher(user.Terrain, user.Difficulty, user.Endurance, user.Equipments);
-            RequirementsMatcher routeReruirements = new RequirementsMatcher(route.Terrain, route.Difficulty, route.Endurance, route.Equipments);
-
-            return userRequirements.Equals(routeReruirements);           
-        }
-
 
     }
 }

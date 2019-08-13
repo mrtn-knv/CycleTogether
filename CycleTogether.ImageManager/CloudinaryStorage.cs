@@ -8,10 +8,12 @@ using WebModels;
 using AutoMapper;
 using DAL.Models;
 using System.Linq;
+using Microsoft.Extensions.Options;
+using CycleTogether.BindingModels;
 
 namespace CycleTogether.ImageManager
 {
-    public class CloudinaryStorage : IPicture
+    public class CloudinaryStorage : IGallery
     {
         private readonly Account _account;
         private readonly Cloudinary _cloudinary;
@@ -19,9 +21,15 @@ namespace CycleTogether.ImageManager
         private readonly IMapper _mapper;
         private readonly IUserRepository _users;
         private readonly IRouteRepository _routes;
-        public CloudinaryStorage(IImageRepository images, IMapper mapper, IUserRepository users, IRouteRepository routes)
+        private readonly CloudinaryAccount _credentials;
+        public CloudinaryStorage(IImageRepository images, 
+                                 IMapper mapper, 
+                                 IUserRepository users, 
+                                 IRouteRepository routes, 
+                                 CloudinaryAccount credentials)
         {
-            _account = new Account("diroaq4wp", "712983898652981", "tFVw4-kYq09AwH9srE84eNWBEnk");
+            _credentials = credentials;
+            _account = new Account(_credentials.Cloud, _credentials.ApiKey, _credentials.ApiSecret);
             _cloudinary = new Cloudinary(_account);
             _images = images;
             _mapper = mapper;
@@ -44,7 +52,7 @@ namespace CycleTogether.ImageManager
         public List<Picture> GetAll(string routeId)
         {
             return _routes.GetById(Guid.Parse(routeId)).
-                   Images.Select(img => _mapper.
+                   Pictures.Select(img => _mapper.
                    Map<Picture>(img)).
                    ToList();
         }

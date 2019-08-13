@@ -1,26 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using CycleTogether.Contracts;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WebModels;
 
 namespace CycleTogetherWeb.Controllers
 {
     [Authorize]
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class EquipmentController : ControllerBase
     {
-        private IEquipmentRetriever _equipment;
+        private readonly IEquipmentRetriever _equipment;
         public EquipmentController(IEquipmentRetriever equipment)
         {
             _equipment = equipment;
         }
 
+        [AllowAnonymous]
         [HttpGet("all")]
         public IEnumerable<Equipment> GetAvailableEquipments()
         {

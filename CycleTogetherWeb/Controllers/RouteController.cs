@@ -4,77 +4,100 @@ using CycleTogether.Contracts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebModels;
+using CycleTogether.Claims;
 
 namespace CycleTogetherWeb.Controllers
 {
     [Authorize]
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class RouteController : ControllerBase
     {
         private readonly IRouteManager _routes;
-        private readonly ClaimsRetriever _claimsManager;
+        private readonly ClaimsRetriever _claims;
         public RouteController(IRouteManager routes, ClaimsRetriever claimsManager)
         {
             _routes = routes;
-            _claimsManager = claimsManager;
+            _claims = claimsManager;
         }
 
-        [HttpGet("All")]
+        [HttpGet("all")]
         public IEnumerable<Route> GetAll()
         {
             return _routes.GetAll();
         }
 
-        // GET: api/Route/5
-        [HttpGet("{id}", Name = "Get")]
+        [HttpGet("subscribed")]
+        public IEnumerable<Route> GetUserSubscribed()
+        {
+            var userId = _claims.Id();
+            return _routes.GetUsersSubscriptions(userId);
+        }
+
+        // GET: /Route/5
+        [HttpGet("{id}", Name = "id")]
         public Route Get(Guid id)
         {            
             return _routes.Get(id);
         }
 
-        // POST: api/Route/new
+        [HttpGet("all/mytrips")]
+        public IEnumerable<Route> GetAllByUser()
+        {            
+            return _routes.AllByUser(Guid.Parse(_claims.Id()));
+        }
+
+        // POST: /Route/new
         [HttpPost("new")]
         public Route Create([FromBody] Route route)
         {            
-            var id = _claimsManager.Id();
-            var mail = _claimsManager.Email();
-            return _routes.Create(route, id, mail);
+            var id = _claims.Id();
+            return _routes.Create(route, id);
         }
 
-        // POST: api/Route/subscribe
+        // POST: /Route/subscribe
         [HttpPost("subscribe")]
-        public IActionResult Subscribe([FromBody]Route route)
+        public bool Subscribe([FromBody]Route route)
         {
-            var mail = _claimsManager.Email();
-            if (_routes.Subscribe(mail, route))
-                return Ok();
+            var currentUserId = Guid.Parse(_claims.Id());
+            if (_routes.Subscribe(currentUserId, route.Id))
+                return true;
             
-            return Content("You can't subscribe for this trip.");          
+            return false;          
         }
 
+        // POST: /Route/unsubscribe
         [HttpPost("unsubscribe")]
         public IActionResult Unsubscribe([FromBody]Route route)
         {
-            var mail = _claimsManager.Email();
-            _routes.Unsubscribe(mail, route);
-            return Ok();
+            var currentUserId = Guid.Parse(_claims.Id());
+            if (_routes.Unsubscribe(currentUserId, route.Id))
+            {
+                return Ok(true);
+            }
+
+            return Ok(false);
         }
 
-        // POST: api/Route/edit
+        // POST: /Route/edit
         [HttpPost("edit")]
         public Route Update([FromBody]Route route)
         {
-            var currentUserId = _claimsManager.Id();
+            var currentUserId = _claims.Id();
             return _routes.Update(route, currentUserId);
         }
 
-        // DELETE: api/ApiWithActions/5
+        // DELETE: /ApiWithActions/5
         [HttpDelete("{id}")]
-        public void Delete(Guid id)
+        public IActionResult Delete(Guid id)
         {
-            var userId = _claimsManager.Id();
-            _routes.Remove(id, userId);
+            var userId = _claims.Id();
+            if (_routes.Remove(id, userId))
+            {
+                return Ok(true);
+            }
+
+            return Ok(false);
         }
     }
 }

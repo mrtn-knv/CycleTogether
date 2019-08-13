@@ -1,9 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
 
-namespace CycleTogetherWeb
+namespace CycleTogether.Claims
 {
     public class ClaimsRetriever
     {
@@ -16,6 +17,14 @@ namespace CycleTogetherWeb
         {
             var claims = GetUserClaims();
             return claims.FirstOrDefault(c => c.Type.Equals(ClaimTypes.Email)).Value;
+        }
+
+        public string FullName()
+        {
+            var claims = GetUserClaims();
+            var firstName = claims.FirstOrDefault(c => c.Type.Equals(ClaimTypes.Name)).Value;
+            var lastName = claims.FirstOrDefault(c => c.Type.Equals(ClaimTypes.Surname)).Value;
+            return firstName + " " + lastName;
         }
 
         public string Id()

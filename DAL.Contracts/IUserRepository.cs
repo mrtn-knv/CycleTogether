@@ -7,7 +7,6 @@ namespace DAL.Contracts
 {
     public interface IUserRepository : IRepository<UserEntry>
     {
-        UserEntry GetByEmail(string email);
-        void AddRoute(RouteEntry route, Guid id);        
+        UserEntry GetByEmail(string email);       
     }
 }

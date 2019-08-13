@@ -1,31 +1,29 @@
 ﻿using DAL.Contracts;
+using DAL.Data;
 using DAL.Models;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 
 namespace DAL
 {
-    public class RoutesRepository : Repository<RouteEntry>, IRouteRepository
+    public class RoutesRepository : DbRepository<RouteEntry>, IRouteRepository
     {
-        public RoutesRepository()
+        public RoutesRepository(CycleTogetherDbContext context) : base(context)
         {
 
         }
 
         public void AddPicture(Guid routeId, PictureEntry image)
         {
-            context.FirstOrDefault(r => r.Id == routeId).Images.Add(image);
+            
+            GetAll().FirstOrDefault(r => r.Id == routeId).Pictures.Add(image);
         }
 
-        public void Subscribe(string email, RouteEntry route)
+        public IEnumerable<RouteEntry> AllByUser(Guid userId)
         {
-            route.SubscribedMails.Add(email);
-        }
-
-        public void Unsubscribe(string email, RouteEntry route)
-        {
-            route.SubscribedMails.Remove(email);
+            return GetAll().Where(route => route.UserId == userId).ToList();
         }
     }
 }

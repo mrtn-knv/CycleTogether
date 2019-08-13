@@ -6,10 +6,12 @@
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="8.1.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.2.4" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\DAL.Contracts\DAL.Contracts.csproj" />
+    <ProjectReference Include="..\DAL.Data\DAL.Data.csproj" />
     <ProjectReference Include="..\WebModels\WebModels.csproj" />
   </ItemGroup>
 
