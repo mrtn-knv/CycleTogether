@@ -78,7 +78,13 @@ namespace CycleTogether.Cache
         public void AddUserRoutes(List<Route> userRoutes, string userId)
         {
             if (userRoutes != null && userRoutes.Count > 0)
-                _redis.StringSet(userId.ToString()+key, JsonConvert.SerializeObject(userRoutes));
+            {
+                var usersRoutes = JsonConvert.DeserializeObject<List<Route>>(_redis.StringGet(userId+key));
+                userRoutes.ForEach(route => usersRoutes.Add(route));
+                _redis.StringSet(userId+key, JsonConvert.SerializeObject(usersRoutes));
+            }        
+                     
+                
         }
 
         public void AddUserSubsciptions(List<Route> subscribedRoutes, string userId)
@@ -100,18 +106,6 @@ namespace CycleTogether.Cache
             }
         }
 
-        public IEnumerable<Route> UserRoutes(string userId)
-        {
-            try
-            {
-                return JsonConvert.DeserializeObject<IEnumerable<Route>>(_redis.StringGet(userId+key));
-            }
-            catch (ArgumentNullException ex)
-            {
-                //TODO Add loger
-                return null;
-            }
-        }
 
         public Route GetItem(string id)
         {

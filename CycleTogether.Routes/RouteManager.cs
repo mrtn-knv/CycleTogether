@@ -46,6 +46,7 @@ namespace CycleTogether.Routes
             SaveRouteEquipments(newRoute, route.EquipmentsIds);
             _subscriber.Create(new UserRouteEntry { RouteId = newRoute.Id, UserId = Guid.Parse(userId) });
             _cache.AddItem(newRoute);
+            _cache.AddUserRoutes(new List<Route>() { newRoute }, userId);
             return newRoute;
         }
 
@@ -74,7 +75,7 @@ namespace CycleTogether.Routes
             {
                 var routes = _routes.AllByUser(userId).Select(route => _mapper.Map<Route>(route));
                 _cache.AddUserRoutes(routes.ToList(), userId.ToString());
-                return _cache.UserRoutes(userId.ToString());
+                return _cache.AllBy(userId.ToString());
             }
             return userRoutes;
         }

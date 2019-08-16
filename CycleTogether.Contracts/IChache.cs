@@ -9,7 +9,7 @@ namespace CycleTogether.Contracts
         T GetItem(string id);
         void RemoveItem(T item);
         IEnumerable<T> All();
-        IEnumerable<T> AllBy(string Id);
+        IEnumerable<T> AllBy(string userId);
         void AddAll(List<T> items);
 
 
