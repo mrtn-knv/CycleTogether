@@ -7,7 +7,6 @@ using CycleTogether.BindingModels;
 using NotificationEmails;
 using System.Collections.Generic;
 using WebModels;
-using CycleTogether.Notification;
 using Hangfire;
 
 namespace CycleTogether.Notifications
@@ -19,11 +18,12 @@ namespace CycleTogether.Notifications
         private readonly EmailProperties _emailProperties;
         private readonly NotificationCredentials _emailCredentials;
         private readonly IRouteManager _routes;
-        private readonly EmailsRetriever _retriever;
-        public Notification(ClaimsRetriever claims, EmailProperties emailProperties, NotificationCredentials emailCredentials, IRouteManager routes, EmailsRetriever retriever)
+        private readonly ISubscription _subcription;
+
+        public Notification(ClaimsRetriever claims, EmailProperties emailProperties, NotificationCredentials emailCredentials, IRouteManager routes, ISubscription subcription)
         {
             _routes = routes;
-            _retriever = retriever;
+            _subcription = subcription;
             _claims = claims;
             _emailProperties = emailProperties;
             _emailCredentials = emailCredentials;
@@ -52,7 +52,7 @@ namespace CycleTogether.Notifications
 
         public void SendReminder(string routeId)
         {
-            var sendDate = _routes.Get(Guid.Parse(routeId)).StartTime.AddDays(-1).Day;
+            var sendDate = _routes.Get(Guid.Parse(routeId)).StartTime.Day - DateTime.Now.Day;
             var job = BackgroundJob.Schedule(
                 () => Send(NotificationEmail(routeId)),
                 TimeSpan.FromDays(sendDate));            
@@ -60,8 +60,7 @@ namespace CycleTogether.Notifications
 
         private Email NotificationEmail(string routeId)
         {
-            var route = _routes.Get(Guid.Parse(routeId));
-            var receiversEmails = _retriever.GetUsersFromRoute(route);
+            var receiversEmails = _subcription.SubscribedEmails(routeId);
             var body = string.Format(_emailProperties.ReminderBody, _emailProperties.BaseLink + routeId);
             return new Email(receiversEmails, _emailCredentials.DefaultSender, _emailProperties.SubjectReminder, body);
         }

@@ -15,7 +15,6 @@ using Microsoft.IdentityModel.Tokens;
 using CycleTogether.Notifications;
 using CycleTogether.Claims;
 using CycleTogether.BindingModels;
-using CycleTogether.Notification;
 using CycleTogether.Cache;
 
 namespace CycleTogetherWeb
@@ -31,11 +30,11 @@ namespace CycleTogetherWeb
             services.AddScoped<IEquipmentsRepository, EquipmentRepository>();
             services.AddScoped<IImageRepository, PicturesRepository>();
             services.AddScoped<IUserRouteRepository, UserRoutesRepository>();
+            services.AddScoped<ISubscription, Subscription>();
             services.AddScoped(typeof(TokenGenerator));
             services.AddScoped(typeof(ClaimsRetriever));
             services.AddScoped(typeof(DifficultyCalculator));
-            services.AddScoped(typeof(Subscription));
-            services.AddScoped(typeof(EmailsRetriever));
+          
             services.AddScoped<IGallery, CloudinaryStorage>();
             services.AddScoped<IAuthentication, Authenticator>();
             services.AddScoped<IEquipmentRetriever, EquipmentRetriever>();

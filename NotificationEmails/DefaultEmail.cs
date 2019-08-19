@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Net.Mail;
+using System;
 
 namespace NotificationEmails
 {
     public class Email : MailMessage
-    {
+    {      
         public Email(IEnumerable<string>receivers,string from, string subject, string body): base()
         {
             base.From = new MailAddress(from);

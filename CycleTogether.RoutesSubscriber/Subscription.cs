@@ -1,11 +1,13 @@
-﻿using DAL.Contracts;
+﻿using CycleTogether.Contracts;
+using DAL.Contracts;
 using DAL.Models;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace CycleTogether.RoutesSubscriber
 {
-    public class Subscription
+    public class Subscription : ISubscription
     {
         private readonly IRouteRepository _routes;
         private readonly IUserRepository _users;
@@ -39,6 +41,13 @@ namespace CycleTogether.RoutesSubscriber
             return false;
         }
 
+        public List<string> SubscribedEmails(string routeId)
+        {
+            var route = _routes.GetById(Guid.Parse(routeId));
+            return route.UserRoutes.Select(ur => _users.GetById(ur.UserId).Email).ToList();
+
+        }
+
         private bool IsSubscribed(UserRouteEntry userFromRoute)
         {
             if (_subscriber.GetAll()
@@ -50,6 +59,8 @@ namespace CycleTogether.RoutesSubscriber
             }
             return false;
         }
+
+        
 
     }
 }

@@ -18,7 +18,7 @@ namespace CycleTogether.Routes
         private readonly IMapper _mapper;
         private readonly IUserRouteRepository _subscriber;
         private readonly DifficultyCalculator _difficulty;
-        private readonly Subscription _subscription;
+        private readonly ISubscription _subscription;
         private readonly IRouteEquipmentRepositoy _routeEquipments;
         private readonly IRoutesCache _cache;
 
@@ -26,7 +26,7 @@ namespace CycleTogether.Routes
                             IMapper mapper,
                             IUserRouteRepository userRoutes,
                             DifficultyCalculator difficulty,
-                            Subscription subscription,
+                            ISubscription subscription,
                             IRoutesCache cache,
                             IRouteEquipmentRepositoy routeEquipments)
         {
@@ -138,17 +138,22 @@ namespace CycleTogether.Routes
         {
             try
             {
-                _cache.GetItem(id.ToString());
-                var route = _routes.GetById(id);
-                route.UserRoutes = _subscriber.GetAll().Where(subscribed => subscribed.RouteId == route.Id).ToList();
-                var found = _mapper.Map<Route>(route);
-                found.Subscribed = route.UserRoutes.Select(ur => _mapper.Map<UserRoute>(ur)).ToList();
+                 var route = _cache.GetItem(id.ToString());
+                if (route == null)
+                {
+                    route = _mapper.Map<Route>(_routes.GetById(id));
+                }
 
-                found.Equipments = _routeEquipments.GetAll()
-                                   .Where(re => re.RouteId == found.Id)
+                route.Subscribed = _subscriber.GetAll()
+                                   .Where(subscribed => subscribed.RouteId == route.Id)
+                                   .ToList()
+                                   .Select(ur => _mapper.Map<UserRoute>(ur));
+
+                route.Equipments = _routeEquipments.GetAll()
+                                   .Where(re => re.RouteId == route.Id)
                                    .Select(re => _mapper.Map<RouteEquipments>(re)).ToList();
 
-                return found;
+                return route;
             }
             catch (Exception ex)
             {

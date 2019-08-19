@@ -9,6 +9,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\DAL.Models\DAL.Models.csproj" />
     <ProjectReference Include="..\WebModels\WebModels.csproj" />
   </ItemGroup>
 

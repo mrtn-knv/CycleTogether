@@ -9,6 +9,7 @@ using DAL.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http;
 using StackExchange.Redis;
+using Hangfire;
 
 namespace CycleTogetherWeb
 {
@@ -38,8 +39,12 @@ namespace CycleTogetherWeb
 
             services.AddDbContext<CycleTogetherDbContext>(options =>
                 options.UseLazyLoadingProxies()
-                    .UseSqlServer(Configuration["ConnectionString:DefaultConnectionString"]));
+                    .UseSqlServer(Configuration["ConnectionStrings:DefaultConnectionString"]));
+
+            var hfConnectionString = Configuration["ConnectionStrings:HangFireConnectionString"];
+            services.AddHangfire(h => h.UseSqlServerStorage(hfConnectionString));
             
+
             services.AddCors();
             var appSettings = appSettingsSection.Get<AppSettings>();
             var key = Encoding.ASCII.GetBytes(appSettings.Secret);
@@ -61,6 +66,9 @@ namespace CycleTogetherWeb
                 .AllowAnyOrigin()
                 .AllowAnyMethod()
                 .AllowAnyHeader());
+
+            app.UseHangfireDashboard();
+            app.UseHangfireServer();
 
             app.UseAuthentication();
             

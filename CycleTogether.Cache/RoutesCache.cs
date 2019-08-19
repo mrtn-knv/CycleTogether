@@ -77,12 +77,21 @@ namespace CycleTogether.Cache
 
         public void AddUserRoutes(List<Route> userRoutes, string userId)
         {
-            if (userRoutes != null && userRoutes.Count > 0)
+            try
             {
-                var usersRoutes = JsonConvert.DeserializeObject<List<Route>>(_redis.StringGet(userId+key));
-                userRoutes.ForEach(route => usersRoutes.Add(route));
-                _redis.StringSet(userId+key, JsonConvert.SerializeObject(usersRoutes));
-            }        
+                if (userRoutes != null && userRoutes.Count > 0)
+                {
+                    var usersRoutes = JsonConvert.DeserializeObject<List<Route>>(_redis.StringGet(userId + key));
+                    userRoutes.ForEach(route => usersRoutes.Add(route));
+                    _redis.StringSet(userId + key, JsonConvert.SerializeObject(usersRoutes));
+                }
+            }
+            catch (Exception ex)
+            {
+                _redis.StringSet(userId + key, JsonConvert.SerializeObject(userRoutes));
+                //TODO add logger
+            }
+                    
                      
                 
         }
