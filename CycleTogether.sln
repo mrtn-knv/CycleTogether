@@ -53,9 +53,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CycleTogether.JSONBindingMo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DAL.Data", "DAL.Data\DAL.Data.csproj", "{C3BFE754-728C-4EB4-B233-573A3BB1D585}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CycleTogether.Cache", "CycleTogether.Cache\CycleTogether.Cache.csproj", "{258B7BA7-E68A-4EFA-90B7-DFF13883CBCA}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CycleTogether.Paging", "CycleTogether.Paging\CycleTogether.Paging.csproj", "{1B0B59E6-9E47-4A1C-AB86-8279A04CDE0B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CycleTogether.Cache", "CycleTogether.Cache\CycleTogether.Cache.csproj", "{258B7BA7-E68A-4EFA-90B7-DFF13883CBCA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -139,10 +137,6 @@ Global
 		{258B7BA7-E68A-4EFA-90B7-DFF13883CBCA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{258B7BA7-E68A-4EFA-90B7-DFF13883CBCA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{258B7BA7-E68A-4EFA-90B7-DFF13883CBCA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1B0B59E6-9E47-4A1C-AB86-8279A04CDE0B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1B0B59E6-9E47-4A1C-AB86-8279A04CDE0B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1B0B59E6-9E47-4A1C-AB86-8279A04CDE0B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1B0B59E6-9E47-4A1C-AB86-8279A04CDE0B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

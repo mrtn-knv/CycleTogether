@@ -10,5 +10,6 @@ namespace CycleTogether.Contracts
         void AddUserRoutes(List<Route> userRoutes, string userId);
         void AddUserSubsciptions(List<Route> subscribedRoutes, string userId);
         IEnumerable<Route> UserSubscriptions(string userId);
+        void Edit(Route route);
     }
 }

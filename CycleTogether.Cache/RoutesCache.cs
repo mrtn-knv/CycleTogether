@@ -17,7 +17,7 @@ namespace CycleTogether.Cache
         public RoutesCache(IDatabase redis)
         {
             _redis = redis;
-            
+
         }
 
         public void AddItem(Route route)
@@ -49,7 +49,7 @@ namespace CycleTogether.Cache
         {
             try
             {
-                return JsonConvert.DeserializeObject<IEnumerable<Route>>(_redis.StringGet(userId+key));
+                return JsonConvert.DeserializeObject<IEnumerable<Route>>(_redis.StringGet(userId + key));
             }
             catch (ArgumentNullException ex)
             {
@@ -72,7 +72,7 @@ namespace CycleTogether.Cache
         public void AddAll(List<Route> routes)
         {
             if (routes != null && routes.Count > 0)
-            _redis.StringSet(key, JsonConvert.SerializeObject(routes));
+                _redis.StringSet(key, JsonConvert.SerializeObject(routes));
         }
 
         public void AddUserRoutes(List<Route> userRoutes, string userId)
@@ -91,9 +91,9 @@ namespace CycleTogether.Cache
                 _redis.StringSet(userId + key, JsonConvert.SerializeObject(userRoutes));
                 //TODO add logger
             }
-                    
-                     
-                
+
+
+
         }
 
         public void AddUserSubsciptions(List<Route> subscribedRoutes, string userId)
@@ -103,10 +103,10 @@ namespace CycleTogether.Cache
         }
 
         public IEnumerable<Route> UserSubscriptions(string userId)
-        {              
+        {
             try
             {
-               return JsonConvert.DeserializeObject<IEnumerable<Route>>(_redis.StringGet(userId));
+                return JsonConvert.DeserializeObject<IEnumerable<Route>>(_redis.StringGet(userId));
             }
             catch (ArgumentNullException ex)
             {
@@ -120,7 +120,39 @@ namespace CycleTogether.Cache
         {
             var all = this.All();
             return all.FirstOrDefault(r => r.Id == Guid.Parse(id));
-           
+
+        }
+
+        public void Edit(Route route)
+        {
+            EditInRoutesCache(route);
+            EditInUserRoutesCache(route);
+
+        }
+
+        private void EditInUserRoutesCache(Route route)
+        {
+            var routes = this.AllBy(route.UserId.ToString()).ToList();
+            var toUpdate = routes.FirstOrDefault(r => r.Id == route.Id);
+            if (toUpdate != null)
+            {
+                routes.Remove(toUpdate);
+                routes.Add(route);
+                _redis.StringSet(route.UserId.ToString() + key, JsonConvert.SerializeObject(routes));
+            }
+        }
+
+        private void EditInRoutesCache(Route route)
+        {
+            var routes = this.All().ToList();
+            var toUpdate = routes.FirstOrDefault(r => r.Id == route.Id);
+            if (toUpdate != null)
+            {
+                routes.Remove(toUpdate);
+                routes.Add(route);
+                _redis.StringSet(key, JsonConvert.SerializeObject(routes));
+            }
+            
         }
     }
 }

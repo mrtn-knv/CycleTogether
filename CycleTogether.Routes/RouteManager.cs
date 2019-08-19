@@ -194,6 +194,7 @@ namespace CycleTogether.Routes
 
         private Route SaveUpdated(Route route)
         {
+            _cache.Edit(route);            
             var current = _mapper.Map<RouteEntry>(route);
             _routes.Edit(current);
             return _mapper.Map<Route>(current);
