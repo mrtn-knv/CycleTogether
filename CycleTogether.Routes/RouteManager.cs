@@ -21,6 +21,7 @@ namespace CycleTogether.Routes
         private readonly ISubscription _subscription;
         private readonly IRouteEquipmentRepositoy _routeEquipments;
         private readonly IRoutesCache _cache;
+        private readonly ISearchManager _search;
 
         public RouteManager(IRouteRepository routes,
                             IMapper mapper,
@@ -28,7 +29,8 @@ namespace CycleTogether.Routes
                             DifficultyCalculator difficulty,
                             ISubscription subscription,
                             IRoutesCache cache,
-                            IRouteEquipmentRepositoy routeEquipments)
+                            IRouteEquipmentRepositoy routeEquipments,
+                            ISearchManager search)
         {
             _routes = routes;
             _mapper = mapper;
@@ -37,6 +39,7 @@ namespace CycleTogether.Routes
             _subscription = subscription;
             _routeEquipments = routeEquipments;
             _cache = cache;
+            _search = search;
 
         }
 
@@ -47,6 +50,7 @@ namespace CycleTogether.Routes
             _subscriber.Create(new UserRouteEntry { RouteId = newRoute.Id, UserId = Guid.Parse(userId) });
             _cache.AddItem(newRoute);
             _cache.AddUserRoutes(new List<Route>() { newRoute }, userId);
+            _search.AddRouteToIndex(newRoute);
             return newRoute;
         }
 
@@ -169,6 +173,7 @@ namespace CycleTogether.Routes
             {
                 _routes.Delete(routeId);
                 _cache.RemoveItem(_mapper.Map<Route>(current));
+                _search.RemoveFromIndex(_mapper.Map<Route>(current));
                 return true;
             }
 
@@ -180,6 +185,7 @@ namespace CycleTogether.Routes
 
             if (currentUserId == route.UserId.ToString())
             {
+                _search.UpdateIndex();
                 return SaveUpdated(route);
             }
 

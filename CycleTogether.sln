@@ -55,6 +55,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DAL.Data", "DAL.Data\DAL.Da
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CycleTogether.Cache", "CycleTogether.Cache\CycleTogether.Cache.csproj", "{258B7BA7-E68A-4EFA-90B7-DFF13883CBCA}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CycleTogether.Search", "CycleTogether.Search", "{E8F16137-6AE1-4BE5-A017-BB6C7F266D36}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CycleTogether.DataRetriever", "CycleTogether.DataRetriever\CycleTogether.DataRetriever.csproj", "{085BAD3F-D254-425B-A2E8-F51F3CAF7779}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -137,6 +141,10 @@ Global
 		{258B7BA7-E68A-4EFA-90B7-DFF13883CBCA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{258B7BA7-E68A-4EFA-90B7-DFF13883CBCA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{258B7BA7-E68A-4EFA-90B7-DFF13883CBCA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{085BAD3F-D254-425B-A2E8-F51F3CAF7779}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{085BAD3F-D254-425B-A2E8-F51F3CAF7779}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{085BAD3F-D254-425B-A2E8-F51F3CAF7779}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{085BAD3F-D254-425B-A2E8-F51F3CAF7779}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -156,6 +164,7 @@ Global
 		{59741623-EADB-461D-A8B6-32C96A6FBE5C} = {F837281D-6917-4581-BAEC-71D9236AA187}
 		{B7A4E541-D42E-474D-B2A9-EA4F50FD37D3} = {F837281D-6917-4581-BAEC-71D9236AA187}
 		{C3BFE754-728C-4EB4-B233-573A3BB1D585} = {0D58E6DD-772A-446B-A83C-21AC416678C1}
+		{085BAD3F-D254-425B-A2E8-F51F3CAF7779} = {E8F16137-6AE1-4BE5-A017-BB6C7F266D36}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {EFB423F9-55B8-4AAA-B678-724323DDAAB7}

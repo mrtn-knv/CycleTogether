@@ -20,6 +20,8 @@ namespace CycleTogether.Cache
 
         }
 
+
+
         public void AddItem(Route route)
         {
             if (route != null)
@@ -90,6 +92,8 @@ namespace CycleTogether.Cache
             {
                 _redis.StringSet(userId + key, JsonConvert.SerializeObject(userRoutes));
                 //TODO add logger
+
+              
             }
 
 
