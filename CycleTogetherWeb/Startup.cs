@@ -39,18 +39,19 @@ namespace CycleTogetherWeb
 
             services.AddDbContext<CycleTogetherDbContext>(options =>
                 options.UseLazyLoadingProxies()
-                    .UseSqlServer(Configuration["ConnectionStrings:DefaultConnectionString"]));
+                    .UseSqlServer(Configuration["ConnectionStrings:DefaultConnectionString"],
+                    b => b.MigrationsAssembly("DAL.Data")));
 
             var hfConnectionString = Configuration["ConnectionStrings:HangFireConnectionString"];
             services.AddHangfire(h => h.UseSqlServerStorage(hfConnectionString));
-            
+
 
             services.AddCors();
             var appSettings = appSettingsSection.Get<AppSettings>();
             var key = Encoding.ASCII.GetBytes(appSettings.Secret);
             services.AddAuthentication(appSettings, key);
             services.SetupServices();
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2).AddJsonOptions(options => 
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2).AddJsonOptions(options =>
             {
                 options.SerializerSettings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
                 options.SerializerSettings.NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore;
@@ -71,9 +72,21 @@ namespace CycleTogetherWeb
             app.UseHangfireServer();
 
             app.UseAuthentication();
-            
+
             app.UseMvc();
+            UpdateDatabase(app);
         }
+
+        private static void UpdateDatabase(IApplicationBuilder app)
+        {
+            var scopeFactory = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>();
+            using (var scope = scopeFactory.CreateScope())
+            {
+                var context = scope.ServiceProvider.GetRequiredService<CycleTogetherDbContext>();
+                context.Database.Migrate();
+            }
+        }
+
         private IDatabase RedisDatabase() => ConnectionMultiplexer.Connect("localhost").GetDatabase();
     }
 }
