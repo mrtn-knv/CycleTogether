@@ -13,14 +13,14 @@ namespace CycleTogether.Notifications
 {
     public class Notification : INotification
     {        
-        private readonly ClaimsRetriever _claims;
+        private readonly IClaimsRetriever _claims;
         private readonly SmtpClient _client;
         private readonly EmailProperties _emailProperties;
         private readonly NotificationCredentials _emailCredentials;
         private readonly IRouteManager _routes;
         private readonly ISubscription _subcription;
 
-        public Notification(ClaimsRetriever claims, EmailProperties emailProperties, NotificationCredentials emailCredentials, IRouteManager routes, ISubscription subcription)
+        public Notification(IClaimsRetriever claims, EmailProperties emailProperties, NotificationCredentials emailCredentials, IRouteManager routes, ISubscription subcription)
         {
             _routes = routes;
             _subcription = subcription;

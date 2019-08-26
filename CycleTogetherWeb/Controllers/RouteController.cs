@@ -4,7 +4,8 @@ using CycleTogether.Contracts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebModels;
-using CycleTogether.Claims;
+using FluentValidation;
+using System.Linq;
 
 namespace CycleTogetherWeb.Controllers
 {
@@ -14,12 +15,14 @@ namespace CycleTogetherWeb.Controllers
     public class RouteController : ControllerBase
     {
         private readonly IRouteManager _routes;
-        private readonly ClaimsRetriever _claims;
+        private readonly IClaimsRetriever _claims;
+        private readonly IValidator<Route> _validator;
         
-        public RouteController(IRouteManager routes, ClaimsRetriever claimsManager)
+        public RouteController(IRouteManager routes, IClaimsRetriever claimsManager, IValidator<Route> validator)
         {
             _routes = routes;
             _claims = claimsManager;
+            _validator = validator;
         }
 
         [HttpGet("all")]
@@ -51,10 +54,17 @@ namespace CycleTogetherWeb.Controllers
 
         // POST: /Route/new
         [HttpPost("new")]
-        public Route Create([FromBody] Route route)
-        {            
-            var id = _claims.Id();
-            return _routes.Create(route, id);
+        public IActionResult Create([FromBody] Route route)
+        {
+            var state = _validator.Validate(route, ruleSet: "all");
+            if (state.IsValid)
+            {
+                var id = _claims.Id();
+                return Ok(_routes.Create(route, id));
+            }
+
+            return Ok(state.Errors.FirstOrDefault().ErrorMessage);
+            
         }
 
         // POST: /Route/subscribe

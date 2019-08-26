@@ -17,12 +17,22 @@ using CycleTogether.Claims;
 using CycleTogether.BindingModels;
 using CycleTogether.Cache;
 using CycleTogether.DataRetriever;
+using Microsoft.Extensions.Configuration;
+using DAL.Data;
+using Microsoft.EntityFrameworkCore;
+using Hangfire;
+using System.Text;
+using Microsoft.AspNetCore.Mvc;
+using FluentValidation.AspNetCore;
+using FluentValidation;
+using WebModels;
+using CycleTogether.Validation;
 
 namespace CycleTogetherWeb
 {
     public static class Extensions
     {
-        public static void SetupServices(this IServiceCollection services)
+        public static void SetupServices(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddAutoMapper();
             services.AddScoped<IUserRepository, UsersRepository>();
@@ -32,10 +42,9 @@ namespace CycleTogetherWeb
             services.AddScoped<IImageRepository, PicturesRepository>();
             services.AddScoped<IUserRouteRepository, UserRoutesRepository>();
             services.AddScoped<ISubscription, Subscription>();
-            services.AddScoped(typeof(TokenGenerator));
-            services.AddScoped(typeof(ClaimsRetriever));
-            services.AddScoped(typeof(DifficultyCalculator));
-          
+            services.AddScoped<ITokenGenerator, TokenGenerator>();
+            services.AddScoped<IClaimsRetriever, ClaimsRetriever>();
+            services.AddScoped<IDifficultyCalculator, DifficultyCalculator>();
             services.AddScoped<IGallery, CloudinaryStorage>();
             services.AddScoped<IAuthentication, Authenticator>();
             services.AddScoped<IEquipmentRetriever, EquipmentRetriever>();
@@ -47,7 +56,44 @@ namespace CycleTogetherWeb
             services.AddSingleton<IEquipmentCache, EquipmentsCache>();
             services.AddScoped<IDataRetriever, DataRetriever>();
             services.AddScoped<ISearchManager, SearchManager>();
-            
+            services.AddSingleton<IValidator<WebModels.Route>, CycleTogether.Validation.Route>();
+            services.AddSingleton<IValidator<WebModels.User>, CycleTogether.Validation.User>();
+
+            var appSettingsSection = configuration.GetSection("AppSettings");
+            services.Configure<AppSettings>(appSettingsSection);
+            var mailCredentials = new NotificationCredentials();
+            configuration.Bind("NotificationCredentials", mailCredentials);
+            services.AddSingleton(mailCredentials);
+            var cloudinary = new CloudinaryAccount();
+            configuration.Bind("CloudinaryAccount", cloudinary);
+            services.AddSingleton(cloudinary);
+            var emails = new EmailProperties();
+            configuration.Bind("EmailProperties", emails);
+            services.AddSingleton(emails);
+
+
+            services.AddDbContext<CycleTogetherDbContext>(options =>
+                options.UseLazyLoadingProxies()
+                    .UseSqlServer(configuration["ConnectionStrings:DefaultConnectionString"],
+                    b => b.MigrationsAssembly("DAL.Data")));
+
+            var hfConnectionString = configuration["ConnectionStrings:HangFireConnectionString"];
+            services.AddHangfire(h => h.UseSqlServerStorage(hfConnectionString));
+
+
+            services.AddCors();
+            var appSettings = appSettingsSection.Get<AppSettings>();
+            var key = Encoding.ASCII.GetBytes(appSettings.Secret);
+            services.AddAuthentication(appSettings, key);
+
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2).AddJsonOptions(options =>
+            {
+                options.SerializerSettings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
+                options.SerializerSettings.NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore;
+            })
+            .AddFluentValidation();
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
         }
 
         public static void AddAuthentication(this IServiceCollection services, AppSettings appSettings, byte[] key)

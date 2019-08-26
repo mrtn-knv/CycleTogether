@@ -16,8 +16,8 @@ namespace CycleTogetherWeb.Controllers
     public class ImageController : ControllerBase
     {
         private readonly IGallery _images;
-        private readonly ClaimsRetriever _claims;
-        public ImageController(IGallery images, ClaimsRetriever claims)
+        private readonly IClaimsRetriever _claims;
+        public ImageController(IGallery images, IClaimsRetriever claims)
         {
             _images = images;
             _claims = claims;

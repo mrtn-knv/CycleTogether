@@ -43,8 +43,7 @@ namespace CycleTogether.DataRetriever
             // add lucene fields mapped to db fields
             doc.Add(new Field("Id", route.Id.ToString(), Field.Store.YES, Field.Index.NOT_ANALYZED));
             doc.Add(new Field("Name", route.Name, Field.Store.YES, Field.Index.ANALYZED));
-            doc.Add(new Field("Description", route.Info, Field.Store.YES, Field.Index.ANALYZED));
-            doc.Add(new Field("StartPoint", route.StartPoint, Field.Store.YES, Field.Index.ANALYZED));
+            doc.Add(new Field("Description", route.Info, Field.Store.YES, Field.Index.NOT_ANALYZED));            
 
             // add entry to index
             writer.AddDocument(doc);
@@ -125,8 +124,7 @@ namespace CycleTogether.DataRetriever
             {
                 Id = Guid.Parse(doc.Get("Id")),
                 Name = doc.Get("Name"),
-                Info = doc.Get("Description"),
-                StartPoint = doc.Get("StartPoint")              
+                Info = doc.Get("Description")            
             };
         }
 
@@ -154,12 +152,12 @@ namespace CycleTogether.DataRetriever
             return query;
         }
 
-        private static IEnumerable<RouteSearch> _search
+        private static IEnumerable<RouteSearch> Find
     (string searchQuery, string searchField = "")
         {
             // validation
             if (string.IsNullOrEmpty(searchQuery.Replace("*", "").Replace("?", ""))) return new List<RouteSearch>();
-            
+            //TODO: try catch
             // set up lucene searcher
             using (var searcher = new IndexSearcher(_directory, true))
             {
@@ -201,12 +199,12 @@ namespace CycleTogether.DataRetriever
                 .Where(x => !string.IsNullOrEmpty(x)).Select(x => x.Trim() + "*");
             input = string.Join(" ", terms);
 
-            return _search(input, fieldName);
+            return Find(input, fieldName);
         }
 
         public static IEnumerable<RouteSearch> SearchDefault(string input, string fieldName = "")
         {
-            return string.IsNullOrEmpty(input) ? new List<RouteSearch>() : _search(input, fieldName);
+            return string.IsNullOrEmpty(input) ? new List<RouteSearch>() : Find(input, fieldName);
         }
 
         public static IEnumerable<RouteSearch> GetAllIndexRecords()

@@ -13,10 +13,10 @@ namespace CycleTogether.Authentication
     {
         private readonly IUserRepository _users;
         private readonly IMapper _mapper;
-        private readonly TokenGenerator _tokenGenerator;
+        private readonly ITokenGenerator _tokenGenerator;
         private readonly IUserEquipmentRepository _userEquipments;
 
-        public Authenticator(IMapper mapper, IUserRepository users, TokenGenerator tokenGenerator, IUserEquipmentRepository userEquipments)
+        public Authenticator(IMapper mapper, IUserRepository users, ITokenGenerator tokenGenerator, IUserEquipmentRepository userEquipments)
         {
             _users = users;
             _mapper = mapper;

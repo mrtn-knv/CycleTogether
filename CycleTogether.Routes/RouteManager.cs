@@ -17,7 +17,7 @@ namespace CycleTogether.Routes
         private readonly IRouteRepository _routes;
         private readonly IMapper _mapper;
         private readonly IUserRouteRepository _subscriber;
-        private readonly DifficultyCalculator _difficulty;
+        private readonly IDifficultyCalculator _difficulty;
         private readonly ISubscription _subscription;
         private readonly IRouteEquipmentRepositoy _routeEquipments;
         private readonly IRoutesCache _cache;
@@ -26,7 +26,7 @@ namespace CycleTogether.Routes
         public RouteManager(IRouteRepository routes,
                             IMapper mapper,
                             IUserRouteRepository userRoutes,
-                            DifficultyCalculator difficulty,
+                            IDifficultyCalculator difficulty,
                             ISubscription subscription,
                             IRoutesCache cache,
                             IRouteEquipmentRepositoy routeEquipments,

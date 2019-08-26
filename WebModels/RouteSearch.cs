@@ -9,7 +9,5 @@ namespace WebModels
         public Guid Id { get; set; }
         public string Name { get; set; }
         public string Info { get; set; }
-        public string StartPoint { get; set; }
-        public DateTime StartTime { get; set; }
     }
 }
