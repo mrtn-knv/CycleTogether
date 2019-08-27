@@ -63,27 +63,27 @@ namespace CycleTogetherWeb.Controllers
                 return Ok(_routes.Create(route, id));
             }
 
-            return Ok(state.Errors.FirstOrDefault().ErrorMessage);
+            return Ok(state.Errors);
             
         }
 
         // POST: /Route/subscribe
-        [HttpPost("subscribe")]
-        public bool Subscribe([FromBody]Route route)
+        [HttpPost("subscribe/{id}")]
+        public bool Subscribe(string id)
         {
             var currentUserId = Guid.Parse(_claims.Id());
-            if (_routes.Subscribe(currentUserId, route.Id))
+            if (_routes.Subscribe(currentUserId, Guid.Parse(id)))
                 return true;
             
             return false;          
         }
 
         // POST: /Route/unsubscribe
-        [HttpPost("unsubscribe")]
-        public IActionResult Unsubscribe([FromBody]Route route)
+        [HttpPost("unsubscribe/{id}")]
+        public IActionResult Unsubscribe(string id)
         {
             var currentUserId = Guid.Parse(_claims.Id());
-            if (_routes.Unsubscribe(currentUserId, route.Id))
+            if (_routes.Unsubscribe(currentUserId, Guid.Parse(id)))
             {
                 return Ok(true);
             }

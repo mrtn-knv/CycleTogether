@@ -46,7 +46,10 @@ namespace CycleTogether.Routes
         public Route Create(Route route, string userId)
         {
             var newRoute = Save(SetProperties(route, userId));
-            SaveRouteEquipments(newRoute, route.EquipmentsIds);
+
+            if (route.EquipmentsIds != null)           
+            SaveRouteEquipments(newRoute, route.EquipmentsIds.ToList());
+
             _subscriber.Create(new UserRouteEntry { RouteId = newRoute.Id, UserId = Guid.Parse(userId) });
             _cache.AddItem(newRoute);
             _cache.AddUserRoutes(new List<Route>() { newRoute }, userId);
@@ -84,13 +87,12 @@ namespace CycleTogether.Routes
             return userRoutes;
         }
 
-        private void SaveRouteEquipments(Route newRoute, IEnumerable<Guid> equipmentIds)
+        private void SaveRouteEquipments(Route newRoute, List<Guid> equipmentIds)
         {
-            foreach (var equipmentId in equipmentIds)
-            {
-                _routeEquipments.Create(new RouteEquipmentEntry() { RouteId = newRoute.Id, EquipmentId = equipmentId });
-            }
-
+                foreach (var equipmentId in equipmentIds)
+                {
+                    _routeEquipments.Create(new RouteEquipmentEntry() { RouteId = newRoute.Id, EquipmentId = equipmentId });
+                }           
         }
 
         private RouteEntry SetProperties(Route route, string userId)
@@ -208,13 +210,26 @@ namespace CycleTogether.Routes
 
         public bool Subscribe(Guid userId, Guid routeId)
         {
-            return _subscription.Subscribe(userId, routeId);
+            if (_subscription.Subscribe(userId, routeId))
+            {
+                var route = _cache.GetItem(routeId.ToString());
+                route.Subscribed.ToList().Add(new UserRoute { RouteId = routeId, UserId = userId });
+                _cache.Edit(route);
+            }
+
+            return false;
         }
         public bool Unsubscribe(Guid userId, Guid routeId)
         {
             var current = _subscriber.GetAll().FirstOrDefault(ur => ur.RouteId == routeId && ur.UserId == userId);
             if (current != null)
             {
+                var routeInCache = _cache.GetItem(routeId.ToString());
+                    routeInCache.Subscribed
+                    .ToList()
+                    .Remove(new UserRoute {RouteId = routeId, UserId = userId});
+                _cache.Edit(routeInCache);
+
                 return _subscription.Unsubscribe(current);
             }
             return false;

@@ -12,7 +12,7 @@ namespace CycleTogether.RoutesSubscriber
         private readonly IRouteRepository _routes;
         private readonly IUserRepository _users;
         private readonly IUserRouteRepository _subscriber;
-
+        
         public Subscription(IRouteRepository routes, IUserRepository users, IUserRouteRepository subscriber)
         {
             _routes = routes;

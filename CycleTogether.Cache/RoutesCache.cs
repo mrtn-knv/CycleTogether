@@ -127,6 +127,10 @@ namespace CycleTogether.Cache
 
         }
 
+        /// <summary>
+        /// Edit in both user's routes cache and all routes cache.
+        /// </summary>
+        /// <param name="route"></param>
         public void Edit(Route route)
         {
             EditInRoutesCache(route);
@@ -134,6 +138,10 @@ namespace CycleTogether.Cache
 
         }
 
+        /// <summary>
+        /// Edits route in user's routes cache.
+        /// </summary>
+        /// <param name="route"></param>
         private void EditInUserRoutesCache(Route route)
         {
             var routes = this.AllBy(route.UserId.ToString()).ToList();
@@ -146,6 +154,10 @@ namespace CycleTogether.Cache
             }
         }
 
+        /// <summary>
+        /// Edits route from Routes cache.
+        /// </summary>
+        /// <param name="route"></param>
         private void EditInRoutesCache(Route route)
         {
             var routes = this.All().ToList();
@@ -157,6 +169,6 @@ namespace CycleTogether.Cache
                 _redis.StringSet(key, JsonConvert.SerializeObject(routes));
             }
             
-        }
+        }       
     }
 }

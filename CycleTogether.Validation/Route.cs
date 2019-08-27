@@ -9,13 +9,14 @@ namespace CycleTogether.Validation
         {
             RuleFor(r => r.Name)
                 .NotEmpty()
-                .WithMessage("Route's title cannot be empty.");
+                .WithMessage("Route's title cannot be empty.")
+                .MaximumLength(25);
 
             RuleFor(r => r.Info)
                 .Cascade(CascadeMode.StopOnFirstFailure)
                 .NotEmpty()
                 .WithMessage("The field cannot be empty.")
-                .MinimumLength(50)
+                .MinimumLength(10)
                 .WithMessage("Information must contain at least 50 characters.");
 
             RuleFor(r => r.StartPoint)
