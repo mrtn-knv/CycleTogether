@@ -72,10 +72,7 @@ namespace CycleTogetherWeb.Controllers
         public bool Subscribe(string id)
         {
             var currentUserId = Guid.Parse(_claims.Id());
-            if (_routes.Subscribe(currentUserId, Guid.Parse(id)))
-                return true;
-            
-            return false;          
+            return _routes.Subscribe(currentUserId, Guid.Parse(id));         
         }
 
         // POST: /Route/unsubscribe
@@ -83,12 +80,7 @@ namespace CycleTogetherWeb.Controllers
         public IActionResult Unsubscribe(string id)
         {
             var currentUserId = Guid.Parse(_claims.Id());
-            if (_routes.Unsubscribe(currentUserId, Guid.Parse(id)))
-            {
-                return Ok(true);
-            }
-
-            return Ok(false);
+            return Ok(_routes.Unsubscribe(currentUserId, Guid.Parse(id)));           
         }
 
         // POST: /Route/edit
@@ -104,12 +96,7 @@ namespace CycleTogetherWeb.Controllers
         public IActionResult Delete(Guid id)
         {
             var userId = _claims.Id();
-            if (_routes.Remove(id, userId))
-            {
-                return Ok(true);
-            }
-
-            return Ok(false);
+            return Ok(_routes.Remove(id, userId));
         }
     }
 }

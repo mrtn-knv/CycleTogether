@@ -8,7 +8,7 @@ using CycleTogether.RoutesDifficultyManager;
 using CycleTogether.RoutesSubscriber;
 using CycleTogether.Contracts;
 using System.Linq;
-
+using Serilog;
 
 namespace CycleTogether.Routes
 {
@@ -131,9 +131,7 @@ namespace CycleTogether.Routes
                 }
                 catch (NullReferenceException ex)
                 {
-
-                    //TODO: Add Logger.
-
+                    Log.Information("{0} Exception was thrown: {1}", DateTime.Now, ex);
                 }
 
             }
@@ -163,8 +161,8 @@ namespace CycleTogether.Routes
             }
             catch (Exception ex)
             {
-                //TODO: Add Logger.
-                throw; 
+                Log.Information("{0} Exception was thrown: {1}", DateTime.Now, ex);
+                return null;
             }
         }
 
@@ -224,7 +222,14 @@ namespace CycleTogether.Routes
             var current = _subscriber.GetAll().FirstOrDefault(ur => ur.RouteId == routeId && ur.UserId == userId);
             if (current != null)
             {
+                //todo try catch.
                 var routeInCache = _cache.GetItem(routeId.ToString());
+                routeInCache.Subscribed = _subscriber
+                    .GetAll()
+                    .Where(ur => ur.RouteId == routeId)
+                    .Select(_mapper.Map<UserRoute>)
+                    .ToList();
+
                     routeInCache.Subscribed
                     .ToList()
                     .Remove(new UserRoute {RouteId = routeId, UserId = userId});

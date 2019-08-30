@@ -27,6 +27,7 @@ using FluentValidation.AspNetCore;
 using FluentValidation;
 using WebModels;
 using CycleTogether.Validation;
+using Serilog;
 
 namespace CycleTogetherWeb
 {
@@ -93,6 +94,13 @@ namespace CycleTogetherWeb
             })
             .AddFluentValidation();
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
+            Log.Logger = new LoggerConfiguration()
+                .MinimumLevel
+                .Debug()
+                .WriteTo
+                .File("log.txt")
+                .CreateLogger();
 
         }
 

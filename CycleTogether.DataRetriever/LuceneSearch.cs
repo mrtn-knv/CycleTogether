@@ -10,7 +10,6 @@ using Lucene.Net.QueryParsers;
 using Lucene.Net.Search;
 using Version = Lucene.Net.Util.Version;
 using WebModels;
-using System.Globalization;
 
 namespace CycleTogether.DataRetriever
 {

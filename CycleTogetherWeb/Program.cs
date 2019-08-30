@@ -17,7 +17,7 @@ namespace CycleTogetherWeb
             .ConfigureAppConfiguration((webHostBuilderContext,
                                         configurationbuilder) =>
             {
-                var env = webHostBuilderContext.HostingEnvironment;
+                var env = webHostBuilderContext.HostingEnvironment;                
                 configurationbuilder.SetBasePath(env.ContentRootPath);
                 configurationbuilder.AddJsonFile("appsettings.json", false, true);
                 configurationbuilder.AddJsonFile("emailconfig.json", false, true);
