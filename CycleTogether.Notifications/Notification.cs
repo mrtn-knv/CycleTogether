@@ -53,7 +53,7 @@ namespace CycleTogether.Notifications
                 }
                 catch (FormatException ex)
                 {
-                    Log.Information("{0} Exception was thrown: {1}", DateTime.Now, ex);
+                    Log.Error("{0} Exception was thrown: {1}", DateTime.Now, ex);
                 }
             }
             return validMails;
@@ -90,7 +90,7 @@ namespace CycleTogether.Notifications
             }
             catch (Exception ex)
             {
-                Log.Information("{0} Exception was thrown: {1}", DateTime.Now, ex);
+                Log.Error("{0} Exception was thrown: {1}", DateTime.Now, ex);
             }
         }
         private void SetCredentials(SmtpClient client)

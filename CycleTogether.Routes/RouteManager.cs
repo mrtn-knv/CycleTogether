@@ -131,7 +131,7 @@ namespace CycleTogether.Routes
                 }
                 catch (NullReferenceException ex)
                 {
-                    Log.Information("{0} Exception was thrown: {1}", DateTime.Now, ex);
+                    Log.Error("{0} Exception was thrown: {1}", DateTime.Now, ex);
                 }
 
             }
@@ -161,7 +161,7 @@ namespace CycleTogether.Routes
             }
             catch (Exception ex)
             {
-                Log.Information("{0} Exception was thrown: {1}", DateTime.Now, ex);
+                Log.Error("{0} Exception was thrown: {1}", DateTime.Now, ex);
                 return null;
             }
         }

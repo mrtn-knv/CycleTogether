@@ -40,7 +40,7 @@ namespace CycleTogether.Cache
             }
             catch (ArgumentNullException ex)
             {
-                Log.Information("{0} Exception was thrown: {1}", DateTime.Now, ex);
+                Log.Error("{0} Exception was thrown: {1}", DateTime.Now, ex);
                 return null;
             }
         }
@@ -66,7 +66,7 @@ namespace CycleTogether.Cache
             }
             catch (ArgumentNullException ex)
             {
-                Log.Information("{0} Exception was thrown: {1}", DateTime.Now, ex);
+                Log.Error("{0} Exception was thrown: {1}", DateTime.Now, ex);
                 return null;
             }
         }
@@ -101,7 +101,7 @@ namespace CycleTogether.Cache
             }
             catch (Exception ex)
             {
-                Log.Information("{0} Exception was thrown: {1}", DateTime.Now, ex);
+                Log.Error("{0} Exception was thrown: {1}", DateTime.Now, ex);
                 _redis.StringSet(userId + key, JsonConvert.SerializeObject(userRoutes));
             }
         }
@@ -120,7 +120,7 @@ namespace CycleTogether.Cache
             }
             catch (ArgumentNullException ex)
             {
-                Log.Information("{0} Exception was thrown: {1}", DateTime.Now, ex);
+                Log.Error("{0} Exception was thrown: {1}", DateTime.Now, ex);
                 return null;
             }
         }
