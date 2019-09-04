@@ -8,19 +8,21 @@ using NotificationEmails;
 using System.Collections.Generic;
 using WebModels;
 using Hangfire;
+using System.Linq;
+using Serilog;
 
 namespace CycleTogether.Notifications
 {
     public class Notification : INotification
-    {        
-        private readonly ClaimsRetriever _claims;
+    {
+        private readonly IClaimsRetriever _claims;
         private readonly SmtpClient _client;
         private readonly EmailProperties _emailProperties;
         private readonly NotificationCredentials _emailCredentials;
         private readonly IRouteManager _routes;
         private readonly ISubscription _subcription;
 
-        public Notification(ClaimsRetriever claims, EmailProperties emailProperties, NotificationCredentials emailCredentials, IRouteManager routes, ISubscription subcription)
+        public Notification(IClaimsRetriever claims, EmailProperties emailProperties, NotificationCredentials emailCredentials, IRouteManager routes, ISubscription subcription)
         {
             _routes = routes;
             _subcription = subcription;
@@ -30,24 +32,38 @@ namespace CycleTogether.Notifications
             _client = Client();
             SetCredentials(_client);
         }
-        public void SendInvitation(string routeId, List<User> receiverEmails)
+        public void SendInvitation(string routeId, List<string> receiverEmails)
         {
-            Send(InvitationEmail(routeId, receiverEmails));
+            var validMails = CheckForInvalidEmails(receiverEmails);
+            Send(InvitationEmail(routeId, validMails));
+
+
         }
 
-        private Email InvitationEmail(string routeId, List<User> users)
+        private List<string> CheckForInvalidEmails(List<string> receiverEmails)
+        {
+            var validMails = new List<string>();
+
+            foreach (var email in receiverEmails)
+            {
+                try
+                {
+                    MailAddress mail = new MailAddress(email);
+                    validMails.Add(email);
+                }
+                catch (FormatException ex)
+                {
+                    Log.Error("{0} Exception was thrown: {1}", DateTime.Now, ex);
+                }
+            }
+            return validMails;
+        }
+
+        private Email InvitationEmail(string routeId, List<string> users)
         {
             var invitationSender = _claims.FullName();
             var body = string.Format(_emailProperties.InvitationBody, invitationSender, _emailProperties.BaseLink + routeId);
-            return new Email(GetUsersEmails(users), _emailCredentials.DefaultSender, _emailProperties.SubjectInvitation, body);
-        }
-
-        private IEnumerable<string> GetUsersEmails(List<User> users)
-        {
-            foreach (var user in users)
-            {
-                yield return user.Email;
-            }
+            return new Email(users, _emailCredentials.DefaultSender, _emailProperties.SubjectInvitation, body);
         }
 
         public void SendReminder(string routeId)
@@ -55,7 +71,7 @@ namespace CycleTogether.Notifications
             var sendDate = _routes.Get(Guid.Parse(routeId)).StartTime.Day - DateTime.Now.Day;
             var job = BackgroundJob.Schedule(
                 () => Send(NotificationEmail(routeId)),
-                TimeSpan.FromDays(sendDate));            
+                TimeSpan.FromDays(sendDate));
         }
 
         private Email NotificationEmail(string routeId)
@@ -70,14 +86,14 @@ namespace CycleTogether.Notifications
             try
             {
                 _client.Send(email);
-                
+
             }
             catch (Exception ex)
             {
-                
+                Log.Error("{0} Exception was thrown: {1}", DateTime.Now, ex);
             }
         }
-        private  void SetCredentials(SmtpClient client)
+        private void SetCredentials(SmtpClient client)
         {
             var credentials = new NetworkCredential(_emailCredentials.DefaultSender, _emailCredentials.DefaultPass);
             client.UseDefaultCredentials = false;
@@ -91,7 +107,7 @@ namespace CycleTogether.Notifications
                 EnableSsl = true,
                 Host = _emailCredentials.DefaultHost,
                 Port = 25
-            };            
+            };
         }
     }
 }

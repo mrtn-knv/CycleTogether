@@ -4,7 +4,8 @@ using CycleTogether.Contracts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebModels;
-using CycleTogether.Claims;
+using FluentValidation;
+using System.Linq;
 
 namespace CycleTogetherWeb.Controllers
 {
@@ -14,12 +15,14 @@ namespace CycleTogetherWeb.Controllers
     public class RouteController : ControllerBase
     {
         private readonly IRouteManager _routes;
-        private readonly ClaimsRetriever _claims;
+        private readonly IClaimsRetriever _claims;
+        private readonly IValidator<Route> _validator;
         
-        public RouteController(IRouteManager routes, ClaimsRetriever claimsManager)
+        public RouteController(IRouteManager routes, IClaimsRetriever claimsManager, IValidator<Route> validator)
         {
             _routes = routes;
             _claims = claimsManager;
+            _validator = validator;
         }
 
         [HttpGet("all")]
@@ -51,34 +54,33 @@ namespace CycleTogetherWeb.Controllers
 
         // POST: /Route/new
         [HttpPost("new")]
-        public Route Create([FromBody] Route route)
-        {            
-            var id = _claims.Id();
-            return _routes.Create(route, id);
+        public IActionResult Create([FromBody] Route route)
+        {
+            var state = _validator.Validate(route, ruleSet: "all");
+            if (state.IsValid)
+            {
+                var id = _claims.Id();
+                return Ok(_routes.Create(route, id));
+            }
+
+            return Ok(state.Errors);
+            
         }
 
         // POST: /Route/subscribe
-        [HttpPost("subscribe")]
-        public bool Subscribe([FromBody]Route route)
+        [HttpPost("subscribe/{id}")]
+        public bool Subscribe(string id)
         {
             var currentUserId = Guid.Parse(_claims.Id());
-            if (_routes.Subscribe(currentUserId, route.Id))
-                return true;
-            
-            return false;          
+            return _routes.Subscribe(currentUserId, Guid.Parse(id));         
         }
 
         // POST: /Route/unsubscribe
-        [HttpPost("unsubscribe")]
-        public IActionResult Unsubscribe([FromBody]Route route)
+        [HttpPost("unsubscribe/{id}")]
+        public IActionResult Unsubscribe(string id)
         {
             var currentUserId = Guid.Parse(_claims.Id());
-            if (_routes.Unsubscribe(currentUserId, route.Id))
-            {
-                return Ok(true);
-            }
-
-            return Ok(false);
+            return Ok(_routes.Unsubscribe(currentUserId, Guid.Parse(id)));           
         }
 
         // POST: /Route/edit
@@ -94,12 +96,7 @@ namespace CycleTogetherWeb.Controllers
         public IActionResult Delete(Guid id)
         {
             var userId = _claims.Id();
-            if (_routes.Remove(id, userId))
-            {
-                return Ok(true);
-            }
-
-            return Ok(false);
+            return Ok(_routes.Remove(id, userId));
         }
     }
 }

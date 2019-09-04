@@ -19,7 +19,7 @@ namespace CycleTogetherWeb.Controllers
 
         [AllowAnonymous]
         [HttpPost("login")]
-        public IActionResult Authenticate([FromBody]User userParams)
+        public IActionResult Authenticate([FromBody]UserView userParams)
         {
             var authenticated = _authenticator.Authenticate(userParams.Email, userParams.Password);
             if (!string.IsNullOrWhiteSpace(authenticated))

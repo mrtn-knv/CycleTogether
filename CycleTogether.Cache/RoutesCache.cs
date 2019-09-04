@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using WebModels;
 using System.Linq;
+using Serilog;
 
 namespace CycleTogether.Cache
 {
@@ -13,12 +14,11 @@ namespace CycleTogether.Cache
         private readonly IDatabase _redis;
         private const string key = "routes";
 
-
         public RoutesCache(IDatabase redis)
         {
             _redis = redis;
-
         }
+
 
         public void AddItem(Route route)
         {
@@ -35,25 +35,38 @@ namespace CycleTogether.Cache
             try
             {
                 var result = JsonConvert.DeserializeObject<IEnumerable<Route>>(_redis.StringGet(key));
+                result = RemoveInvalidRoutes(result);
                 return result;
             }
             catch (ArgumentNullException ex)
             {
-                //TODO: Add logger for exception.
+                Log.Error("{0} Exception was thrown: {1}", DateTime.Now, ex);
                 return null;
             }
+        }
 
+        private IEnumerable<Route> RemoveInvalidRoutes(IEnumerable<Route> result)
+        {
+            var trips = new List<Route>();
+            foreach (var route in result)
+            {
+                if (DateTime.Compare(DateTime.Now, route.StartTime) <= 0)
+                {
+                    trips.Add(route);
+                }
+            }
+            return trips;
         }
 
         public IEnumerable<Route> AllBy(string userId)
         {
             try
             {
-                return JsonConvert.DeserializeObject<IEnumerable<Route>>(_redis.StringGet(userId + key));
+                return this.RemoveInvalidRoutes(JsonConvert.DeserializeObject<IEnumerable<Route>>(_redis.StringGet(userId + key)));
             }
             catch (ArgumentNullException ex)
             {
-                //TODO: Add logger for exception.
+                Log.Error("{0} Exception was thrown: {1}", DateTime.Now, ex);
                 return null;
             }
         }
@@ -88,12 +101,9 @@ namespace CycleTogether.Cache
             }
             catch (Exception ex)
             {
+                Log.Error("{0} Exception was thrown: {1}", DateTime.Now, ex);
                 _redis.StringSet(userId + key, JsonConvert.SerializeObject(userRoutes));
-                //TODO add logger
             }
-
-
-
         }
 
         public void AddUserSubsciptions(List<Route> subscribedRoutes, string userId)
@@ -106,11 +116,11 @@ namespace CycleTogether.Cache
         {
             try
             {
-                return JsonConvert.DeserializeObject<IEnumerable<Route>>(_redis.StringGet(userId));
+                return this.RemoveInvalidRoutes(JsonConvert.DeserializeObject<IEnumerable<Route>>(_redis.StringGet(userId)));
             }
             catch (ArgumentNullException ex)
             {
-
+                Log.Error("{0} Exception was thrown: {1}", DateTime.Now, ex);
                 return null;
             }
         }
@@ -120,16 +130,22 @@ namespace CycleTogether.Cache
         {
             var all = this.All();
             return all.FirstOrDefault(r => r.Id == Guid.Parse(id));
-
         }
 
+        /// <summary>
+        /// Edit in both user's routes cache and all routes cache.
+        /// </summary>
+        /// <param name="route"></param>
         public void Edit(Route route)
         {
             EditInRoutesCache(route);
             EditInUserRoutesCache(route);
-
         }
 
+        /// <summary>
+        /// Edits route in user's routes cache.
+        /// </summary>
+        /// <param name="route"></param>
         private void EditInUserRoutesCache(Route route)
         {
             var routes = this.AllBy(route.UserId.ToString()).ToList();
@@ -142,6 +158,10 @@ namespace CycleTogether.Cache
             }
         }
 
+        /// <summary>
+        /// Edits route from Routes cache.
+        /// </summary>
+        /// <param name="route"></param>
         private void EditInRoutesCache(Route route)
         {
             var routes = this.All().ToList();
@@ -153,6 +173,6 @@ namespace CycleTogether.Cache
                 _redis.StringSet(key, JsonConvert.SerializeObject(routes));
             }
             
-        }
+        }       
     }
 }

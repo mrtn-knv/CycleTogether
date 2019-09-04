@@ -7,10 +7,11 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using CycleTogether.BindingModels;
+using CycleTogether.Contracts;
 
 namespace CycleTogether.Authentication
 {
-    public class TokenGenerator
+    public class TokenGenerator : ITokenGenerator
     {
         private readonly byte[] _secretTokenKey;
         private readonly int _tokenExpirationInMinutes;

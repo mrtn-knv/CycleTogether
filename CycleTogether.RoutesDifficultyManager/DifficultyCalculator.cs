@@ -5,7 +5,7 @@ using WebModels;
 
 namespace CycleTogether.RoutesDifficultyManager
 {
-    public class DifficultyCalculator
+    public class DifficultyCalculator : IDifficultyCalculator
     {
         private readonly IDifficultyLevel _beginnerLevel;
         private readonly IDifficultyLevel _intermediateLevel;

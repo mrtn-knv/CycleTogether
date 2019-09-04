@@ -1,5 +1,6 @@
 ﻿using CycleTogether.Contracts;
 using Newtonsoft.Json;
+using Serilog;
 using StackExchange.Redis;
 using System;
 using System.Collections.Generic;
@@ -40,9 +41,8 @@ namespace CycleTogether.Cache
                 return JsonConvert.DeserializeObject<IEnumerable<Equipment>>(_redis.StringGet(key));
             }
             catch (ArgumentNullException ex)
-            {
-                //TODO: logger for exception
-                
+            { 
+                Log.Information("{0} Exception was thrown: {1}", DateTime.Now, ex);
                 return null; 
             }
         }

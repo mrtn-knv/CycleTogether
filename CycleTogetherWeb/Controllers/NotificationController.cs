@@ -19,9 +19,9 @@ namespace CycleTogetherWeb.Controllers
         }
                 
         [HttpPost("{routeId}/invite")]
-        public void SendInvitation([FromBody]List<User> users, string routeId)
+        public void SendInvitation([FromBody]List<string> emails, string routeId)
         {
-            _notificator.SendInvitation(routeId, users);
+            _notificator.SendInvitation(routeId, emails);
         }
 
         [AllowAnonymous]

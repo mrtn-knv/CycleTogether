@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
+using CycleTogether.Contracts;
 using Microsoft.AspNetCore.Http;
 
 namespace CycleTogether.Claims
 {
-    public class ClaimsRetriever
+    public class ClaimsRetriever : IClaimsRetriever
     {
         private readonly IHttpContextAccessor _accessor;
         public ClaimsRetriever(IHttpContextAccessor accessor)
