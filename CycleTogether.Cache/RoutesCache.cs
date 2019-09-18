@@ -73,12 +73,28 @@ namespace CycleTogether.Cache
 
         public void RemoveItem(Route route)
         {
+            RemoveFromUsersRoutes(route);
+            RemoveFromAllRoutes(route);
+        }
+
+        private void RemoveFromAllRoutes(Route route)
+        {
             var all = JsonConvert.DeserializeObject<List<Route>>(_redis.StringGet(key));
-            var current = all.FirstOrDefault(r => r.Id == route.Id);
-            if (current != null)
+            if (all != null)
             {
-                all.RemoveAll(r => r.Id == current.Id);
+                var current = all.FirstOrDefault(r => r.Id == route.Id);
+                all.Remove(current);
                 _redis.StringSet(key, JsonConvert.SerializeObject(all));
+            }            
+        }
+
+        private void RemoveFromUsersRoutes(Route route)
+        {
+            var usersRoutes = JsonConvert.DeserializeObject<List<Route>>(_redis.StringGet(route.UserId.ToString() + key));
+            if (usersRoutes != null)
+            {
+                usersRoutes.Remove(route);
+                _redis.StringSet(route.UserId.ToString() + key, JsonConvert.SerializeObject(usersRoutes));
             }
         }
 
@@ -172,7 +188,7 @@ namespace CycleTogether.Cache
                 routes.Add(route);
                 _redis.StringSet(key, JsonConvert.SerializeObject(routes));
             }
-            
-        }       
+
+        }
     }
 }
