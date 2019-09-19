@@ -38,6 +38,13 @@ namespace CycleTogetherWeb.Controllers
             return _routes.GetUsersSubscriptions(userId);
         }
 
+        [HttpGet("history")]
+        public IEnumerable<Route> History()
+        {
+            var userId = _claims.Id();
+            return _routes.History(userId);
+        }
+
         [HttpGet("all/mytrips")]
         public IEnumerable<Route> GetAllByUser()
         {

@@ -14,7 +14,7 @@ namespace WebModels
         public string Destination { get; set; }
         public DateTime StartTime { get; set; }
         public bool SuitableForKids { get; set; }
-        public bool IsComplete { get; set; }
+        public bool IsComplete => DateTime.Compare(DateTime.UtcNow, StartTime) > 0;
         public IEnumerable<UserRoute> Subscribed { get; set; }
         public IEnumerable<RouteEquipments> Equipments{ get; set; }
         public IEnumerable<Guid> EquipmentsIds { get; set; }

@@ -68,11 +68,24 @@ namespace CycleTogether.Routes
             if (subscriptions == null)
             {
                 var userRoutes = _subscriber.GetAll().Where(ur => ur.UserId == Guid.Parse(userId));
-                var routes = userRoutes.Select(userRoute => _mapper.Map<Route>(_routes.GetById(userRoute.RouteId)));
-                _cache.AddUserSubsciptions(routes.ToList(), userId);
-                return _cache.UserSubscriptions(userId);
+                subscriptions = userRoutes.Select(userRoute => _mapper.Map<Route>(_routes.GetById(userRoute.RouteId)));
+                _cache.AddUserSubsciptions(subscriptions.ToList(), userId);
             }
-            return subscriptions;
+            return subscriptions.Where(route=>DateTime.Compare(DateTime.UtcNow, route.StartTime) <= 0);
+        }
+
+        public IEnumerable<Route> History(string userId)
+        {
+            var subscriptions = _cache.UserSubscriptions(userId);
+            if (subscriptions == null)
+            {
+                subscriptions = _subscriber.GetAll()
+                    .Where(ur => ur.UserId == Guid.Parse(userId))
+                    .Select(ur => ur.Route)
+                    .Select(_mapper.Map<Route>);
+                _cache.AddUserSubsciptions(subscriptions.ToList(), userId);
+            }
+            return subscriptions.Where(route => DateTime.Compare(DateTime.UtcNow, route.StartTime) > 0);
         }
 
         public IEnumerable<Route> AllByUser(Guid userId)
@@ -182,7 +195,7 @@ namespace CycleTogether.Routes
 
         public Route Update(Route route, string currentUserId)
         {
-
+            //todo when edits, userId is not passed to the model
             if (currentUserId == route.UserId.ToString())
             {
                 _search.UpdateIndex();
@@ -239,6 +252,5 @@ namespace CycleTogether.Routes
             }
             return false;
         }
-
     }
 }
