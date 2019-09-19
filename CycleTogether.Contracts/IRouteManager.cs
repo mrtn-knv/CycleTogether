@@ -15,5 +15,6 @@ namespace CycleTogether.Contracts
         bool Unsubscribe(Guid userId, Guid routeId);
         IEnumerable<Route> AllByUser(Guid userId);
         IEnumerable<Route> GetUsersSubscriptions(string userId);
+        IEnumerable<Route> History(string userId);
     }
 }

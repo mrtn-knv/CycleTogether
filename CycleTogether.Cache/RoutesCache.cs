@@ -132,7 +132,7 @@ namespace CycleTogether.Cache
         {
             try
             {
-                return this.RemoveInvalidRoutes(JsonConvert.DeserializeObject<IEnumerable<Route>>(_redis.StringGet(userId)));
+                return JsonConvert.DeserializeObject<IEnumerable<Route>>(_redis.StringGet(userId));
             }
             catch (ArgumentNullException ex)
             {
@@ -145,6 +145,7 @@ namespace CycleTogether.Cache
         public Route GetItem(string id)
         {
             var all = this.All();
+            //todo should check if null
             return all.FirstOrDefault(r => r.Id == Guid.Parse(id));
         }
 
