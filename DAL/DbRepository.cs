@@ -22,7 +22,6 @@ namespace DAL
         public TEntity Create(TEntity entry)
         {
             _context.Add(entry);
-            _context.SaveChanges();
             return entry;
         }
 
@@ -30,7 +29,6 @@ namespace DAL
         {
             var current = _context.Find<TEntity>(id);
             _context.Remove(current);
-            _context.SaveChanges();
         }
 
         public void Dispose()
@@ -41,7 +39,6 @@ namespace DAL
         public void Edit(TEntity entry)
         {
             _context.Update(entry);
-            _context.SaveChanges();
         }
 
         public IEnumerable<TEntity> GetAll()

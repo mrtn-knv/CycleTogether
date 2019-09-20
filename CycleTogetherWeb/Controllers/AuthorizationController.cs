@@ -41,7 +41,6 @@ namespace CycleTogetherWeb.Controllers
             }
             catch (Exception ex)
             {
-
                 return Content(ex.ToString());
             }
 

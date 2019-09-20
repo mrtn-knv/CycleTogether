@@ -9,13 +9,12 @@ namespace CycleTogether.Equipments
 {
     public class EquipmentRetriever : IEquipmentRetriever
     {
-        private readonly IEquipmentsRepository _equipments;
         private readonly IMapper _mapper;
         private readonly IEquipmentCache _equipmentsCache;
-        public EquipmentRetriever(IEquipmentsRepository equipments, IMapper mapper, IEquipmentCache equipmentsCache)
+        private readonly IUnitOfWork _db;
+        public EquipmentRetriever(IMapper mapper, IEquipmentCache equipmentsCache, IUnitOfWork db)
         {
-
-            _equipments = equipments;
+            _db = db;
             _mapper = mapper;
             _equipmentsCache = equipmentsCache;
         }
@@ -24,7 +23,7 @@ namespace CycleTogether.Equipments
             var equipments = _equipmentsCache.All();
             if (equipments == null)
             {
-                var equipment = _equipments.GetAll().Select(e => _mapper.Map<Equipment>(e));
+                var equipment = _db.Equipments.GetAll().Select(e => _mapper.Map<Equipment>(e));
                 _equipmentsCache.AddAll(equipment.ToList());
                 return equipment;
             }

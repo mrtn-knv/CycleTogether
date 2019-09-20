@@ -11,26 +11,25 @@ namespace CycleTogether.Authentication
 {
     public class Authenticator : IAuthentication
     {
-        private readonly IUserRepository _users;
         private readonly IMapper _mapper;
         private readonly ITokenGenerator _tokenGenerator;
-        private readonly IUserEquipmentRepository _userEquipments;
+        private readonly IUnitOfWork _db;
 
-        public Authenticator(IMapper mapper, IUserRepository users, ITokenGenerator tokenGenerator, IUserEquipmentRepository userEquipments)
+        public Authenticator(IMapper mapper, IUserRepository users, ITokenGenerator tokenGenerator, IUserEquipmentRepository userEquipments, IUnitOfWork db)
         {
-            _users = users;
+            _db = db;
             _mapper = mapper;
             _tokenGenerator = tokenGenerator;
-            _userEquipments = userEquipments;
         }
 
         public void Register(User user)
         {
-            if (!_users.GetAll().Any(u => u.Email == user.Email))
+            if (!_db.Users.GetAll().Any(u => u.Email == user.Email))
             {
                 user.Password = this._tokenGenerator.HashPassword(user.Password);
                 var savedUser = SaveUser(user);
                 SaveUserEquipments(savedUser.Id, user.Equipments);
+                _db.SaveChanges();
             }
             
         }
@@ -40,7 +39,7 @@ namespace CycleTogether.Authentication
             if (equipments != null)
             foreach (var equipment in equipments)
             {
-                _userEquipments.Create(new UserEquipmentEntry { UserId = id, EquipmentId = equipment });
+                _db.UserEquipments.Create(new UserEquipmentEntry { UserId = id, EquipmentId = equipment });
             }
         }
 
@@ -51,7 +50,7 @@ namespace CycleTogether.Authentication
 
         private User SaveUser(User user)
         {
-            var newUser = _users.Create(_mapper.Map<UserEntry>(user));            
+            var newUser = _db.Users.Create(_mapper.Map<UserEntry>(user));            
             return _mapper.Map<User>(newUser);
         }
     }

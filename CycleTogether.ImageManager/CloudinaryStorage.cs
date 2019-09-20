@@ -17,25 +17,19 @@ namespace CycleTogether.ImageManager
     {
         private readonly Account _account;
         private readonly Cloudinary _cloudinary;
-        private readonly IImageRepository _images;
         private readonly IMapper _mapper;
-        private readonly IUserRepository _users;
-        private readonly IRouteRepository _routes;
         private readonly CloudinaryAccount _credentials;
+        private readonly IUnitOfWork _db;
    
-        public CloudinaryStorage(IImageRepository images,
+        public CloudinaryStorage(IUnitOfWork db,
                                  IMapper mapper,
-                                 IUserRepository users,
-                                 IRouteRepository routes,
                                  CloudinaryAccount credentials)
         {
+            _db = db;
             _credentials = credentials;
             _account = new Account(_credentials.Cloud, _credentials.ApiKey, _credentials.ApiSecret);
             _cloudinary = new Cloudinary(_account);
-            _images = images;
             _mapper = mapper;
-            _users = users;
-            _routes = routes;
 
         }
 
@@ -47,12 +41,12 @@ namespace CycleTogether.ImageManager
 
         public Picture Get(string id)
         {
-            return _mapper.Map<Picture>(_images.GetById(Guid.Parse(id)));
+            return _mapper.Map<Picture>(_db.Images.GetById(Guid.Parse(id)));
         }
 
         public List<Picture> GetAll(string routeId)
         {
-            return _routes.GetById(Guid.Parse(routeId)).
+            return _db.Routes.GetById(Guid.Parse(routeId)).
                    Pictures.Select(img => _mapper.
                    Map<Picture>(img)).
                    ToList();
@@ -62,9 +56,10 @@ namespace CycleTogether.ImageManager
         {
             if (IsRouteCreator(currentUserId, routeId))
             {
-                var publicId = _images.GetById(Guid.Parse(imageId)).PublicId;
+                var publicId = _db.Images.GetById(Guid.Parse(imageId)).PublicId;
                 DeleteFromCloudinary(publicId);
-                _images.Delete(Guid.Parse(imageId));
+                _db.Images.Delete(Guid.Parse(imageId));
+                _db.SaveChanges();
             }
         }
 
@@ -76,19 +71,20 @@ namespace CycleTogether.ImageManager
 
         private bool IsRouteCreator(string currentUserId, string routeId)
         {
-            return _users.GetById(Guid.Parse(currentUserId)).Routes.Any(r => r.Id == Guid.Parse(routeId));
+            return _db.Users.GetById(Guid.Parse(currentUserId)).Routes.Any(r => r.Id == Guid.Parse(routeId));
         }
 
         private void AddImageToRoute(string routeId, PictureEntry newImage)
         {
-            _routes.AddPicture(Guid.Parse(routeId), newImage);
+            _db.Routes.AddPicture(Guid.Parse(routeId), newImage);
         }
 
         private Picture Save(ImageUploadResult image, string routeId)
         {
             var newImage = FillImageProperties(image, routeId);
-            var createdImage = _images.Create(_mapper.Map<PictureEntry>(newImage));
+            var createdImage = _db.Images.Create(_mapper.Map<PictureEntry>(newImage));
             AddImageToRoute(routeId, createdImage);
+            _db.SaveChanges();
             return _mapper.Map<Picture>(createdImage);
         }
 

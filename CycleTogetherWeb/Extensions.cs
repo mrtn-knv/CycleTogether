@@ -57,6 +57,7 @@ namespace CycleTogetherWeb
             services.AddSingleton<IEquipmentCache, EquipmentsCache>();
             services.AddScoped<IDataRetriever, DataRetriever>();
             services.AddScoped<ISearchManager, SearchManager>();
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddSingleton<IValidator<WebModels.Route>, CycleTogether.Validation.Route>();
             services.AddSingleton<IValidator<WebModels.User>, CycleTogether.Validation.User>();
 
