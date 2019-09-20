@@ -44,21 +44,7 @@ namespace CycleTogether.Routes
             _cache.AddUserRoutes(new List<Route>() { newRoute }, userId);
             _search.AddRouteToIndex(newRoute);
             return newRoute;
-        }
-
-        public IEnumerable<Route> History(string userId)
-        {
-            var subscriptions = _cache.UserSubscriptions(userId);
-            if (subscriptions == null)
-            {
-                subscriptions = _db.UserRoutes.GetAll()
-                    .Where(ur => ur.UserId == Guid.Parse(userId))
-                    .Select(ur => ur.Route)
-                    .Select(_mapper.Map<Route>);
-                _cache.AddUserSubsciptions(subscriptions.ToList(), userId);
-            }
-            return subscriptions.Where(route => DateTime.Compare(DateTime.UtcNow, route.StartTime) > 0);
-        }
+        }       
 
         public IEnumerable<Route> AllByUser(Guid userId)
         {

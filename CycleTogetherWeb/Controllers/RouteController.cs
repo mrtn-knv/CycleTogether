@@ -17,13 +17,11 @@ namespace CycleTogetherWeb.Controllers
         private readonly IRouteManager _routes;
         private readonly IClaimsRetriever _claims;
         private readonly IValidator<Route> _validator;
-        private readonly IRouteSubscriber _subscriber;
         
-        public RouteController(IRouteManager routes, IClaimsRetriever claimsManager, IRouteSubscriber subscriber, IValidator<Route> validator)
+        public RouteController(IRouteManager routes, IClaimsRetriever claimsManager, IValidator<Route> validator)
         {
             _routes = routes;
             _claims = claimsManager;
-            _subscriber = subscriber;
             _validator = validator;
         }
 
@@ -31,20 +29,6 @@ namespace CycleTogetherWeb.Controllers
         public IEnumerable<Route> GetAll()
         {
             return _routes.GetAll();
-        }
-
-        [HttpGet("subscribed")]
-        public IEnumerable<Route> GetUserSubscribed()
-        {
-            var userId = _claims.Id();
-            return _subscriber.GetUsersSubscriptions(userId);
-        }
-
-        [HttpGet("history")]
-        public IEnumerable<Route> History()
-        {
-            var userId = _claims.Id();
-            return _routes.History(userId);
         }
 
         [HttpGet("all/mytrips")]
@@ -60,7 +44,6 @@ namespace CycleTogetherWeb.Controllers
             return _routes.Get(id);
         }
         
-
         // POST: /Route/new
         [HttpPost("new")]
         public IActionResult Create([FromBody] Route route)
@@ -71,25 +54,7 @@ namespace CycleTogetherWeb.Controllers
                 var id = _claims.Id();
                 return Ok(_routes.Create(route, id));
             }
-
-            return Ok(state.Errors);
-            
-        }
-
-        // POST: /Route/subscribe
-        [HttpPost("subscribe/{id}")]
-        public bool Subscribe(string id)
-        {
-            var currentUserId = Guid.Parse(_claims.Id());
-            return _subscriber.Subscribe(currentUserId, Guid.Parse(id));         
-        }
-
-        // POST: /Route/unsubscribe
-        [HttpPost("unsubscribe/{id}")]
-        public IActionResult Unsubscribe(string id)
-        {
-            var currentUserId = Guid.Parse(_claims.Id());
-            return Ok(_subscriber.Unsubscribe(currentUserId, Guid.Parse(id)));           
+            return Ok(state.Errors);            
         }
 
         // POST: /Route/edit

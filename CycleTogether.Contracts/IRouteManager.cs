@@ -12,6 +12,5 @@ namespace CycleTogether.Contracts
         Route Get(Guid id);
         IEnumerable<Route> GetAll();
         IEnumerable<Route> AllByUser(Guid userId);
-        IEnumerable<Route> History(string userId);
     }
 }
