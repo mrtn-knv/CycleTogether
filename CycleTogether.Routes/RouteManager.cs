@@ -14,7 +14,6 @@ namespace CycleTogether.Routes
     {
         private readonly IMapper _mapper;
         private readonly IDifficultyCalculator _difficulty;
-        private readonly ISubscription _subscriber;
         private readonly IRoutesCache _cache;
         private readonly ISearchManager _search;
         private readonly IUnitOfWork _db;
@@ -22,14 +21,12 @@ namespace CycleTogether.Routes
         public RouteManager(IUnitOfWork db,
                             IMapper mapper,
                             IDifficultyCalculator difficulty,
-                            ISubscription subscription,
                             IRoutesCache cache,
                             ISearchManager search)
         {
             _db = db;
             _mapper = mapper;
             _difficulty = difficulty;
-            _subscriber = subscription;
             _cache = cache;
             _search = search;
 
@@ -47,23 +44,6 @@ namespace CycleTogether.Routes
             _cache.AddUserRoutes(new List<Route>() { newRoute }, userId);
             _search.AddRouteToIndex(newRoute);
             return newRoute;
-        }
-
-        public IEnumerable<Route> GetUsersSubscriptions(string userId)
-        {
-            return UsersSubscribtions(userId);
-        }
-
-        private IEnumerable<Route> UsersSubscribtions(string userId)
-        {
-            var subscriptions = _cache.UserSubscriptions(userId);
-            if (subscriptions == null)
-            {
-                var userRoutes = _db.UserRoutes.GetAll().Where(ur => ur.UserId == Guid.Parse(userId));
-                subscriptions = userRoutes.Select(userRoute => _mapper.Map<Route>(_db.Routes.GetById(userRoute.RouteId)));
-                _cache.AddUserSubsciptions(subscriptions.ToList(), userId);
-            }
-            return subscriptions.Where(route => DateTime.Compare(DateTime.UtcNow, route.StartTime) <= 0);
         }
 
         public IEnumerable<Route> History(string userId)
@@ -92,24 +72,6 @@ namespace CycleTogether.Routes
             return userRoutes;
         }
 
-        private void SaveRouteEquipments(Route newRoute, List<Guid> equipmentIds)
-        {
-            foreach (var equipmentId in equipmentIds)
-            {
-                _db.RouteEquipments.Create(new RouteEquipmentEntry() { RouteId = newRoute.Id, EquipmentId = equipmentId });
-            }
-            _db.SaveChanges();
-        }
-
-        private RouteEntry SetProperties(Route route, string userId)
-        {
-
-            var newRoute = _mapper.Map<RouteEntry>(route);
-            newRoute.Difficulty = _difficulty.DifficultyLevel(route);
-            newRoute.UserId = Guid.Parse(userId);
-            return newRoute;
-        }
-
         public IEnumerable<Route> GetAll()
         {
             var all = _cache.All();
@@ -121,27 +83,6 @@ namespace CycleTogether.Routes
                 return _cache.All();
             }
             return all;
-        }
-
-        private void FillAllEquipmentsForRoutes()
-        {
-            var allRoutes = _db.Routes.GetAll();
-
-            foreach (var route in allRoutes)
-            {
-                try
-                {
-                    route.RouteEquipments = _db.RouteEquipments.GetAll()
-                                       .Where(equipment => equipment.RouteId == route.Id)
-                                       .ToList();
-                }
-                catch (NullReferenceException ex)
-                {
-                    Log.Error("{0} Exception was thrown: {1}", DateTime.Now, ex);
-                }
-
-            }
-
         }
 
         public Route Get(Guid id)
@@ -198,6 +139,45 @@ namespace CycleTogether.Routes
             return null;
         }
 
+
+        private void SaveRouteEquipments(Route newRoute, List<Guid> equipmentIds)
+        {
+            foreach (var equipmentId in equipmentIds)
+            {
+                _db.RouteEquipments.Create(new RouteEquipmentEntry() { RouteId = newRoute.Id, EquipmentId = equipmentId });
+            }
+            _db.SaveChanges();
+        }
+
+        private RouteEntry SetProperties(Route route, string userId)
+        {
+
+            var newRoute = _mapper.Map<RouteEntry>(route);
+            newRoute.Difficulty = _difficulty.DifficultyLevel(route);
+            newRoute.UserId = Guid.Parse(userId);
+            return newRoute;
+        }
+        private void FillAllEquipmentsForRoutes()
+        {
+            var allRoutes = _db.Routes.GetAll();
+
+            foreach (var route in allRoutes)
+            {
+                try
+                {
+                    route.RouteEquipments = _db.RouteEquipments.GetAll()
+                                       .Where(equipment => equipment.RouteId == route.Id)
+                                       .ToList();
+                }
+                catch (NullReferenceException ex)
+                {
+                    Log.Error("{0} Exception was thrown: {1}", DateTime.Now, ex);
+                }
+
+            }
+
+        }
+
         private Route Save(RouteEntry route)
         {
 
@@ -213,38 +193,6 @@ namespace CycleTogether.Routes
             return _mapper.Map<Route>(current);
         }
 
-        public bool Subscribe(Guid userId, Guid routeId)
-        {
-            if (_subscriber.Subscribe(userId, routeId))
-            {
-                var route = _cache.GetItem(routeId.ToString());
-                route.Subscribed.ToList().Add(new UserRoute { RouteId = routeId, UserId = userId });
-                _cache.Edit(route);
-            }
-
-            return false;
-        }
-        public bool Unsubscribe(Guid userId, Guid routeId)
-        {
-            var current = _db.UserRoutes.GetAll().FirstOrDefault(ur => ur.RouteId == routeId && ur.UserId == userId);
-            if (current != null)
-            {
-                //todo try catch.
-                var routeInCache = _cache.GetItem(routeId.ToString());
-                routeInCache.Subscribed = _db.UserRoutes
-                    .GetAll()
-                    .Where(ur => ur.RouteId == routeId)
-                    .Select(_mapper.Map<UserRoute>)
-                    .ToList();
-
-                routeInCache.Subscribed
-                .ToList()
-                .Remove(new UserRoute { RouteId = routeId, UserId = userId });
-                _cache.Edit(routeInCache);
-
-                return _subscriber.Unsubscribe(current);
-            }
-            return false;
-        }
+       
     }
 }

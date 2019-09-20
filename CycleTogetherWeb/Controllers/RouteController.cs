@@ -17,11 +17,13 @@ namespace CycleTogetherWeb.Controllers
         private readonly IRouteManager _routes;
         private readonly IClaimsRetriever _claims;
         private readonly IValidator<Route> _validator;
+        private readonly IRouteSubscriber _subscriber;
         
-        public RouteController(IRouteManager routes, IClaimsRetriever claimsManager, IValidator<Route> validator)
+        public RouteController(IRouteManager routes, IClaimsRetriever claimsManager, IRouteSubscriber subscriber, IValidator<Route> validator)
         {
             _routes = routes;
             _claims = claimsManager;
+            _subscriber = subscriber;
             _validator = validator;
         }
 
@@ -35,7 +37,7 @@ namespace CycleTogetherWeb.Controllers
         public IEnumerable<Route> GetUserSubscribed()
         {
             var userId = _claims.Id();
-            return _routes.GetUsersSubscriptions(userId);
+            return _subscriber.GetUsersSubscriptions(userId);
         }
 
         [HttpGet("history")]
@@ -79,7 +81,7 @@ namespace CycleTogetherWeb.Controllers
         public bool Subscribe(string id)
         {
             var currentUserId = Guid.Parse(_claims.Id());
-            return _routes.Subscribe(currentUserId, Guid.Parse(id));         
+            return _subscriber.Subscribe(currentUserId, Guid.Parse(id));         
         }
 
         // POST: /Route/unsubscribe
@@ -87,7 +89,7 @@ namespace CycleTogetherWeb.Controllers
         public IActionResult Unsubscribe(string id)
         {
             var currentUserId = Guid.Parse(_claims.Id());
-            return Ok(_routes.Unsubscribe(currentUserId, Guid.Parse(id)));           
+            return Ok(_subscriber.Unsubscribe(currentUserId, Guid.Parse(id)));           
         }
 
         // POST: /Route/edit
