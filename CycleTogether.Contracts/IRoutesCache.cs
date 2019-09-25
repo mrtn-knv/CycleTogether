@@ -5,11 +5,13 @@ using WebModels;
 
 namespace CycleTogether.Contracts
 {
-    public interface IRoutesCache : IChache<Route>
+    public interface IRoutesCache /*: IChache<Route>*/
     {
-        void AddUserRoutes(List<Route> userRoutes, string userId);
-        void AddUserSubsciptions(List<Route> subscribedRoutes, string userId);
-        IEnumerable<Route> UserSubscriptions(string userId);
-        void Edit(Route route);
+        void Add(Route route);
+        void AddAll();
+        Route Update(Route route);
+        void Remove(string routeId);
+        Route Get(string routeId);
+        IEnumerable<RouteView> All();
     }
 }

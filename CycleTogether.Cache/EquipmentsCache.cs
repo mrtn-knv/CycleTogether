@@ -17,7 +17,7 @@ namespace CycleTogether.Cache
             _redis = redis;
         }
 
-        public void AddItem(Equipment item)
+        public void Add(Equipment item)
         {
             if (item != null)
             {
@@ -52,18 +52,13 @@ namespace CycleTogether.Cache
             return JsonConvert.DeserializeObject<IEnumerable<Equipment>>(_redis.StringGet(key + id));
         }
 
-        public void RemoveItem(Equipment item)
+        public void Remove(Equipment item)
         {
             if (item != null)
             {
                 var equipments = JsonConvert.DeserializeObject<List<Equipment>>(_redis.StringGet(key));
                 equipments.Remove(item);
             }            
-        }
-
-        public Equipment GetItem(string id)
-        {
-            throw new NotImplementedException();
         }
     }
 }

@@ -60,6 +60,7 @@ namespace CycleTogetherWeb
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddSingleton<IValidator<WebModels.Route>, CycleTogether.Validation.Route>();
             services.AddSingleton<IValidator<WebModels.User>, CycleTogether.Validation.User>();
+            services.AddScoped<IRouteSubscriber, RouteSubscriber>();
 
             var appSettingsSection = configuration.GetSection("AppSettings");
             services.Configure<AppSettings>(appSettingsSection);

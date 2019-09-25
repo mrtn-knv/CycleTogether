@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Cache;
 using CycleTogether.Contracts;
 using DAL.Contracts;
 using System;
@@ -30,7 +31,7 @@ namespace CycleTogether.Routes
         {
             if (_subscriber.Subscribe(userId, routeId))
             {
-                var route = _cache.GetItem(routeId.ToString());
+                var route = _cache.Get(routeId.ToString());
                 route.Subscribed.ToList().Add(new UserRoute { RouteId = routeId, UserId = userId });
                 _cache.Edit(route);
             }

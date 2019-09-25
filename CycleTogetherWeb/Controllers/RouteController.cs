@@ -26,7 +26,7 @@ namespace CycleTogetherWeb.Controllers
         }
 
         [HttpGet("all")]
-        public IEnumerable<Route> GetAll()
+        public IEnumerable<RouteView> GetAll()
         {
             return _routes.GetAll();
         }
