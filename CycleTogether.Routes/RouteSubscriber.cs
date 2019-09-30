@@ -13,27 +13,40 @@ namespace CycleTogether.Routes
     {
         private readonly IMapper _mapper;
         private readonly ISubscription _subscriber;
+        private readonly IUserHistoryCache _historyCache;
+        private readonly IUserSubscriptions _subscriptions;
+        private readonly IUserOwnedRoutes _routesByUser;
         private readonly IRoutesCache _cache;
         private readonly IUnitOfWork _db;
 
         public RouteSubscriber(IMapper mapper,
                                ISubscription subscriber,
-                               IRoutesCache cache,
-                               IUnitOfWork db)
+                               IUserSubscriptions subscriptions,
+                               IUserHistoryCache historyCache,
+                               IUnitOfWork db, 
+                               IUserOwnedRoutes routesByUser,
+                               IRoutesCache cache)
         {
+            _db = db;
             _mapper = mapper;
             _subscriber = subscriber;
+            _subscriptions = subscriptions;
+            _historyCache = historyCache;
             _cache = cache;
-            _db = db;
+            _routesByUser = routesByUser;
         }
 
         public bool Subscribe(Guid userId, Guid routeId)
         {
             if (_subscriber.Subscribe(userId, routeId))
             {
-                var route = _cache.Get(routeId.ToString());
+               
+                var route = _subscriptions.Get(routeId.ToString());
                 route.Subscribed.ToList().Add(new UserRoute { RouteId = routeId, UserId = userId });
-                _cache.Edit(route);
+                _cache.Update(route);
+                _routesByUser.Update(route);
+                _subscriptions.Update(route);
+                return true;
             }
 
             return false;
@@ -43,8 +56,7 @@ namespace CycleTogether.Routes
             var current = _db.UserRoutes.GetAll().FirstOrDefault(ur => ur.RouteId == routeId && ur.UserId == userId);
             if (current != null)
             {
-                //todo try catch.
-                var routeInCache = _cache.GetItem(routeId.ToString());
+                var routeInCache = _subscriptions.Get(routeId.ToString());
                 routeInCache.Subscribed = _db.UserRoutes
                     .GetAll()
                     .Where(ur => ur.RouteId == routeId)
@@ -54,42 +66,25 @@ namespace CycleTogether.Routes
                 routeInCache.Subscribed
                 .ToList()
                 .Remove(new UserRoute { RouteId = routeId, UserId = userId });
-                _cache.Edit(routeInCache);
+                _subscriber.Unsubscribe(current);
+                _routesByUser.Update(routeInCache);
+                _subscriptions.Update(routeInCache);
+                _cache.Update(routeInCache);
 
-                return _subscriber.Unsubscribe(current);
+                return true;
             }
             return false;
         }
 
-        public IEnumerable<Route> History(string userId)
+        public IEnumerable<RouteView> History(string userId)
         {
-            var subscriptions = _cache.UserSubscriptions(userId);
-            if (subscriptions == null)
-            {
-                subscriptions = _db.UserRoutes.GetAll()
-                    .Where(ur => ur.UserId == Guid.Parse(userId))
-                    .Select(ur => ur.Route)
-                    .Select(_mapper.Map<Route>);
-                _cache.AddUserSubsciptions(subscriptions.ToList(), userId);
-            }
-            return subscriptions.Where(route => DateTime.Compare(DateTime.UtcNow, route.StartTime) > 0);
+            return _historyCache.All(userId);
         }
 
-        public IEnumerable<Route> GetUsersSubscriptions(string userId)
+        public IEnumerable<RouteView> GetUsersSubscriptions(string userId)
         {
-            return UsersSubscribtions(userId);
+            return _subscriptions.All();
         }
 
-        private IEnumerable<Route> UsersSubscribtions(string userId)
-        {
-            var subscriptions = _cache.UserSubscriptions(userId);
-            if (subscriptions == null)
-            {
-                var userRoutes = _db.UserRoutes.GetAll().Where(ur => ur.UserId == Guid.Parse(userId));
-                subscriptions = userRoutes.Select(userRoute => _mapper.Map<Route>(_db.Routes.GetById(userRoute.RouteId)));
-                _cache.AddUserSubsciptions(subscriptions.ToList(), userId);
-            }
-            return subscriptions.Where(route => DateTime.Compare(DateTime.UtcNow, route.StartTime) <= 0);
-        }
     }
 }

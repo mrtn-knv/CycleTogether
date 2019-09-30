@@ -10,7 +10,7 @@ using WebModels;
 
 namespace Cache
 {
-    public class UserSubscribedRoutes : IRoutesCache
+    public class UserSubscribedRoutes : IUserSubscriptions
     {
         private const string key = "subscriptions_";
         private readonly IDatabase _redis;
@@ -30,23 +30,23 @@ namespace Cache
         public void Add(Route route)
         {
             var userId = _claims.Id();
-            var routes = JsonConvert.DeserializeObject<List<Route>>(_redis.StringGet(key + userId));
-            routes.Add(route);
-            _redis.StringSet(key + userId, JsonConvert.SerializeObject(routes));
+            try
+            {
+                var routes = JsonConvert.DeserializeObject<List<Route>>(_redis.StringGet(key + userId));
+                routes.Add(route);
+                _redis.StringSet(key + userId, JsonConvert.SerializeObject(routes));
+            }
+            catch (ArgumentNullException)
+            {
+                var userSubscriptions = new List<Route>
+                {
+                    route
+                };
+                _redis.StringSet(key + userId, JsonConvert.SerializeObject(userSubscriptions));
+            }
         }
 
-        public void AddAll()
-        {
-            var userId = _claims.Id();
-            var routes = _db.UserRoutes
-                            .GetAll()
-                            .Where(ur => ur.UserId == Guid.Parse(userId))
-                            .ToList()
-                            .Select(ur => _db.Routes.GetById(ur.RouteId))
-                            .ToList();
 
-            _redis.StringSet(key + userId, JsonConvert.SerializeObject(routes.Select(route => _mapper.Map<Route>(route))));
-        }
 
         public IEnumerable<RouteView> All()
         {
@@ -69,45 +69,105 @@ namespace Cache
             var userId = _claims.Id();
             try
             {
-               var subscriptions = JsonConvert.DeserializeObject<List<Route>>(_redis.StringGet(key + userId));
-               return subscriptions.FirstOrDefault(route => route.Id.ToString() == routeId);
+                var subscriptions = JsonConvert.DeserializeObject<List<Route>>(_redis.StringGet(key + userId));
+                var route = subscriptions.FirstOrDefault(r => r.Id.ToString() == routeId);
+                if (route == null)
+                    return GetFromDatabase(routeId, userId);
+                else
+                    return route;
+
+
             }
             catch (ArgumentNullException)
             {
-                this.AddAll();
-                return JsonConvert.DeserializeObject<List<Route>>(_redis.StringGet(key + userId))
-                       .FirstOrDefault(route => route.Id.ToString() == routeId);
+                return GetFromDatabase(routeId, userId);
             }
         }
 
+
+
         public void Remove(string routeId)
         {
-            var userId = _claims.Id();
-            var subscriptions = JsonConvert.DeserializeObject<List<Route>>(_redis.StringGet(key + userId));
-            var toDelete = subscriptions.FirstOrDefault(route => route.Id.ToString() == routeId);
-            if (toDelete != null)
+            try
             {
-                subscriptions.Remove(toDelete);
-                _redis.StringSet(key + userId, JsonConvert.SerializeObject(subscriptions));
+                var userId = _claims.Id();
+                var subscriptions = JsonConvert.DeserializeObject<List<Route>>(_redis.StringGet(key + userId));
+                var toDelete = subscriptions.FirstOrDefault(route => route.Id.ToString() == routeId);
+                if (toDelete != null)
+                {
+                    subscriptions.Remove(toDelete);
+                    _redis.StringSet(key + userId, JsonConvert.SerializeObject(subscriptions));
+                }
+            }
+            catch (ArgumentNullException)
+            {
+
             }
         }
 
         public Route Update(Route route)
         {
             var userId = _claims.Id();
-            var subscriptions = JsonConvert.DeserializeObject<List<Route>>(_redis.StringGet(key + userId));
-            var toUpdate = subscriptions.FirstOrDefault(r => r.Id == route.Id);
-            if (toUpdate != null)
+            try
             {
-                subscriptions.Remove(toUpdate);
-                subscriptions.Add(route);
-                _redis.StringSet(key + userId, JsonConvert.SerializeObject(subscriptions));
-                return route;
+                var subscriptions = JsonConvert.DeserializeObject<List<Route>>(_redis.StringGet(key + userId));
+                var toUpdate = subscriptions.FirstOrDefault(r => r.Id == route.Id);
+                if (toUpdate != null)
+                {
+                    subscriptions.Remove(toUpdate);
+                    subscriptions.Add(route);
+                    _redis.StringSet(key + userId, JsonConvert.SerializeObject(subscriptions));
+                    return route;
+                }
+                else
+                {
+                    //todo: Add error messages and add correct one to error message.
+                    throw new InvalidOperationException();
+                }
+            }
+            catch (ArgumentNullException)
+            {
+                if (_db.Routes.GetAll().All(r => r.Id == route.Id))
+                {
+                    var userSubscriptions = JsonConvert.DeserializeObject<List<Route>>(_redis.StringGet(key + userId));
+                    userSubscriptions.Add(route);
+                    _redis.StringSet(key + userId, JsonConvert.SerializeObject(userSubscriptions));
+                    return route;
+                }
+                else
+                {
+                    throw new ArgumentException();
+                }
+            }
+        }
+
+        private void AddAll()
+        {
+            var userId = _claims.Id();
+            var routes = _db.UserRoutes
+                            .GetAll()
+                            .Where(ur => ur.UserId == Guid.Parse(userId))
+                            .ToList()
+                            .Select(ur => _db.Routes.GetById(ur.RouteId))
+                            .ToList();
+
+            _redis.StringSet(key + userId, JsonConvert.SerializeObject(routes.Select(route => _mapper.Map<Route>(route))));
+        }
+
+        private Route GetFromDatabase(string routeId, string userId)
+        {
+            var route = _db.Routes.GetById(Guid.Parse(routeId));
+            var userRoutes = new List<Route>();
+            if (route != null)
+            {
+                userRoutes.Add(_mapper.Map<Route>(route));
+                _redis.StringSet(key + userId, JsonConvert.SerializeObject(userRoutes));
+                return _mapper.Map<Route>(route);
             }
             else
             {
-                //todo: Add error messages and add correct one to error message.
-                throw new InvalidOperationException();
+                //Todo: add error message.
+                throw new ArgumentException();
             }
         }
     }

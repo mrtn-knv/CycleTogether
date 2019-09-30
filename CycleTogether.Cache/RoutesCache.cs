@@ -16,15 +16,17 @@ namespace CycleTogether.Cache
         private readonly IDatabase _redis;
         private readonly IUnitOfWork _db;
         private readonly IMapper _mapper;
+        private readonly IClaimsRetriever _claims;
 
 
-        public RoutesCache(IDatabase redis, IUnitOfWork db, IMapper mapper)
+        public RoutesCache(IDatabase redis, IUnitOfWork db, IMapper mapper, IClaimsRetriever claims)
         {
             _redis = redis;
             _db = db;
             _mapper = mapper;
-        }
+            _claims = claims;
 
+        }
 
         public void Add(Route route)
         {
@@ -34,15 +36,9 @@ namespace CycleTogether.Cache
             }
             catch (ArgumentNullException)
             {
-                this.AddAll();
-                AddRouteToCache(route);
+                var routes = new List<Route>() { route };
+                _redis.StringSet(key, JsonConvert.SerializeObject(routes));
             }
-        }
-
-        public void AddAll()
-        {
-            var routes = _db.Routes.GetAll().Select(route => _mapper.Map<Route>(route));
-            _redis.StringSet(key, JsonConvert.SerializeObject(routes));
         }
 
         public IEnumerable<RouteView> All()
@@ -68,50 +64,93 @@ namespace CycleTogether.Cache
             }
             catch (ArgumentNullException)
             {
-                this.AddAll();
-                return GetRoute(routeId);
+                if (_db.Routes.GetAll().Any(r => r.Id == Guid.Parse(routeId)))
+                {
+                    var route = _mapper.Map<Route>(_db.Routes.GetById(Guid.Parse(routeId)));
+                    var routes = new List<Route>() { route };
+                    _redis.StringSet(key, JsonConvert.SerializeObject(routes));
+                    return route;
+                }
+                else
+                    //Todo: add error message
+                    throw new InvalidOperationException();
             }
-        }       
+        }
 
         public void Remove(string routeId)
         {
-            var routes = JsonConvert.DeserializeObject<List<Route>>(_redis.StringGet(key));
-            if (routes.Any(route => route.Id == Guid.Parse(routeId)))
+            try
             {
-                var toDelete = routes.FirstOrDefault(r => r.Id == Guid.Parse(routeId));
-                routes.Remove(toDelete);
-                _redis.StringSet(key, JsonConvert.SerializeObject(routes));
+                var routes = JsonConvert.DeserializeObject<List<Route>>(_redis.StringGet(key));
+                if (routes.Any(route => route.Id == Guid.Parse(routeId)))
+                {
+                    var toDelete = routes.FirstOrDefault(r => r.Id == Guid.Parse(routeId));
+                    routes.Remove(toDelete);
+                    _redis.StringSet(key, JsonConvert.SerializeObject(routes));
+                }
+                else
+                    //Todo: add error message.
+                    throw new InvalidOperationException();
             }
-            else
-                //Todo: add error message.
-                throw new InvalidOperationException();
+            catch (Exception)
+            {
+
+            }
         }
 
         public Route Update(Route route)
         {
-            var routes = JsonConvert.DeserializeObject<List<Route>>(_redis.StringGet(key));
-            if (routes.Any(r => r.Id == route.Id))
+            try
             {
-                var current = routes.FirstOrDefault(r => r.Id == route.Id);
-                routes.Remove(current);
-                routes.Add(route);
-                _redis.StringSet(key, JsonConvert.SerializeObject(routes));
-                return route;
+                var routes = JsonConvert.DeserializeObject<List<Route>>(_redis.StringGet(key));
+                if (routes.Any(r => r.Id == route.Id))
+                {
+                    var current = routes.FirstOrDefault(r => r.Id == route.Id);
+                    routes.Remove(current);
+                    routes.Add(route);
+                    _redis.StringSet(key, JsonConvert.SerializeObject(routes));
+                    return route;
+                }
+                else
+                    //Todo: Add error message.
+                    throw new InvalidOperationException();
             }
-            else
-                //Todo: Add error message.
-                throw new InvalidOperationException();
+            catch (ArgumentNullException)
+            {
+                if (_db.Routes.GetAll().Any(r => r.Id == route.Id))
+                {
+                    _redis.StringSet(key, JsonConvert.SerializeObject(new List<Route>() { route }));
+                    return route;
+                }
+                else
+                    throw new ArgumentException();
+            }
         }
 
         private Route GetRoute(string routeId)
         {
-            var route = JsonConvert.DeserializeObject<List<Route>>(_redis.StringGet(key))
-                                        .FirstOrDefault(r => r.Id == Guid.Parse(routeId));
-            if (route != null)
-                return route;
-            else
-                //TODO: add error message
-                throw new InvalidOperationException();
+            try
+            {
+                var route = JsonConvert.DeserializeObject<List<Route>>(_redis.StringGet(key))
+                                       .FirstOrDefault(r => r.Id == Guid.Parse(routeId));
+                if (route != null)
+                    return route;
+                else
+                    //TODO: add error message
+                    throw new InvalidOperationException();
+            }
+            catch (ArgumentNullException)
+            {
+                var route = _mapper.Map<Route>(_db.Routes.GetById(Guid.Parse(routeId)));
+                if (route != null)
+                {
+                    _redis.StringSet(key, JsonConvert.SerializeObject(new List<Route>() { route }));
+                    return route;
+                }
+                else
+                    throw new ArgumentException();
+
+            }
         }
 
         private void AddRouteToCache(Route route)
@@ -120,5 +159,13 @@ namespace CycleTogether.Cache
             routes.Add(route);
             _redis.StringSet(key, JsonConvert.SerializeObject(routes));
         }
+
+        private void AddAll()
+        {
+            var routes = _db.Routes.GetAll().Select(route => _mapper.Map<Route>(route));
+            _redis.StringSet(key, JsonConvert.SerializeObject(routes));
+        }
+
+
     }
 }

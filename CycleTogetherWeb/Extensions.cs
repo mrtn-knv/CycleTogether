@@ -28,6 +28,7 @@ using FluentValidation;
 using WebModels;
 using CycleTogether.Validation;
 using Serilog;
+using Cache;
 
 namespace CycleTogetherWeb
 {
@@ -53,7 +54,7 @@ namespace CycleTogetherWeb
             services.AddScoped<INotification, Notification>();
             services.AddScoped<IUserEquipmentRepository, UserEquipmentsRepository>();
             services.AddScoped<IRouteEquipmentRepositoy, RouteEquipmentRepository>();
-            services.AddSingleton<IRoutesCache, RoutesCache>();
+            services.AddScoped<IRoutesCache, RoutesCache>();
             services.AddSingleton<IEquipmentCache, EquipmentsCache>();
             services.AddScoped<IDataRetriever, DataRetriever>();
             services.AddScoped<ISearchManager, SearchManager>();
@@ -61,6 +62,11 @@ namespace CycleTogetherWeb
             services.AddSingleton<IValidator<WebModels.Route>, CycleTogether.Validation.Route>();
             services.AddSingleton<IValidator<WebModels.User>, CycleTogether.Validation.User>();
             services.AddScoped<IRouteSubscriber, RouteSubscriber>();
+            services.AddScoped(typeof(RouteCacheEvents));
+            services.AddScoped<IUserSubscriptions, UserSubscribedRoutes>();
+            services.AddScoped<IUserOwnedRoutes, UserOwnedRoutes>();
+            services.AddScoped<IUserHistoryCache, UserHistory>();
+
 
             var appSettingsSection = configuration.GetSection("AppSettings");
             services.Configure<AppSettings>(appSettingsSection);

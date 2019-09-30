@@ -36,14 +36,14 @@ namespace CycleTogetherWeb.Controllers
         }
 
         [HttpGet("subscribed")]
-        public IEnumerable<Route> GetUserSubscribed()
+        public IEnumerable<RouteView> GetUserSubscribed()
         {
             var userId = _claims.Id();
             return _subscriber.GetUsersSubscriptions(userId);
         }
 
         [HttpGet("history")]
-        public IEnumerable<Route> History()
+        public IEnumerable<RouteView> History()
         {
             var userId = _claims.Id();
             return _subscriber.History(userId);

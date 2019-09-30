@@ -32,9 +32,9 @@ namespace CycleTogetherWeb.Controllers
         }
 
         [HttpGet("all/mytrips")]
-        public IEnumerable<Route> GetAllByUser()
+        public IEnumerable<RouteView> GetAllByUser()
         {
-            return _routes.AllByUser(Guid.Parse(_claims.Id()));
+            return _routes.AllByUser();
         }
 
         // GET: /Route/5
@@ -51,8 +51,7 @@ namespace CycleTogetherWeb.Controllers
             var state = _validator.Validate(route, ruleSet: "all");
             if (state.IsValid)
             {
-                var id = _claims.Id();
-                return Ok(_routes.Create(route, id));
+                return Ok(_routes.Create(route));
             }
             return Ok(state.Errors);            
         }
@@ -67,10 +66,9 @@ namespace CycleTogetherWeb.Controllers
 
         // DELETE: /ApiWithActions/5
         [HttpDelete("{id}")]
-        public IActionResult Delete(Guid id)
+        public void Delete(string id)
         {
-            var userId = _claims.Id();
-            return Ok(_routes.Remove(id, userId));
+            _routes.Remove(id);
         }
     }
 }

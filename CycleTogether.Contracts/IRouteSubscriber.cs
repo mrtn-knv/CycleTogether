@@ -8,7 +8,7 @@ namespace CycleTogether.Contracts
     {
         bool Subscribe(Guid userId, Guid routeId);
         bool Unsubscribe(Guid userId, Guid routeId);
-        IEnumerable<Route> GetUsersSubscriptions(string userId);
-        IEnumerable<Route> History(string userId);
+        IEnumerable<RouteView> GetUsersSubscriptions(string userId);
+        IEnumerable<RouteView> History(string userId);
     }
 }

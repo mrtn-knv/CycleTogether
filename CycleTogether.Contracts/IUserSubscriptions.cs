@@ -3,8 +3,8 @@ using WebModels;
 
 namespace CycleTogether.Contracts
 {
-    public interface IRoutesCache : ICache<Route>
-    {        
+    public interface IUserSubscriptions : ICache<Route>
+    {
         IEnumerable<RouteView> All();
     }
 }

@@ -16,12 +16,13 @@ namespace DAL
         public DbRepository(CycleTogetherDbContext context) 
         {
             _context = context;
-            dbSet = _context.Set<TEntity>();
+            dbSet = _context.Set<TEntity>();         
         }
 
         public TEntity Create(TEntity entry)
         {
             _context.Add(entry);
+            _context.SaveChanges();
             return entry;
         }
 
@@ -29,6 +30,7 @@ namespace DAL
         {
             var current = _context.Find<TEntity>(id);
             _context.Remove(current);
+            _context.SaveChanges();
         }
 
         public void Dispose()
@@ -39,6 +41,7 @@ namespace DAL
         public void Edit(TEntity entry)
         {
             _context.Update(entry);
+            _context.SaveChanges();
         }
 
         public IEnumerable<TEntity> GetAll()
@@ -49,11 +52,6 @@ namespace DAL
         public TEntity GetById(Guid id)
         {
            return dbSet.FirstOrDefault(x => x.Id == id);
-        }
-
-        public void SaveChanges()
-        {
-            _context.SaveChanges();
         }
     }
 }

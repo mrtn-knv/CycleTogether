@@ -6,12 +6,11 @@ using StackExchange.Redis;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using WebModels;
 
 namespace Cache
 {
-    public class UserOwnedRoutes : IRoutesCache
+    public class UserOwnedRoutes : IUserOwnedRoutes
     {
         private const string key = "ownedtrips_";
         private readonly IDatabase _redis;
@@ -35,18 +34,13 @@ namespace Cache
             }
             catch (ArgumentNullException)
             {
-                this.AddAll();
+                var userOwnRoutes = new List<Route>
+                {
+                    route
+                };
+                _redis.StringSet(key + _claims.Id(), JsonConvert.SerializeObject(userOwnRoutes));
                 AddToCache(route);
             }
-        }
-
-        public void AddAll()
-        {
-            var userId = _claims.Id();
-            var routesByUser = _db.Routes
-                               .AllByUser(Guid.Parse(userId))
-                               .Select(route => _mapper.Map<Route>(route));
-            _redis.StringSet(key + userId, JsonConvert.SerializeObject(routesByUser));
         }
 
         public IEnumerable<RouteView> All()
@@ -54,9 +48,8 @@ namespace Cache
             var userId = _claims.Id();
             try
             {
-                return JsonConvert
-                       .DeserializeObject<List<Route>>(_redis.StringGet(key + userId))
-                       .Select(route => _mapper.Map<RouteView>(route));
+                var userRoutes = JsonConvert.DeserializeObject<List<RouteView>>(_redis.StringGet(key+userId));
+                return userRoutes;
             }
             catch (ArgumentNullException)
             {
@@ -82,11 +75,16 @@ namespace Cache
             }
             catch (ArgumentException)
             {
-                this.AddAll();
-                var route = JsonConvert.DeserializeObject<List<Route>>(_redis.StringGet(key + userId))
-                            .FirstOrDefault(r => r.Id == Guid.Parse(routeId));
-                if (route != null)
-                    return route;
+                if (_db.Routes.AllByUser(Guid.Parse(userId)).Any(ur => ur.Id == Guid.Parse(routeId)))
+                {
+                    var route = _db.Routes.AllByUser(Guid.Parse(userId)).Where(r => r.Id == Guid.Parse(routeId));
+                    var userOwnRoutes = new List<Route>
+                    {
+                        _mapper.Map<Route>(route)
+                    };
+                    _redis.StringSet(key + userId, JsonConvert.SerializeObject(userOwnRoutes));
+                    return _mapper.Map<Route>(route);
+                }
                 else
                     throw new InvalidOperationException();
             }
@@ -95,31 +93,46 @@ namespace Cache
         public void Remove(string routeId)
         {
             var userId = _claims.Id();
-            var routesByUser = JsonConvert.DeserializeObject<List<Route>>(_redis.StringGet(key+userId));
-            var routeToDelete = routesByUser.FirstOrDefault(route => route.Id == Guid.Parse(routeId));
-            if (routeToDelete != null)
+            try
             {
-                routesByUser.Remove(routeToDelete);
-                _redis.StringSet(key + userId, JsonConvert.SerializeObject(routesByUser));
+                var routesByUser = JsonConvert.DeserializeObject<List<Route>>(_redis.StringGet(key + userId));
+                if (routesByUser.Any(r => r.Id == Guid.Parse(routeId)))
+                {
+                    var routeToDelete = routesByUser.FirstOrDefault(route => route.Id == Guid.Parse(routeId));
+                    routesByUser.Remove(routeToDelete);
+                    _redis.StringSet(key + userId, JsonConvert.SerializeObject(routesByUser));
+                }
+                else
+                    //Todo: Add error message.
+                    throw new InvalidOperationException();
             }
-            else
+            catch (ArgumentNullException)
             {
-                //Todo: Add error message.
-                throw new InvalidOperationException();
+
             }
         }
 
         public Route Update(Route route)
         {
+            var userId = _claims.Id();
             try
             {
                 return UpdateCache(route);
             }
             catch (ArgumentNullException)
             {
-                this.AddAll();
-                return this.UpdateCache(route);
-
+                var routesByUser = _db.Routes.AllByUser(Guid.Parse(userId))
+                                   .Select(r => _mapper.Map<Route>(r));
+                if (routesByUser.Any(r => r.Id == route.Id))
+                {
+                    var toUpdate = routesByUser.FirstOrDefault(r => r.Id == route.Id);
+                    _redis.StringSet(key + userId, JsonConvert.SerializeObject(new List<Route>() { route }));
+                    return route;
+                }
+                else
+                    //Todo: add error message
+                    throw new ArgumentException();
+                
             }
         }
 
@@ -144,6 +157,15 @@ namespace Cache
             var routesByUser = JsonConvert.DeserializeObject<List<Route>>(_redis.StringGet(key + route.UserId.ToString()));
             routesByUser.Add(route);
             _redis.StringSet(key + route.UserId.ToString(), JsonConvert.SerializeObject(routesByUser));
+        }
+
+        private void AddAll()
+        {
+            var userId = _claims.Id();
+            var routesByUser = _db.Routes
+                               .AllByUser(Guid.Parse(userId))
+                               .Select(route => _mapper.Map<Route>(route));
+            _redis.StringSet(key + userId, JsonConvert.SerializeObject(routesByUser));
         }
     }
 }

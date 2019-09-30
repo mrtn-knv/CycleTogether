@@ -6,11 +6,11 @@ namespace CycleTogether.Contracts
 {
     public interface IRouteManager
     {
-        Route Create(Route route, string id);
-        Route Update(Route route, string id);
-        bool Remove(Guid id, string userId);
+        Route Create(Route route);
+        Route Update(Route route, string userId);
+        void Remove(string id);
         Route Get(Guid id);
-        IEnumerable<Route> GetAll();
-        IEnumerable<Route> AllByUser(Guid userId);
+        IEnumerable<RouteView> GetAll();
+        IEnumerable<RouteView> AllByUser();
     }
 }

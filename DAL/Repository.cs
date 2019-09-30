@@ -52,10 +52,5 @@ namespace DAL
         {
           return context.FirstOrDefault(t => t.Id == id);
         }
-
-        public void SaveChanges()
-        {
-            throw new NotImplementedException();
-        }
     }
 }

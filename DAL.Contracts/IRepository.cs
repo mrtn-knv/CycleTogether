@@ -11,7 +11,6 @@ namespace DAL.Contracts
         T Create(T entry);
         void Edit(T entry);
         void Delete(Guid id);
-        void SaveChanges();
 
     }
 }
