@@ -20,6 +20,7 @@ namespace CycleTogether.Routes
         private readonly IRoutesCache _cache;
         private readonly IUserOwnedRoutes _usersRoutes;
         private readonly IUserSubscriptions _subscriptions;
+        private readonly IClaimsRetriever _claims;
 
         public RouteManager(IUnitOfWork db,
                             IMapper mapper,
@@ -27,12 +28,11 @@ namespace CycleTogether.Routes
                             IRoutesCache cache,
                             ISearchManager search,
                             IUserOwnedRoutes usersRoutes,
-                            IUserSubscriptions subscriptions)
+                            IUserSubscriptions subscriptions,
+                            IClaimsRetriever claimsManager)
         {
             _eventManager = new RouteCacheEvents();
-           
-
-            
+            _claims = claimsManager;           
             _db = db;
             _mapper = mapper;
             _difficulty = difficulty;
@@ -101,24 +101,28 @@ namespace CycleTogether.Routes
         public void Remove(string routeId)
         {
             var current = _db.Routes.GetById(Guid.Parse(routeId));
-            _db.Routes.Delete(Guid.Parse(routeId));
-            _db.SaveChanges();
-            _cache.Remove(routeId.ToString());
-            _search.RemoveFromIndex(_mapper.Map<Route>(current));
-            _eventManager.RemovedFromCache += _cache.Remove;
-            _eventManager.RemovedFromCache += _usersRoutes.Remove;
-            _eventManager.RemovedFromCache += _subscriptions.Remove;
-            _eventManager.OnRemove(routeId.ToString());
+            var currentUserId = _claims.Id();
+            if (currentUserId == current.UserId.ToString())
+            {
+                _db.Routes.Delete(Guid.Parse(routeId));
+                _db.SaveChanges();
+                _cache.Remove(routeId.ToString());
+                _search.RemoveFromIndex(_mapper.Map<Route>(current));
+                _eventManager.RemovedFromCache += _cache.Remove;
+                _eventManager.RemovedFromCache += _usersRoutes.Remove;
+                _eventManager.RemovedFromCache += _subscriptions.Remove;
+                _eventManager.OnRemove(routeId.ToString());
+            }
         }
 
-        public Route Update(Route route, string currentUserId)
+        public Route Update(Route route)
         {
-            //todo when edits, userId is not passed to the model
-            
+            var currentUserId = _claims.Id();
             if (currentUserId == route.UserId.ToString())
             {
+                var updated = SaveUpdated(route);
                 _search.UpdateIndex();
-                return SaveUpdated(route);
+                return updated;
             }
 
             throw new ArgumentException();

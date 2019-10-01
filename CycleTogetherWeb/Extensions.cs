@@ -66,6 +66,7 @@ namespace CycleTogetherWeb
             services.AddScoped<IUserSubscriptions, UserSubscribedRoutes>();
             services.AddScoped<IUserOwnedRoutes, UserOwnedRoutes>();
             services.AddScoped<IUserHistoryCache, UserHistory>();
+            services.AddScoped<IRouteFilter, RouteFilter>();
 
 
             var appSettingsSection = configuration.GetSection("AppSettings");

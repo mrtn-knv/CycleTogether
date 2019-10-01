@@ -7,7 +7,7 @@ namespace CycleTogether.Contracts
     public interface IRouteManager
     {
         Route Create(Route route);
-        Route Update(Route route, string userId);
+        Route Update(Route route);
         void Remove(string id);
         Route Get(Guid id);
         IEnumerable<RouteView> GetAll();

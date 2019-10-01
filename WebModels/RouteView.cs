@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace WebModels
 {
@@ -8,6 +6,7 @@ namespace WebModels
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
+        public string Info { get; set; }
         public Guid UserId { get; set; }
         public DateTime StartTime { get; set; }
     }

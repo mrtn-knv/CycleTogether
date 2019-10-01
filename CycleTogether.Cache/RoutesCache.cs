@@ -16,15 +16,17 @@ namespace CycleTogether.Cache
         private readonly IDatabase _redis;
         private readonly IUnitOfWork _db;
         private readonly IMapper _mapper;
+        private readonly IRouteFilter _filter;
         private readonly IClaimsRetriever _claims;
 
 
-        public RoutesCache(IDatabase redis, IUnitOfWork db, IMapper mapper, IClaimsRetriever claims)
+        public RoutesCache(IDatabase redis, IUnitOfWork db, IMapper mapper, IClaimsRetriever claims, IRouteFilter filter)
         {
             _redis = redis;
             _db = db;
             _mapper = mapper;
             _claims = claims;
+            _filter = filter;
 
         }
 
@@ -45,14 +47,15 @@ namespace CycleTogether.Cache
         {
             try
             {
-                return JsonConvert.DeserializeObject<List<Route>>(_redis.StringGet(key))
-                                  .Select(route => _mapper.Map<RouteView>(route));
+                var routes = JsonConvert.DeserializeObject<List<RouteView>>(_redis.StringGet(key));
+                return _filter.RemovePassedRoutes(routes);
             }
             catch (ArgumentNullException)
             {
                 this.AddAll();
-                return JsonConvert.DeserializeObject<List<Route>>(_redis.StringGet(key))
-                       .Select(route => _mapper.Map<RouteView>(route));
+                var routes = JsonConvert.DeserializeObject<List<Route>>(_redis.StringGet(key))
+                       .Select(route => _mapper.Map<RouteView>(route)).ToList();
+                return _filter.RemovePassedRoutes(routes);
             }
         }
 

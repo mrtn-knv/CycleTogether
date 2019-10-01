@@ -15,13 +15,11 @@ namespace CycleTogetherWeb.Controllers
     public class RouteController : ControllerBase
     {
         private readonly IRouteManager _routes;
-        private readonly IClaimsRetriever _claims;
         private readonly IValidator<Route> _validator;
         
-        public RouteController(IRouteManager routes, IClaimsRetriever claimsManager, IValidator<Route> validator)
+        public RouteController(IRouteManager routes,IValidator<Route> validator)
         {
             _routes = routes;
-            _claims = claimsManager;
             _validator = validator;
         }
 
@@ -60,8 +58,7 @@ namespace CycleTogetherWeb.Controllers
         [HttpPost("edit")]
         public Route Update([FromBody]Route route)
         {
-            var currentUserId = _claims.Id();
-            return _routes.Update(route, currentUserId);
+            return _routes.Update(route);
         }
 
         // DELETE: /ApiWithActions/5

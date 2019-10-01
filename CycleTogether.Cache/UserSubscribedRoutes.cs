@@ -17,14 +17,16 @@ namespace Cache
         private readonly IMapper _mapper;
         private readonly IClaimsRetriever _claims;
         private readonly IUnitOfWork _db;
+        private readonly IRouteFilter _filter;
 
 
-        public UserSubscribedRoutes(IDatabase redis, IMapper mapper, IClaimsRetriever claims, IUnitOfWork db)
+        public UserSubscribedRoutes(IDatabase redis, IMapper mapper, IClaimsRetriever claims, IUnitOfWork db, IRouteFilter filter)
         {
             _redis = redis;
             _mapper = mapper;
             _claims = claims;
             _db = db;
+            _filter = filter;
         }
 
         public void Add(Route route)
@@ -53,14 +55,15 @@ namespace Cache
             var userId = _claims.Id();
             try
             {
-                var subscriptions = JsonConvert.DeserializeObject<IEnumerable<Route>>(_redis.StringGet(key + userId));
-                return subscriptions.Select(route => _mapper.Map<RouteView>(route));
+                var subscriptions = JsonConvert.DeserializeObject<List<RouteView>>(_redis.StringGet(key + userId));
+                return _filter.RemovePassedRoutes(subscriptions);
             }
             catch (ArgumentNullException)
             {
                 this.AddAll();
-                var subscriptions = JsonConvert.DeserializeObject<List<Route>>(_redis.StringGet(key + userId));
-                return subscriptions.Select(route => _mapper.Map<RouteView>(route));
+                var subscriptions = JsonConvert.DeserializeObject<List<Route>>(_redis.StringGet(key + userId))
+                                    .Select(route => _mapper.Map<RouteView>(route)).ToList();
+                return _filter.RemovePassedRoutes(subscriptions);
             }
         }
 
