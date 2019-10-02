@@ -19,7 +19,7 @@ namespace CycleTogetherWeb.Controllers
         }
 
         [HttpGet("{input}")]
-        public IEnumerable<RouteSearch> Search(string input)
+        public IEnumerable<RouteView> Search(string input)
         {
             return _search.Find(input);
         }

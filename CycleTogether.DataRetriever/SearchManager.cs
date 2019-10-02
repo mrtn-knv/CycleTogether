@@ -25,13 +25,13 @@ namespace CycleTogether.DataRetriever
         public void CreateIndex()
         {
 
-            LuceneSearch.AddUpdateLuceneIndex(_cache.All().Select(route => _mapper.Map<RouteSearch>(route)));          
+            LuceneSearch.AddUpdateLuceneIndex(_cache.All());          
         }
 
         public void AddRouteToIndex(Route route)
         {
 
-            LuceneSearch.AddUpdateLuceneIndex(_mapper.Map<RouteSearch>(route));
+            LuceneSearch.AddUpdateLuceneIndex(_mapper.Map<RouteView>(route));
         }
 
         public void RemoveFromIndex(Route route)
@@ -45,7 +45,7 @@ namespace CycleTogether.DataRetriever
         public void UpdateIndex()
         {
             LuceneSearch.ClearLuceneIndex();
-            LuceneSearch.AddUpdateLuceneIndex(_cache.All().Select(route => _mapper.Map<RouteSearch>(route)));
+            LuceneSearch.AddUpdateLuceneIndex(_cache.All());
         }
     }
 }

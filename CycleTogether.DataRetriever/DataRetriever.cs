@@ -1,8 +1,6 @@
 ﻿using CycleTogether.Contracts;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using WebModels;
 
 namespace CycleTogether.DataRetriever
@@ -14,7 +12,7 @@ namespace CycleTogether.DataRetriever
         {
             _manager = manager;
         }
-        public IEnumerable<RouteSearch> Find(string input)
+        public IEnumerable<RouteView> Find(string input)
         {
             try
             {
@@ -25,7 +23,11 @@ namespace CycleTogether.DataRetriever
                 _manager.CreateIndex();
                 return LuceneSearch.Search(input);
             }
-                       
+            catch (System.IO.FileNotFoundException)
+            {
+                _manager.CreateIndex();
+                return LuceneSearch.Search(input).ToList();
+            }           
         }
     }
 }

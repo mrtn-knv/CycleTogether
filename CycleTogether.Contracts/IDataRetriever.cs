@@ -7,6 +7,6 @@ namespace CycleTogether.Contracts
 {
     public interface IDataRetriever
     {
-        IEnumerable<RouteSearch> Find(string input);
+        IEnumerable<RouteView> Find(string input);
     }
 }

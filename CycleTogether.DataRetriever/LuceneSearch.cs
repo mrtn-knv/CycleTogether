@@ -15,8 +15,7 @@ namespace CycleTogether.DataRetriever
 {
     public static class LuceneSearch
     {
-        private static readonly string _luceneDir =
-        Path.Combine(@"C:\Users\mkune\Desktop\CycleApp\", "lucene_index");
+        private static readonly string _luceneDir = @"C:\Users\mkune\Desktop\CycleApp\lucene_index";
         private static FSDirectory _directoryTemp;
         private static FSDirectory _directory
         {
@@ -30,7 +29,7 @@ namespace CycleTogether.DataRetriever
             }
         }
 
-        private static void AddToLuceneIndex(RouteSearch route, IndexWriter writer)
+        private static void AddToLuceneIndex(RouteView route, IndexWriter writer)
         {
             // remove older index entry
             var searchQuery = new TermQuery(new Term("Id", route.Id.ToString()));
@@ -42,13 +41,13 @@ namespace CycleTogether.DataRetriever
             // add lucene fields mapped to db fields
             doc.Add(new Field("Id", route.Id.ToString(), Field.Store.YES, Field.Index.NOT_ANALYZED));
             doc.Add(new Field("Name", route.Name, Field.Store.YES, Field.Index.ANALYZED));
-            doc.Add(new Field("Description", route.Info, Field.Store.YES, Field.Index.NOT_ANALYZED));            
+            doc.Add(new Field("Description", route.Info, Field.Store.YES, Field.Index.NOT_ANALYZED));
 
             // add entry to index
             writer.AddDocument(doc);
         }
 
-        public static void AddUpdateLuceneIndex(IEnumerable<RouteSearch> routes)
+        public static void AddUpdateLuceneIndex(IEnumerable<RouteView> routes)
         {
             // init lucene
             var analyzer = new StandardAnalyzer(Version.LUCENE_30);
@@ -63,9 +62,9 @@ namespace CycleTogether.DataRetriever
             }
         }
 
-        public static void AddUpdateLuceneIndex(RouteSearch route)
+        public static void AddUpdateLuceneIndex(RouteView route)
         {
-            AddUpdateLuceneIndex(new List<RouteSearch> { route });
+            AddUpdateLuceneIndex(new List<RouteView> { route });
         }
 
         public static void ClearLuceneIndexRecord(string recordId)
@@ -117,21 +116,21 @@ namespace CycleTogether.DataRetriever
             }
         }
 
-        private static RouteSearch MapLuceneDocumentToData(Document doc)
+        private static RouteView MapLuceneDocumentToData(Document doc)
         {
-            return new RouteSearch
+            return new RouteView
             {
                 Id = Guid.Parse(doc.Get("Id")),
                 Name = doc.Get("Name"),
-                Info = doc.Get("Description")            
+                Info = doc.Get("Description")
             };
         }
 
-        private static IEnumerable<RouteSearch> MapLuceneToDataList(IEnumerable<Document> hits)
+        private static IEnumerable<RouteView> MapLuceneToDataList(IEnumerable<Document> hits)
         {
             return hits.Select(MapLuceneDocumentToData).ToList();
         }
-        private static IEnumerable<RouteSearch> _mapLuceneToDataList(IEnumerable<ScoreDoc> hits,
+        private static IEnumerable<RouteView> _mapLuceneToDataList(IEnumerable<ScoreDoc> hits,
             IndexSearcher searcher)
         {
             return hits.Select(hit => MapLuceneDocumentToData(searcher.Doc(hit.Doc))).ToList();
@@ -151,11 +150,11 @@ namespace CycleTogether.DataRetriever
             return query;
         }
 
-        private static IEnumerable<RouteSearch> Find
-    (string searchQuery, string searchField = "")
+        private static IEnumerable<RouteView> Find
+            (string searchQuery, string searchField = "")
         {
             // validation
-            if (string.IsNullOrEmpty(searchQuery.Replace("*", "").Replace("?", ""))) return new List<RouteSearch>();
+            if (string.IsNullOrEmpty(searchQuery.Replace("*", "").Replace("?", ""))) return new List<RouteView>();
             //TODO: try catch
             // set up lucene searcher
             using (var searcher = new IndexSearcher(_directory, true))
@@ -190,9 +189,9 @@ namespace CycleTogether.DataRetriever
             }
         }
 
-        public static IEnumerable<RouteSearch> Search(string input, string fieldName = "")
+        public static IEnumerable<RouteView> Search(string input, string fieldName = "")
         {
-            if (string.IsNullOrEmpty(input)) return new List<RouteSearch>();
+            if (string.IsNullOrEmpty(input)) return new List<RouteView>();
 
             var terms = input.Trim().Replace("-", " ").Split(' ')
                 .Where(x => !string.IsNullOrEmpty(x)).Select(x => x.Trim() + "*");
@@ -201,15 +200,15 @@ namespace CycleTogether.DataRetriever
             return Find(input, fieldName);
         }
 
-        public static IEnumerable<RouteSearch> SearchDefault(string input, string fieldName = "")
+        public static IEnumerable<RouteView> SearchDefault(string input, string fieldName = "")
         {
-            return string.IsNullOrEmpty(input) ? new List<RouteSearch>() : Find(input, fieldName);
+            return string.IsNullOrEmpty(input) ? new List<RouteView>() : Find(input, fieldName);
         }
 
-        public static IEnumerable<RouteSearch> GetAllIndexRecords()
+        public static IEnumerable<RouteView> GetAllIndexRecords()
         {
             // validate search index
-            if (!System.IO.Directory.EnumerateFiles(_luceneDir).Any()) return new List<RouteSearch>();
+            if (!System.IO.Directory.EnumerateFiles(_luceneDir).Any()) return new List<RouteView>();
 
             // set up lucene searcher
             var searcher = new IndexSearcher(_directory, false);
