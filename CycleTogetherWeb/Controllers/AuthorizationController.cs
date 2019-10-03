@@ -3,6 +3,7 @@ using CycleTogether.Contracts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebModels;
+using FluentValidation;
 
 namespace CycleTogetherWeb.Controllers
 {
@@ -12,14 +13,16 @@ namespace CycleTogetherWeb.Controllers
     public class AuthorizationController : ControllerBase
     {
         private readonly IAuthentication _authenticator;
-        public AuthorizationController(IAuthentication authenticator)
+        private readonly IValidator<User> _validator;
+        public AuthorizationController(IAuthentication authenticator, IValidator<User> validator)
         {
             _authenticator = authenticator;
+            _validator = validator;
         }
 
         [AllowAnonymous]
         [HttpPost("login")]
-        public IActionResult Authenticate([FromBody]UserView userParams)
+        public IActionResult Authenticate([FromBody]UserLogin userParams)
         {
             var authenticated = _authenticator.Authenticate(userParams.Email, userParams.Password);
             if (!string.IsNullOrWhiteSpace(authenticated))
@@ -37,11 +40,12 @@ namespace CycleTogetherWeb.Controllers
         {
             try
             {
-                _authenticator.Register(user);
+                var state = _validator.Validate(user, ruleSet: "all");
+                if (state.IsValid) _authenticator.Register(user);
             }
             catch (Exception ex)
             {
-                return Content(ex.ToString());
+                return Content(ex.Message);
             }
 
             return Ok(true);

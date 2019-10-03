@@ -1,5 +1,5 @@
 ﻿using System;
-
+using System.ComponentModel.DataAnnotations;
 
 namespace WebModels
 {
@@ -7,6 +7,7 @@ namespace WebModels
     {
         public Guid Id { get; set; }
         public string PublicId { get; set; }
+        [Required]
         public Guid RouteId { get; set; }
         public string Path { get; set; }
 

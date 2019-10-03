@@ -18,6 +18,7 @@ namespace CycleTogether.Routes
         private readonly IUserOwnedRoutes _routesByUser;
         private readonly IRoutesCache _cache;
         private readonly IUnitOfWork _db;
+        private readonly RouteCacheEvents _eventManager;
 
         public RouteSubscriber(IMapper mapper,
                                ISubscription subscriber,
@@ -25,7 +26,8 @@ namespace CycleTogether.Routes
                                IUserHistoryCache historyCache,
                                IUnitOfWork db, 
                                IUserOwnedRoutes routesByUser,
-                               IRoutesCache cache)
+                               IRoutesCache cache,
+                               RouteCacheEvents eventManager)
         {
             _db = db;
             _mapper = mapper;
@@ -34,23 +36,23 @@ namespace CycleTogether.Routes
             _historyCache = historyCache;
             _cache = cache;
             _routesByUser = routesByUser;
+            _eventManager = eventManager;
         }
 
         public bool Subscribe(Guid userId, Guid routeId)
         {
             if (_subscriber.Subscribe(userId, routeId))
             {
-               
+
                 var route = _subscriptions.Get(routeId.ToString());
                 route.Subscribed.ToList().Add(new UserRoute { RouteId = routeId, UserId = userId });
-                _cache.Update(route);
-                _routesByUser.Update(route);
-                _subscriptions.Update(route);
+                UpdateCache(route);
                 return true;
             }
 
             return false;
         }
+
         public bool Unsubscribe(Guid userId, Guid routeId)
         {
             var current = _db.UserRoutes.GetAll().FirstOrDefault(ur => ur.RouteId == routeId && ur.UserId == userId);
@@ -67,9 +69,7 @@ namespace CycleTogether.Routes
                 .ToList()
                 .Remove(new UserRoute { RouteId = routeId, UserId = userId });
                 _subscriber.Unsubscribe(current);
-                _routesByUser.Update(routeInCache);
-                _subscriptions.Update(routeInCache);
-                _cache.Update(routeInCache);
+                UpdateCache(routeInCache);
 
                 return true;
             }
@@ -84,6 +84,14 @@ namespace CycleTogether.Routes
         public IEnumerable<RouteView> GetUsersSubscriptions(string userId)
         {
             return _subscriptions.All();
+        }
+
+        private void UpdateCache(Route route)
+        {
+            _eventManager.UpdatedCache += _cache.Update;
+            _eventManager.UpdatedCache += _routesByUser.Update;
+            _eventManager.UpdatedCache += _subscriptions.Update;
+            _eventManager.OnUpdate(route);
         }
 
     }

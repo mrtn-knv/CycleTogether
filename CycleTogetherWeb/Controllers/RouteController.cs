@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using CycleTogether.Contracts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebModels;
 using FluentValidation;
-using System.Linq;
 
 namespace CycleTogetherWeb.Controllers
 {
@@ -24,22 +22,47 @@ namespace CycleTogetherWeb.Controllers
         }
 
         [HttpGet("all")]
-        public IEnumerable<RouteView> GetAll()
+        public IActionResult GetAll()
         {
-            return _routes.GetAll();
+            try
+            {
+                return Ok(_routes.GetAll());
+            }
+            catch (Exception ex)
+            {
+                return Content(ex.Message);
+            }
+
         }
 
         [HttpGet("all/mytrips")]
-        public IEnumerable<RouteView> GetAllByUser()
+        public IActionResult GetAllByUser()
         {
-            return _routes.AllByUser();
+            try
+            {
+                return Ok(_routes.AllByUser());
+            }
+            catch (Exception ex)
+            {
+
+                return Content(ex.Message);
+            }
+
         }
 
         // GET: /Route/5
         [HttpGet("{id}", Name = "id")]
-        public Route Get(Guid id)
-        {            
-            return _routes.Get(id);
+        public IActionResult Get(Guid id)
+        {
+            try
+            {
+                return Ok(_routes.Get(id));
+            }
+            catch (Exception ex)
+            {
+                return Content(ex.Message);
+            }
+           
         }
         
         // POST: /Route/new
@@ -56,16 +79,34 @@ namespace CycleTogetherWeb.Controllers
 
         // POST: /Route/edit
         [HttpPost("edit")]
-        public Route Update([FromBody]Route route)
+        public IActionResult Update([FromBody]Route route)
         {
-            return _routes.Update(route);
+            try
+            {
+                return Ok(_routes.Update(route));
+            }
+            catch (Exception ex)
+            {
+
+                return Content(ex.Message);
+            }
+            
         }
 
-        // DELETE: /ApiWithActions/5
+        // DELETE: /route/5
         [HttpDelete("{id}")]
-        public void Delete(string id)
+        public IActionResult Delete(string id)
         {
-            _routes.Remove(id);
+            try
+            {
+                _routes.Remove(id);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return Content(ex.Message);
+            }
+            
         }
     }
 }

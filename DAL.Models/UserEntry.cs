@@ -1,13 +1,16 @@
 ﻿using CycleTogether.Enums;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace DAL.Models
 {
     public class UserEntry : EntityBase
-    {           
+    {    
         public string FirstName { get; set; }
         public string LastName { get; set; }
+        [Required]
         public string Email { get; set; }
+        [Required]
         public string Password { get; set; }
         public int Level { get; set; }
         public Terrain Terrain { get; set; }

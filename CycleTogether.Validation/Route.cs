@@ -16,8 +16,8 @@ namespace CycleTogether.Validation
                 .Cascade(CascadeMode.StopOnFirstFailure)
                 .NotEmpty()
                 .WithMessage("The field cannot be empty.")
-                .MinimumLength(10)
-                .WithMessage("Information must contain at least 50 characters.");
+                .MinimumLength(5)
+                .WithMessage("Information must contain at least 5 characters.");
 
             RuleFor(r => r.StartPoint)
                 .NotEmpty()

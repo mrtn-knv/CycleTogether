@@ -4,14 +4,16 @@ using DAL.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DAL.Data.Migrations
 {
     [DbContext(typeof(CycleTogetherDbContext))]
-    partial class CycleTogetherDbContextModelSnapshot : ModelSnapshot
+    [Migration("20191003065219_update-constraints")]
+    partial class updateconstraints
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -69,8 +71,7 @@ namespace DAL.Data.Migrations
                     b.Property<bool>("IsComplete");
 
                     b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(25);
+                        .IsRequired();
 
                     b.Property<string>("StartPoint")
                         .IsRequired();

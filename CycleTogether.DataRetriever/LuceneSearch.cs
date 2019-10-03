@@ -42,6 +42,7 @@ namespace CycleTogether.DataRetriever
             doc.Add(new Field("Id", route.Id.ToString(), Field.Store.YES, Field.Index.NOT_ANALYZED));
             doc.Add(new Field("Name", route.Name, Field.Store.YES, Field.Index.ANALYZED));
             doc.Add(new Field("Description", route.Info, Field.Store.YES, Field.Index.NOT_ANALYZED));
+            doc.Add(new Field("StartTime", route.StartTime.ToString(), Field.Store.YES, Field.Index.NOT_ANALYZED));
 
             // add entry to index
             writer.AddDocument(doc);
@@ -122,7 +123,9 @@ namespace CycleTogether.DataRetriever
             {
                 Id = Guid.Parse(doc.Get("Id")),
                 Name = doc.Get("Name"),
-                Info = doc.Get("Description")
+                Info = doc.Get("Description"),
+                StartTime = DateTime.Parse(doc.Get("StartTime"))
+               
             };
         }
 

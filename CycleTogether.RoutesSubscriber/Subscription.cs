@@ -22,6 +22,7 @@ namespace CycleTogether.RoutesSubscriber
                                    _db.UserRoutes.Exists(subscribed) == false)
             {
                 _db.UserRoutes.Create(subscribed);
+                _db.SaveChanges();
                 return true;
             }
             return false;
@@ -32,6 +33,7 @@ namespace CycleTogether.RoutesSubscriber
             if (IsSubscribed(userFromRoute))
             {
                 _db.UserRoutes.Delete(userFromRoute.Id);
+                _db.SaveChanges();
                 return true;
             }
             return false;
