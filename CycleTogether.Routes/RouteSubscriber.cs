@@ -2,6 +2,7 @@
 using Cache;
 using CycleTogether.Contracts;
 using DAL.Contracts;
+using DAL.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -45,7 +46,12 @@ namespace CycleTogether.Routes
             {
 
                 var route = _subscriptions.Get(routeId.ToString());
+                route.Subscribed = _db.UserRoutes.GetAll()
+                                   .Where(ur => ur.RouteId == routeId)
+                                   .Select(r => _mapper.Map<UserRoute>(r));
                 route.Subscribed.ToList().Add(new UserRoute { RouteId = routeId, UserId = userId });
+                _eventManager.AddedToCache += _subscriptions.Add;
+                _eventManager.OnAdd(route);
                 UpdateCache(route);
                 return true;
             }
@@ -67,8 +73,11 @@ namespace CycleTogether.Routes
 
                 routeInCache.Subscribed
                 .ToList()
-                .Remove(new UserRoute { RouteId = routeId, UserId = userId });
+                .Remove(_mapper.Map<UserRoute>(current));
                 _subscriber.Unsubscribe(current);
+                _db.SaveChanges();
+                _eventManager.RemovedFromCache += _subscriptions.Remove;
+                _eventManager.OnRemove(routeId.ToString());
                 UpdateCache(routeInCache);
 
                 return true;
@@ -90,7 +99,6 @@ namespace CycleTogether.Routes
         {
             _eventManager.UpdatedCache += _cache.Update;
             _eventManager.UpdatedCache += _routesByUser.Update;
-            _eventManager.UpdatedCache += _subscriptions.Update;
             _eventManager.OnUpdate(route);
         }
 
