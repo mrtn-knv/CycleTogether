@@ -18,11 +18,21 @@ namespace CycleTogether.RoutesSubscriber
         public bool Subscribe(Guid userId, Guid routeId)
         {
             var subscribed = new UserRouteEntry { RouteId = routeId, UserId = userId };
-            if (Requirements.Match(_db.Users.GetById(userId), _db.Routes.GetById(routeId)) &&
+            if (UserIsOwner(userId, routeId) || Requirements.Match(_db.Users.GetById(userId), _db.Routes.GetById(routeId)) &&
                                    _db.UserRoutes.Exists(subscribed) == false)
             {
                 _db.UserRoutes.Create(subscribed);
                 _db.SaveChanges();
+                return true;
+            }
+            return false;
+        }
+
+        private bool UserIsOwner(Guid userId, Guid routeId)
+        {
+            var route = _db.Routes.GetById(routeId);
+            if (route.UserId == userId)
+            {
                 return true;
             }
             return false;
